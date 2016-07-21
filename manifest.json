@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+
+  "name": "Pokus",
+  "description": "This extension allows you to block websites for a certain amount of time. In doing so, you will remain focused at the task at hand and increase your productivity.",
+  "version": "1.0",
+  "author": "Sinokaba",
+  "icons":{
+    "16": "icon16x16.png",
+    "48": "icon48x48.png",
+    "128": "icon128x128.png"
+  },
+  "browser_action": {
+    "default_icon": "icon128x128.png",
+    "default_popup": "popup.html",
+    "default_title": "Let's Pokus"
+  },
+  "background":{
+    "scripts": ["popup.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "webRequest",
+    "webRequestBlocking",
+    "tabs",
+    "unlimitedStorage",
+    "<all_urls>"
+  ]
+}
