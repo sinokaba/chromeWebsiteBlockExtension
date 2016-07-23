@@ -1,9 +1,31 @@
-function cancel(requestDetails) {
-  console.log("Canceling: " + requestDetails.url + ". Get back to work!");
-  return {cancel: true};
+window.onload = function(){
+
+var obj = {};
+var storage = chrome.storage.local;
+var website;
+
+document.getElementById("blockNow").onclick = function(){
+  website = document.getElementById("blockSite").value;
+  console.log(website);
+  chrome.extension.getBackgroundPage().enableBlocking(website);
+  
+  document.getElementById("unblockNow").value = "Unblock " + website;
+
+  obj[website] = website;
+  storage.set(obj, function(){
+     if (chrome.extension.lastError) {
+            alert('An error occurred: ' + chrome.extension.lastError.message);
+        }
+  });
+
+  storage.get(website, function(result){
+    document.getElementById("firstSite").innerHTML = JSON.stringify(result);
+  });
+}
+document.getElementById("unblockNow").onclick = function(){
+  chrome.extension.getBackgroundPage().disableBlocking(website);
+}
+var url = document.getElementById("blockSite");
+url.focus();
 }
 
-chrome.webRequest.onBeforeRequest.addListener(
-  cancel,
-    {urls: ["*://www.reddit.com/*"]},
-    ["blocking"]);

@@ -29,11 +29,18 @@
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
-     <script src="popup.js"></script>
+    <script src="popup.js"></script>
   </head>
   <body>
     <div id="status">
-      <p>This extension blocks all access to the website: evil.com</p>
+      <form id="addSite">
+        <p><label>Enter the site to block then press enter: </label>
+        <input name="blockWebsite" type="text" value="" id="blockSite" size="40" placeholder="block this site"></input></p>
+        <input type="button" id="blockNow" value="Block"></input>
+        <input type="button" id="unblockNow" value=""></input>
+      </form>
+      <p>Websites blocked</p>
+      <p id="firstSite"></p>
     </div>
   </body>
 </html>
