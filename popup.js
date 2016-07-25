@@ -30,9 +30,8 @@ document.getElementById("unblockNow").onclick = function(){
       alert("An error occured, could not remove item.");
     }
   }); 
-  getKeys();
 }
-
+getKeys();
 function getKeys(){
   storage.get(null, function(items){
     var allkeys = Object.keys(items);
