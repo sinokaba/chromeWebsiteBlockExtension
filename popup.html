@@ -30,6 +30,12 @@
         width: 100%;
         text-align: center;
       }
+      ul > li{
+        list-style-type: none; 
+      }
+      ul{
+        padding-left: 0;
+      }
       .button-style{
         -webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
         -moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -49,6 +55,16 @@
       .inner{
         display: inline-block;
       }
+      #direct{
+        color: red;
+        text-align: center;
+        background-color: #f1f1f1;
+      }
+      #title{
+        color: #0000b3;
+        font-size: 17;
+        font-weight: bold;
+      }
     </style>
 
     <!--
@@ -63,8 +79,11 @@
     <div id="status">
       <div id="addSite">
         <form>
-          <p><label>Block this site: </label>
+          <p id="title"><label>Pokus NOW: </label>
           <input name="blockWebsite" type="text" value="" id="blockSite" size="40" placeholder="block this site"></input></p>
+          <div id="direct">
+            <p><label>Please click 'block' to block a site</label></p>
+          </div>
         </form>
       </div>
         <div id="outer">
