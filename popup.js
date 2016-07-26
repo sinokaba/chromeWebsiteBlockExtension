@@ -8,32 +8,32 @@ var err;
 var sitesBlocked = -1;
 var textbox = document.getElementById("blockSite");
 var n = -1;
-function block(n){
+var buttonID = document.getElementById("blockNow");
+
+
+
+buttonID.addEventListener('click', function(){
   website = textbox.value;
   console.log(website);
   getBG.enableBlocking(website);
   
   if(website != ""){
-    sitesBlocked = n;
+    sitesBlocked++;
     setKeys();
-    addtoList(website.length + 2); 
+    addtoList(website.length + 2);
   }
   else{
     alert("You did not enter a valid website!");
   }
-}
+});
 
+/*
 textbox.addEventListener("keydown", function(event) {
   if (event.keyCode == 13) {
-    n++;
-    block(n);
+    document.getElementById("ins").innerHTML = "Please click 'block' to block a site";
   }
-})
-
-document.getElementById("blockNow").onclick = function(){
-  n++;
-  block(n);
-}
+});
+*/
 
 
 document.getElementById("unblockNow").value = "Unblock All";
