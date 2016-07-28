@@ -32,6 +32,7 @@
       }
       ul > li{
         list-style-type: none; 
+        background-color: #cde7f0;
       }
       ul{
         padding-left: 0;
@@ -64,6 +65,30 @@
         color: #0000b3;
         font-size: 17;
         font-weight: bold;
+        text-align: center;
+      }
+      #permaban{
+        background-color: red;
+      }
+      .ui-widget{
+        border: 1px solid black;
+      }
+      .ui-widget-header,.ui-state-default, ui-button{
+        background: red;
+        border: 1px solid red;
+        color: #FFFFFF;
+        font-weight: bold;
+      }
+      .ui-widget-content{
+        background-color: white;
+      }
+      #perm-title{
+        color: red;
+        font-weight: bold;
+      }
+      #permbanned > li{
+        background-color: red;
+        color: white;
       }
     </style>
 
@@ -74,25 +99,32 @@
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
     <script src="popup.js"></script>
+    <script src="jquery.js"></script>
+    <script src="jquery-ui.min.js"></script>
   </head>
   <body>
+    <div id="warning-popup" title="Warning">
+        <p id="warning-text"></p>
+    </div>
     <div id="status">
+
       <div id="addSite">
         <form>
           <p id="title"><label>Pokus NOW: </label>
           <input name="blockWebsite" type="text" value="" id="blockSite" size="40" placeholder="block this site"></input></p>
-          <div id="direct">
-            <p><label>Please click 'block' to block a site</label></p>
-          </div>
         </form>
       </div>
         <div id="outer">
           <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
+          <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
         </div>
       <p>Websites blocked</p>
       <ul id="blockList">
       </ul>
       
+      <p id="perm-title">Permanently blocked websites</p>
+      <ul id="permbanned">
+      </ul>
       <div class="inner"><input type="submit" class="button-style" id="unblockNow" value="Unblock All"></div>
     </div>
   </body>
