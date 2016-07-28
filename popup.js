@@ -1,92 +1,159 @@
 window.onload = function(){
 
 var obj = {};
-var storage = chrome.storage.local;
+var permObj = {};
+var local = chrome.storage.local;
+var sync = chrome.storage.sync;
 var website;
 var getBG = chrome.extension.getBackgroundPage();
 var err;
-var sitesBlocked = -1;
 var textbox = document.getElementById("blockSite");
-var n = -1;
 var buttonID = document.getElementById("blockNow");
+var unBlock = document.getElementById("unblockNow");
+var warning = false;
+var confirmed = false;
 
+$("#warning-popup").dialog({
+  autoOpen: false,
+  draggable: false,
+  open: function(event, ui) {
+    $("#status").css("opacity", ".7");
+    document.getElementById("blockNow").disabled = true;
+    document.getElementById("unblockNow").disabled = true;
+    document.getElementById("permaban").disabled = true;
+    document.getElementById("blockSite").disabled = true;
+    $(".button-style").css("cursor", "default");
+    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+  },
+  close: function(event, ui){
+    $("#status").css("opacity", "1");
+    document.getElementById("blockNow").disabled = false;
+    document.getElementById("unblockNow").disabled = false;
+    document.getElementById("permaban").disabled = false;
+    document.getElementById("blockSite").disabled = false;
+    $(".button-style").css("cursor", "pointer");
+  },
+  buttons: [
+      {
+        text: "Ok",
+        click: function() {
+          confirmed = true;
+          $( this ).dialog( "close" );
+            if(confirmed){
+              if(website != ""){
+                console.log(confirmed);
+                permSetKeys();
+                permGetKeys();
+              }
+              else{
+                alert("You did not enter a valid website!");
+              }
+            }
+        }
+        //showText: false
+      },
 
+      {
+        text: "Close",
+        click: function() {
+          $( this ).dialog( "close" );
+        }
+        //showText: false
+      }
+    ]
+});
 
 buttonID.addEventListener('click', function(){
   website = textbox.value;
-  console.log(website);
   getBG.enableBlocking(website);
   
   if(website != ""){
-    sitesBlocked++;
-    setKeys();
-    addtoList(website.length + 2);
+    tempSetKeys();
+    tempGetKeys();
   }
   else{
     alert("You did not enter a valid website!");
   }
 });
 
-/*
+document.getElementById("permaban").addEventListener('click', function(){
+  warning = true;
+  website = textbox.value;
+  $("#warning-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
+  getBG.enableBlocking(website);
+  $("#warning-popup").dialog("open");
+});
+
 textbox.addEventListener("keydown", function(event) {
   if (event.keyCode == 13) {
-    document.getElementById("ins").innerHTML = "Please click 'block' to block a site";
+    buttonID.click();
   }
 });
-*/
-
-
-document.getElementById("unblockNow").value = "Unblock All";
 
 
 
-document.getElementById("unblockNow").onclick = function(){
-  getBG.disableBlocking(website);
-  storage.clear(function(){
+unBlock.value = "Unblock All";
+
+
+
+unBlock.onclick = function(){
+  getBG.disableBlocking();
+  local.clear(function(){
     err = chrome.runtime.lastError;
     if(err){
       alert("An error occured, could not remove item.");
     }
   });
+  sync.clear();
   chrome.runtime.reload();
 }
 
 if(chrome.extension.getViews({ type: "popup" }) != '[]'){
-  getKeys();
-
+  tempGetKeys();
+  permGetKeys();
 }
 
-function getKeys(){
-  storage.get(null, function(items){
-    var allkeys = Object.keys(items);
-    console.log(allkeys);
-    for(i = 0; i < allkeys.length; i++){
-    var li = document.createElement('li');
-    li.setAttribute('id', 'site' + i);
-    document.getElementById("blockList").appendChild(li)
-    document.getElementById("site" + i).innerHTML = allkeys[i];
+function tempGetKeys(){
+    local.get(null, function(items){
+      var allkeys = Object.keys(items);
+      console.log(allkeys);
+      for(i = 0; i < allkeys.length; i++){
+      var li = document.createElement('li');
+      li.setAttribute('id', 'site' + i);
+      document.getElementById("blockList").appendChild(li)
+      document.getElementById("site" + i).innerHTML = allkeys[i];
+      }
+    });
+}
+
+function tempSetKeys(){
+    obj[website] = website;
+    local.set(obj, function(){
+       if (chrome.extension.lastError) {
+              alert("An error occurred: " + chrome.extension.lastError.message);
+          }
+    });
+}
+
+function permSetKeys(){
+  permObj[website] = website;
+  sync.set(permObj, function(){
+    if(chrome.extension.lastError){
+      alert("An error occured: " + chrome.extension.lastError.message);
     }
-  });
+  })
 }
 
-
-function addtoList(len){
-  storage.get(website, function(result){
-    var res = JSON.stringify(result).substring(2, len);
-    var li = document.createElement('li');
-    li.setAttribute('id', 'site' + sitesBlocked);
-    document.getElementById("blockList").appendChild(li)
-    document.getElementById("site" + sitesBlocked).innerHTML = res;
-  });
+function permGetKeys(){
+    sync.get(null, function(items){
+      var allkeys = Object.keys(items);
+      console.log(allkeys);
+      for(i = 0; i < allkeys.length; i++){
+      var li = document.createElement('li');
+      li.setAttribute('id', 'pSite' + i);
+      document.getElementById("permbanned").appendChild(li)
+      document.getElementById("pSite" + i).innerHTML = allkeys[i];
+      }
+    });
 }
-function setKeys(){
-  obj[website] = website;
-  storage.set(obj, function(){
-     if (chrome.extension.lastError) {
-            alert('An error occurred: ' + chrome.extension.lastError.message);
-        }
-  });
-}
-var url = document.getElementById("blockSite");
-url.focus();
 }
