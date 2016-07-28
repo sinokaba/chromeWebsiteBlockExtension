@@ -40,7 +40,7 @@ $("#warning-popup").dialog({
           confirmed = true;
           $( this ).dialog( "close" );
             if(confirmed){
-              if(website != ""){
+              if(!(/\s/).test(website) && website != ""){
                 console.log(confirmed);
                 permSetKeys();
                 permGetKeys();
@@ -67,7 +67,7 @@ buttonID.addEventListener('click', function(){
   website = textbox.value;
   getBG.enableBlocking(website);
   
-  if(website != ""){
+  if(!(/\s/).test(website) && website != ""){
     tempSetKeys();
     tempGetKeys();
   }
