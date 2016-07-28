@@ -8,7 +8,7 @@ function enableBlocking(site){
 	{urls: ["*://www." + site + "/*"]},
 	["blocking"]);
 }
-function disableBlocking(site){
+function disableBlocking(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback);	
 }
 
