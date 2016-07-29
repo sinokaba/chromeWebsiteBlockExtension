@@ -12,7 +12,17 @@ var buttonID = document.getElementById("blockNow");
 var unBlock = document.getElementById("unblockNow");
 var warning = false;
 var confirmed = false;
-var n = -1;
+var n;
+var x = getBG.removedCounter();
+//disable enter key cause it causes a ton of unforseen bugs
+$('html').bind('keypress', function(e)
+{
+   if(e.keyCode == 13)
+   {
+      return false;
+   }
+});
+
 //the dialog for the warning message that appears when the user decides to permanently block a site
 $("#warning-popup").dialog({
   autoOpen: false,
@@ -66,16 +76,27 @@ $("#warning-popup").dialog({
     ]
 });
 
+$(".unblock-button").click(function(){
+  var id = $(this).attr('id');
+  var parseId = id.substring(id.length - 1, id.length);
+  console.log(parseId);
+  getBG.disableBlocking(parseId);
+  removeFromList(parseId);
+  getBG.removedCounter();
+})
+
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 buttonID.addEventListener('click', function(){
   website = textbox.value;
-  n++;
-  document.cookie = n;
-  getBG.enableBlocking(website, document.cookie);
+  n = getBG.addedCounter() - x;
+  console.log("X = " + x);
+  console.log("N = " + n);
+  getBG.enableBlocking(website, n);
   
   //regex expression to check whether the user inputted an empty string into the input field
   if(!(/\s/).test(website) && website != ""){
     tempSetKeys(n);
+    console.log("2N = " + n);
     tempGetKeys();
   }
   else{
@@ -90,13 +111,6 @@ document.getElementById("permaban").addEventListener('click', function(){
   $("#warning-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
   getBG.enableBlocking(website);
   $("#warning-popup").dialog("open");
-});
-
-//triggers the click event when the user presses enter when entering a site
-textbox.addEventListener("keydown", function(event) {
-  if (event.keyCode == 13) {
-    buttonID.click();
-  }
 });
 
 //unblocks everthing when the unblock all button is clicked
@@ -115,14 +129,6 @@ unBlock.onclick = function(){
   chrome.runtime.reload();
 }
 
-$(".unblock-button").click(function(){
-  var id = $(this).attr('id');
-  var parseId = id.substring(id.length - 1, id.length);
-  console.log(parseId);
-  getBG.disableBlocking(parseId);
-  removeFromList(parseId);
-
-})
 //checks whether popup is open or not
 if(chrome.extension.getViews({ type: "popup" }) != '[]'){
   tempGetKeys();
