@@ -1,3 +1,5 @@
+var n = 0;
+var x = 0;
 var callback = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
 	console.log(details.timeStamp);
@@ -34,4 +36,9 @@ function disableBlocking(n){
 	}
 }
 
-
+function addedCounter(){
+	return n++;
+}
+function removedCounter(){
+	return x++;
+}
