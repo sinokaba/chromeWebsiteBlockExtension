@@ -90,6 +90,9 @@
         background-color: red;
         color: white;
       }
+      .hide{
+        display: none;
+      }
     </style>
 
     <!--
@@ -118,10 +121,49 @@
           <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
           <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
         </div>
-      <p>Websites blocked</p>
+
+      <table>
+        <tr>
+          <th>Website url</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td id="site0"></td>
+          <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
+        </tr>
+        <tr>
+          <td id="site1"></td>
+          <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
+        </tr>
+        <tr>
+          <td id="site2"></td>
+          <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
+        </tr>
+        <tr>
+          <td id="site3"></td>
+          <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
+        </tr>
+        <tr>
+          <td id="site4"></td>
+          <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
+        </tr>
+      </table>
+      <!--
       <ul id="blockList">
+        <li id="site0"></li>
+        <li id="unblock-button0"><button>Unblock</button></li>
+        <li id="site1"></li>
+        <li id="unblock-button1"><button>Unblock</button></li>
+        <li id="site2"></li>
+        <li id="unblock-button2"><button>Unblock</button></li>
+        <li id="site3"></li>
+        <li id="unblock-button3"><button>Unblock</button></li>
+        <li id="site4"></li>
+        <li id="unblock-button4"><button>Unblock</button></li>
+        <li id="site5"></li>
+        <li id="unblock-button5"><button>Unblock</button></li>
       </ul>
-      
+      -->
       <p id="perm-title">Permanently blocked websites</p>
       <ul id="permbanned">
       </ul>
