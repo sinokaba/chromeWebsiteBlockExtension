@@ -115,7 +115,7 @@ document.getElementById("permaban").addEventListener('click', function(){
 
 //unblocks everthing when the unblock all button is clicked
 unBlock.onclick = function(){
-  getBG.disableBlocking(n);
+  getBG.unblockAll(getBG.addedCounter());
 
   //clears both local and sync chrome storage systems
   local.clear(function(){
