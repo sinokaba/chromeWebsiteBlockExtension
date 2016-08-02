@@ -1,5 +1,10 @@
 var n = 0;
 var x = 0;
+var permblock = function(details){
+	alert("Cancelling: " + details.url + ". Get back to work!");
+	console.log(details.timeStamp);
+	return {cancel: true};
+}
 var callback1 = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
 	console.log(details.timeStamp);
@@ -98,15 +103,24 @@ function disableBlocking(n){
 	}
 }
 
-function unblockAll(z){
-	n = 0;
-	for(i = 1; i < z; i++){
-		chrome.webRequest.onBeforeRequest.removeListener(callback + i);
-	}
+function unblockAll(){
+	chrome.webRequest.onBeforeRequest.removeListener(callback1);
+	chrome.webRequest.onBeforeRequest.removeListener(callback2);
+	chrome.webRequest.onBeforeRequest.removeListener(callback3);
+	chrome.webRequest.onBeforeRequest.removeListener(callback4);	
+	chrome.webRequest.onBeforeRequest.removeListener(callback5);
+	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
+	chrome.webRequest.onBeforeRequest.removeListener(callback7);
 }
 function addedCounter(){
 	return n++;
 }
 function removedCounter(){
 	return x++;
+}
+
+function permaban(site){
+	chrome.webRequest.onBeforeRequest.addListener(permblock,
+	{urls: ["*://www." + site + "/*"]},
+	["blocking"]);
 }
