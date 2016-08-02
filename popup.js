@@ -54,7 +54,7 @@ $("#warning-popup").dialog({
           $( this ).dialog( "close" );
             if(confirmed){
               if(!(/\s/).test(website) && website != ""){
-                console.log(confirmed);
+                getBG.permaban(website);
                 permSetKeys();
                 permGetKeys();
               }
@@ -115,7 +115,7 @@ document.getElementById("permaban").addEventListener('click', function(){
 
 //unblocks everthing when the unblock all button is clicked
 unBlock.onclick = function(){
-  getBG.unblockAll(getBG.addedCounter());
+  getBG.unblockAll();
 
   //clears both local and sync chrome storage systems
   local.clear(function(){
@@ -124,9 +124,7 @@ unBlock.onclick = function(){
       alert("An error occured, could not remove item.");
     }
   });
-  sync.clear();
   //reloads the extension, closes the popup
-  chrome.runtime.reload();
 }
 
 //checks whether popup is open or not
