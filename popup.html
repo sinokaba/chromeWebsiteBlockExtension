@@ -63,7 +63,7 @@
       }
       #title{
         color: #0000b3;
-        font-size: 17;
+        font-size: 20;
         font-weight: bold;
         text-align: center;
       }
@@ -82,7 +82,9 @@
       .ui-widget-content{
         background-color: white;
       }
-      .title{
+      .tableTitle{
+        text-align: center;
+        font-size: 16;
         color: blue;
         font-weight: bold;
       }
@@ -102,6 +104,12 @@
       .pb{
         color: red;
         font-weight: bold;
+      }
+      .rowBreak{
+        border-right: 1px solid blue;
+      }
+      #unblockNow{
+        background-color: green;
       }
     </style>
 
@@ -130,14 +138,17 @@
           </div>
         </form>
       </div>
-        <div id="outer">
-          <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
-          <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
-        </div>
-      <p class="title">Blocked Websites</p>
+      <div id="outer">
+        <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
+        <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
+      </div>
+
+      <hr>
+
+      <p class="tableTitle">Blocked Websites</p>
       <table>
         <tr>
-          <th style="border-right: 1px solid red">Website URL:</th>
+          <th class="rowBreak">Website URL:</th>
           <th>Status</th>
         </tr>
         <tr>
@@ -169,11 +180,13 @@
           <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
         </tr>
       </table>
+
       <div class="inner"><input type="submit" class="button-style" id="unblockNow" value="Unblock All"></div>
-      <p class = "title">Permanently blocked websites</p>
+
+      <hr>
       <table>
         <tr>
-          <th style="border-right: 1px solid red">Website URL:</th>
+          <th class="rowBreak">Website URL:</th>
           <th>Status</th>
         </tr>
         <tr>
