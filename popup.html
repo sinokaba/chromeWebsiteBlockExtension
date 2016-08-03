@@ -82,8 +82,8 @@
       .ui-widget-content{
         background-color: white;
       }
-      #perm-title{
-        color: red;
+      .title{
+        color: blue;
         font-weight: bold;
       }
       #permbanned > li{
@@ -98,6 +98,10 @@
       }
       th{
         border-bottom: 1px solid black;
+      }
+      .pb{
+        color: red;
+        font-weight: bold;
       }
     </style>
 
@@ -130,10 +134,10 @@
           <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
           <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
         </div>
-
+      <p class="title">Blocked Websites</p>
       <table>
         <tr>
-          <th style="border-right: 1px solid red">Website URL</th>
+          <th style="border-right: 1px solid red">Website URL:</th>
           <th>Status</th>
         </tr>
         <tr>
@@ -166,9 +170,25 @@
         </tr>
       </table>
       <div class="inner"><input type="submit" class="button-style" id="unblockNow" value="Unblock All"></div>
-      <p id="perm-title">Permanently blocked websites</p>
-      <ul id="permbanned">
-      </ul>
+      <p class = "title">Permanently blocked websites</p>
+      <table>
+        <tr>
+          <th style="border-right: 1px solid red">Website URL:</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td id="perm0"></td>
+          <td id="permStat0" class="hide pb">Permablocked</td>
+        </tr>
+        <tr>
+          <td id="perm1"></td>
+          <td id="permStat1" class="hide pb">Permablocked</td>
+        </tr>
+        <tr>
+          <td id="perm2"></td>
+          <td id="permStat2" class="hide pb">Permablocked</td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>
