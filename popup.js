@@ -23,6 +23,9 @@ $('html').bind('keypress', function(e)
    }
 });
 
+//remove after project is finished
+sync.clear();
+
 //the dialog for the warning message that appears when the user decides to permanently block a site
 $("#warning-popup").dialog({
   autoOpen: false,
@@ -174,12 +177,21 @@ function permGetKeys(){
     sync.get(null, function(items){
       var allkeys = Object.keys(items);
       console.log(allkeys);
-      for(i = 0; i < allkeys.length; i++){
-      var li = document.createElement('li');
-      li.setAttribute('id', 'pSite' + i);
-      document.getElementById("permbanned").appendChild(li)
-      document.getElementById("pSite" + i).innerHTML = allkeys[i];
+      if(allkeys.length <= 3){
+        for(i = 0; i < allkeys.length; i++){
+          var key = allkeys[i];
+          $("#perm" + i).text(items[key]);
+          $("#permStat" + i).removeClass("hide");
+        }
       }
+      else{
+          for(i = 0; i < 3; i++){
+          var key = allkeys[i];
+          $("#perm" + i).text(items[key]);
+          $("#permStat" + i).removeClass("hide");
+      }
+    }
     });
 }
+
 }
