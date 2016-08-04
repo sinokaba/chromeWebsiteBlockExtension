@@ -57,9 +57,34 @@ $("#warning-popup").dialog({
           $( this ).dialog( "close" );
             if(confirmed){
               if(!(/\s/).test(website) && website != ""){
-                getBG.permaban(website);
-                permSetKeys();
-                permGetKeys();
+                if (makeCookie.getItem('counter') == null) {
+                    // If the cookie doesn't exist, save the cookie with the value of 1
+
+                    //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
+                    makeCookie.setItem('counter', '1', null);
+                } else {
+                    // If the cookie exists, take the value
+                    var cookie_value = makeCookie.getItem('counter');
+                    // Convert the value to an int to make sure
+                    cookie_value = parseInt(cookie_value);
+                    // Add 1 to the cookie_value
+                    cookie_value++;
+
+                    // Or make a pretty one liner
+                    // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
+
+                    // Save the incremented value to the cookie
+                    makeCookie.setItem('counter', cookie_value, null);
+                }
+                var getCounter = makeCookie.getItem('counter');
+                if(getCounter <= 3){
+                  getBG.permaban(website);
+                  makeCookie.setItem(getCounter, website, null);
+                  getPermItems(getCounter);
+                }
+                else{
+                  alert("You can only permablock up to three websites.");
+                }
               }
               else{
                 alert("You did not enter a valid website!");
@@ -133,8 +158,8 @@ unBlock.onclick = function(){
 //checks whether popup is open or not
 if(chrome.extension.getViews({ type: "popup" }) != '[]'){
   tempGetKeys();
-  permGetKeys();
 }
+
 //this function to store keys and their respected values to chrome local storage
 function tempSetKeys(k){
     obj['website' + k] = website;
@@ -162,6 +187,62 @@ function removeFromList(n){
     console.log("Website removed");
   })
 }
+
+//cookie frame, for making cookies. taken from mozilla js docs
+var makeCookie = {
+  getItem: function (sKey) {
+    if (!sKey) { return null; }
+    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+  },
+  setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
+    var sExpires = "";
+    if (vEnd) {
+      switch (vEnd.constructor) {
+        case Number:
+          sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+          break;
+        case String:
+          sExpires = "; expires=" + vEnd;
+          break;
+        case Date:
+          sExpires = "; expires=" + vEnd.toUTCString();
+          break;
+      }
+    }
+    document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+    return true;
+  },
+  removeItem: function (sKey, sPath, sDomain) {
+    if (!this.hasItem(sKey)) { return false; }
+    document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
+    return true;
+  },
+  hasItem: function (sKey) {
+    if (!sKey) { return false; }
+    return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+  },
+  keys: function () {
+    var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+    for (var nLen = aKeys.length, nIdx = 0; nIdx < nLen; nIdx++) { aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]); }
+    return aKeys;
+  }
+};
+
+
+for(i = 1; i <= 3; i++){
+    $("#perm" + i).text(makeCookie.getItem(i));
+    $("#permStat" + i).removeClass("hide");
+}
+
+function getPermItems(n){
+  for(i = 1; i <= n; i++){
+    console.log(makeCookie.getItem(i));
+    $("#perm" + i).text(makeCookie.getItem(i));
+    $("#permStat" + i).removeClass("hide");
+  }
+}
+
 //this function to store keys and their respected values to chrome sync storage
 function permSetKeys(){
   //stores the website value to permobj variable
