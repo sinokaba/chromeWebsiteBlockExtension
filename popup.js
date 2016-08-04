@@ -78,7 +78,7 @@ $("#warning-popup").dialog({
                 }
                 var getCounter = makeCookie.getItem('counter');
                 if(getCounter <= 3){
-                  getBG.permaban(website);
+                  getBG.permaban(website, getCounter);
                   makeCookie.setItem(getCounter, website, null);
                   getPermItems(getCounter);
                 }
