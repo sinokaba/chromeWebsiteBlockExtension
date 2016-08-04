@@ -1,6 +1,6 @@
 var n = 0;
 var x = 0;
-var z = 0;
+
 var permblock = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
 	console.log(details.timeStamp);
@@ -120,8 +120,7 @@ function removedCounter(){
 	return x++;
 }
 
-function permaban(site){
-	z++;
+function permaban(site, z){
 	if(z < 4){
 		chrome.webRequest.onBeforeRequest.addListener(permblock,
 		{urls: ["*://www." + site + "/*"]},
