@@ -1,7 +1,7 @@
 var n = 0;
 var x = 0;
 
-var permblock = function(details){
+var permanentlyBlock = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
 	console.log(details.timeStamp);
 	return {cancel: true};
@@ -37,6 +37,12 @@ var callback6 = function(details){
 	return {cancel: true};
 }
 var callback7 = function(details){
+	alert("Cancelling: " + details.url + ". Get back to work!");
+	console.log(details.timeStamp);
+	return {cancel: true};
+}
+
+var blockAllCallback = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
 	console.log(details.timeStamp);
 	return {cancel: true};
@@ -112,6 +118,7 @@ function unblockAll(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback5);
 	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
 	chrome.webRequest.onBeforeRequest.removeListener(callback7);
+	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
 }
 function addedCounter(){
 	return n++;
@@ -120,13 +127,19 @@ function removedCounter(){
 	return x++;
 }
 
-function permaban(site, z){
+function permablock(site, z){
 	if(z < 4){
-		chrome.webRequest.onBeforeRequest.addListener(permblock,
+		chrome.webRequest.onBeforeRequest.addListener(permanentlyBlock,
 		{urls: ["*://www." + site + "/*"]},
 		["blocking"]);
 	}
 	else{
 		alert("You cannot permblock any more sites!");
 	}
+}
+
+function blockAllWebsites(){
+	chrome.webRequest.onBeforeRequest.addListener(blockAllCallback, 
+	{urls: ["http://*/*", "https://*/*"]},
+	["blocking"]);
 }
