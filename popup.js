@@ -23,8 +23,6 @@ $('html').bind('keypress', function(e)
    }
 });
 
-//remove after project is finished
-sync.clear();
 
 //the dialog for the warning message that appears when the user decides to permanently block a site
 $("#warning-popup").dialog({
@@ -57,30 +55,32 @@ $("#warning-popup").dialog({
           $( this ).dialog( "close" );
             if(confirmed){
               if(!(/\s/).test(website) && website != ""){
-                if (makeCookie.getItem('counter') == null) {
+                //cookie that stores the number of sites you have added
+                if (makeCookie.getItem('permCounter') == null) {
                     // If the cookie doesn't exist, save the cookie with the value of 1
 
                     //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
-                    makeCookie.setItem('counter', '1', null);
+                    makeCookie.setItem('permCounter', '1', null);
                 } else {
                     // If the cookie exists, take the value
-                    var cookie_value = makeCookie.getItem('counter');
+                    var permCookieValue = makeCookie.getItem('permCounter');
                     // Convert the value to an int to make sure
-                    cookie_value = parseInt(cookie_value);
+                    permCookieValue = parseInt(permCookieValue);
                     // Add 1 to the cookie_value
-                    cookie_value++;
+                    permCookieValue++;
 
                     // Or make a pretty one liner
                     // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
 
                     // Save the incremented value to the cookie
-                    makeCookie.setItem('counter', cookie_value, null);
+                    makeCookie.setItem('permCounter', permCookieValue, null);
                 }
-                var getCounter = makeCookie.getItem('counter');
-                if(getCounter <= 3){
-                  getBG.permaban(website, getCounter);
-                  makeCookie.setItem(getCounter, website, null);
-                  getPermItems(getCounter);
+
+                var getPermCounter = makeCookie.getItem('permCounter');
+                if(getPermCounter <= 3){
+                  getBG.permaban(website, getPermCounter);
+                  makeCookie.setItem(getPermCounter, website, null);
+                  getPermItems(getPermCounter);
                 }
                 else{
                   alert("You can only permablock up to three websites.");
@@ -145,6 +145,9 @@ document.getElementById("permaban").addEventListener('click', function(){
 unBlock.onclick = function(){
   getBG.unblockAll();
 
+  //remove after testing
+  clearCookies();
+
   //clears both local and sync chrome storage systems
   local.clear(function(){
     err = chrome.runtime.lastError;
@@ -152,13 +155,11 @@ unBlock.onclick = function(){
       alert("An error occured, could not remove item.");
     }
   });
-  //reloads the extension, closes the popup
+  tempGetKeys();
 }
 
 //checks whether popup is open or not
-if(chrome.extension.getViews({ type: "popup" }) != '[]'){
-  tempGetKeys();
-}
+tempGetKeys();
 
 //this function to store keys and their respected values to chrome local storage
 function tempSetKeys(k){
@@ -243,6 +244,7 @@ function getPermItems(n){
   }
 }
 
+/*
 //this function to store keys and their respected values to chrome sync storage
 function permSetKeys(){
   //stores the website value to permobj variable
@@ -274,5 +276,17 @@ function permGetKeys(){
     }
     });
 }
-
+*/
+//remove after finished with testing
+function clearCookies(){
+  if(makeCookie.getItem("permCounter") != null){
+    makeCookie.removeItem("permCounter");
+  }
+  var items = document.cookie.split(';');
+  for(i = 0; i < makeCookie.keys().length; i++){
+    var key2 = items[i].split('=');
+    console.log("length: " + makeCookie.keys().length + "items: " + key2[0]);
+    makeCookie.removeItem(key2[0]);
+  }
+}
 }
