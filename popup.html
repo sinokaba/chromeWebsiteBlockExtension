@@ -19,11 +19,11 @@
         overflow: hidden;
 
       }
-      #blockSite{
+      #websiteURL{
         border-radius: 5px;
         -webkit-border-radius: 5px;
       }
-      #blockSite:focus{
+      #websiteURL:focus{
         border-color: blue;
       }
       #outer{
@@ -110,6 +110,14 @@
       #blockAll{
         background-color: blue;
       }
+      .unselectable{
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        opacity: .7;
+      }
     </style>
 
     <!--
@@ -123,15 +131,18 @@
     <script src="jquery-ui.min.js"></script>
   </head>
   <body>
-    <div id="warning-popup" title="Warning">
-        <p id="warning-text"></p>
+    <div id="permblock-popup" title="Warning">
+        <p id="permblock-text"></p>
+    </div>
+
+    <div id="blockAll-popup" title="Warning">
+        <p id="blockAll-text"></p>
     </div>
     <div id="status">
-
       <div id="addSite">
         <form>
           <p id="title"><label>Pokus NOW: </label>
-          <input name="blockWebsite" type="text" value="" id="blockSite" size="40" maxlength="30" placeholder="block this site"></input></p>
+          <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
           <div id="direct">
             <p><label>Enter website url, without 'www', then click block.</label></p>
           </div>
@@ -181,7 +192,7 @@
         </tr>
       </table>
 
-      <div class="inner"><input type="submit" class="button-style" id="unblockNow" value="Unblock All"></div>
+      <div class="inner"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
       <hr>
       <table>
