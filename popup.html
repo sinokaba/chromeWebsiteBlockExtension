@@ -67,7 +67,7 @@
         font-weight: bold;
         text-align: center;
       }
-      #permaban{
+      #permablock{
         background-color: red;
       }
       .ui-widget{
@@ -88,10 +88,6 @@
         color: blue;
         font-weight: bold;
       }
-      #permbanned > li{
-        background-color: red;
-        color: white;
-      }
       .hide{
         display: none;
       }
@@ -110,6 +106,9 @@
       }
       #unblockNow{
         background-color: green;
+      }
+      #blockAll{
+        background-color: blue;
       }
     </style>
 
@@ -140,7 +139,8 @@
       </div>
       <div id="outer">
         <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
-        <div class="inner"><input type="submit" class="button-style" id="permaban" value="Permaban"></div>
+        <div class="inner"><input type="submit" class="button-style" id="permablock" value="Permablock"></div>
+        <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
       </div>
 
       <hr>
