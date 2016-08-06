@@ -10,7 +10,6 @@ var err;
 var textbox = document.getElementById("blockSite");
 var buttonID = document.getElementById("blockNow");
 var unBlock = document.getElementById("unblockNow");
-var warning = false;
 var confirmed = false;
 var n;
 var x = getBG.removedCounter();
@@ -23,38 +22,45 @@ $('html').bind('keypress', function(e)
    }
 });
 
+function disablePopup(bool){
+  if(bool){
 
-//the dialog for the warning message that appears when the user decides to permanently block a site
-$("#warning-popup").dialog({
-  autoOpen: false,
-  draggable: false,
-
-  //will disable the background when the popup is opened, so nothing can be interacted with except the popup
-  open: function(event, ui) {
     $("#status").css("opacity", ".7");
     document.getElementById("blockNow").disabled = true;
     document.getElementById("unblockNow").disabled = true;
-    document.getElementById("permaban").disabled = true;
+    document.getElementById("permablock").disabled = true;
     document.getElementById("blockSite").disabled = true;
-    $(".button-style").css("cursor", "default");
-    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-  },
-  close: function(event, ui){
+    $(".button-style").css("cursor", "pointer");
+  }
+  else{
     $("#status").css("opacity", "1");
     document.getElementById("blockNow").disabled = false;
     document.getElementById("unblockNow").disabled = false;
-    document.getElementById("permaban").disabled = false;
+    document.getElementById("permablock").disabled = false;
     document.getElementById("blockSite").disabled = false;
-    $(".button-style").css("cursor", "pointer");
+    $(".button-style").css("cursor", "default");    
+  }
+}
+
+//the dialog for the warning message that appears when the user decides to permanently block a site
+$("#permblock-popup").dialog({
+  autoOpen: false,
+  draggable: false,
+  //will disable the background when the popup is opened, so nothing can be interacted with except the popup
+  open: function(event, ui) {
+    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); /*removes close button*/
+    disablePopup(true);
+  },
+  close: function(event, ui){
+    disablePopup(false);
   },
   buttons: [
       {
         text: "Ok",
         click: function() {
           confirmed = true;
-          $( this ).dialog( "close" );
+          $(this).dialog("close");
             if(confirmed){
-              if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
                 //cookie that stores the number of sites you have added
                 if (makeCookie.getItem('permCounter') == null) {
                     // If the cookie doesn't exist, save the cookie with the value of 1
@@ -78,17 +84,13 @@ $("#warning-popup").dialog({
 
                 var getPermCounter = makeCookie.getItem('permCounter');
                 if(getPermCounter <= 3){
-                  getBG.permaban(website, getPermCounter);
+                  getBG.permablock(website, getPermCounter);
                   makeCookie.setItem(getPermCounter, website, null);
                   getPermItems(getPermCounter);
                 }
                 else{
                   alert("You can only permablock up to three websites.");
                 }
-              }
-              else{
-                alert("You did not enter a valid website!");
-              }
             }
         }
         //showText: false
@@ -97,13 +99,46 @@ $("#warning-popup").dialog({
       {
         text: "Close",
         click: function() {
-          $( this ).dialog( "close" );
+          $(this).dialog("close");
         }
         //showText: false
       }
     ]
 });
 
+$("#blockAll-popup").dialog({
+  autoOpen: false,
+  draggable: false,
+  //will disable the background when the popup is opened, so nothing can be interacted with except the popup
+  open: function(event, ui) {
+    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); /*removes close button*/
+    disablePopup(true);
+  },
+  close: function(event, ui){
+    disablePopup(false);
+  },
+  buttons: [
+      {
+        text: "Ok",
+        click: function() {
+          confirmed = true;
+          $(this).dialog("close");
+            if(confirmed){
+                getBG.blockAllWebsites();
+            }
+        }
+        //showText: false
+      },
+
+      {
+        text: "Close",
+        click: function() {
+          $(this).dialog("close");
+        }
+        //showText: false
+      }
+    ]
+})
 $(".unblock-button").click(function(){
   var id = $(this).attr('id');
   var parseId = id.substring(id.length - 1, id.length);
@@ -113,6 +148,10 @@ $(".unblock-button").click(function(){
   getBG.removedCounter();
 })
 
+$("#blockAll").on('click', function(){
+  $("#blockAll-text").html("You are about to block all websites. Are you sure you want to do this?");
+  $("#blockAll-popup").dialog("open");
+})
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 buttonID.addEventListener('click', function(){
   website = textbox.value;
@@ -133,12 +172,16 @@ buttonID.addEventListener('click', function(){
 });
 
 //event listener for the permaban button, opens the popup to double check with user before banning
-document.getElementById("permaban").addEventListener('click', function(){
-  warning = true;
+document.getElementById("permablock").addEventListener('click', function(){
   website = textbox.value;
-  $("#warning-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
-  getBG.enableBlocking(website);
-  $("#warning-popup").dialog("open");
+  if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
+    $("#permblock-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
+    getBG.enableBlocking(website);
+    $("#permblock-popup").dialog("open");
+  }
+  else{
+    alert("You did not enter a valid website!");
+  }
 });
 
 //unblocks everthing when the unblock all button is clicked
