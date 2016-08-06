@@ -1,5 +1,4 @@
 var n = 0;
-var x = 0;
 
 var permanentlyBlock = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
@@ -51,37 +50,38 @@ var blockAllCallback = function(details){
 function enableBlocking(site, n){
 	if(n == 0){
 		chrome.webRequest.onBeforeRequest.addListener(callback1,
-		{urls: ["*://www." + site + "/*"]},
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);
+
 	}
 	else if(n == 1){
 		chrome.webRequest.onBeforeRequest.addListener(callback2,
-		{urls: ["*://www." + site + "/*"]},
-		["blocking"]);		
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);	
 	}
 	else if(n == 2){
 		chrome.webRequest.onBeforeRequest.addListener(callback3,
-		{urls: ["*://www." + site + "/*"]},
-		["blocking"]);			
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);
 	}
 	else if(n == 3){
 		chrome.webRequest.onBeforeRequest.addListener(callback4,
-		{urls: ["*://www." + site + "/*"]},
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);		
 	}
 	else if(n == 4){
 		chrome.webRequest.onBeforeRequest.addListener(callback5,
-		{urls: ["*://www." + site + "/*"]},
-		["blocking"]);			
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);		
 	}
 	else if(n == 5){
 		chrome.webRequest.onBeforeRequest.addListener(callback6,
-		{urls: ["*://www." + site + "/*"]},
-		["blocking"]);		
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);
 	}
 	else if(n == 6){
 		chrome.webRequest.onBeforeRequest.addListener(callback7,
-		{urls: ["*://www." + site + "/*"]},
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);			
 	}
 }
@@ -122,9 +122,6 @@ function unblockAll(){
 }
 function addedCounter(){
 	return n++;
-}
-function removedCounter(){
-	return x++;
 }
 
 function permablock(site, z){
