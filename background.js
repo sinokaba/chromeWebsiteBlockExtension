@@ -124,15 +124,10 @@ function addedCounter(){
 	return n++;
 }
 
-function permablock(site, z){
-	if(z < 4){
-		chrome.webRequest.onBeforeRequest.addListener(permanentlyBlock,
-		{urls: ["*://www." + site + "/*"]},
-		["blocking"]);
-	}
-	else{
-		alert("You cannot permblock any more sites!");
-	}
+function permablock(site){
+	chrome.webRequest.onBeforeRequest.addListener(permanentlyBlock,
+	{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+	["blocking"]);
 }
 
 function blockAllWebsites(){
