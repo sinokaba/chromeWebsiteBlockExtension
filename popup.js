@@ -7,12 +7,13 @@ var sync = chrome.storage.sync;
 var website;
 var getBG = chrome.extension.getBackgroundPage();
 var err;
-var textbox = document.getElementById("blockSite");
-var buttonID = document.getElementById("blockNow");
-var unBlock = document.getElementById("unblockNow");
+var url = document.getElementById("websiteURL");
+var blockBttn = document.getElementById("blockNow");
+var unblockAllBttn = document.getElementById("unblockAll");
+var blockAllBttn = document.getElementById("blockAll");
+var permaBlockBttn = document.getElementById("permablock");
 var confirmed = false;
 var n;
-var x = getBG.removedCounter();
 //disable enter key cause it causes a ton of unforseen bugs
 $('html').bind('keypress', function(e)
 {
@@ -24,21 +25,20 @@ $('html').bind('keypress', function(e)
 
 function disablePopup(bool){
   if(bool){
-
-    $("#status").css("opacity", ".7");
-    document.getElementById("blockNow").disabled = true;
-    document.getElementById("unblockNow").disabled = true;
-    document.getElementById("permablock").disabled = true;
-    document.getElementById("blockSite").disabled = true;
-    $(".button-style").css("cursor", "pointer");
+    blockBttn.disabled = true;
+    unblockAllBttn.disabled = true;
+    blockAllBttn.disabled = true;
+    permaBlockBttn.disabled = true;
+    url.disabled = true;
+    $("#status").addClass("unselectable");
   }
   else{
-    $("#status").css("opacity", "1");
-    document.getElementById("blockNow").disabled = false;
-    document.getElementById("unblockNow").disabled = false;
-    document.getElementById("permablock").disabled = false;
-    document.getElementById("blockSite").disabled = false;
-    $(".button-style").css("cursor", "default");    
+    blockBttn.disabled = false;
+    unblockAllBttn.disabled = false;
+    blockAllBttn.disabled = false;
+    permaBlockBttn.disabled = false;
+    url.disabled = false;
+    $("#status").removeClass("unselectable");   
   }
 }
 
@@ -84,7 +84,7 @@ $("#permblock-popup").dialog({
 
                 var getPermCounter = makeCookie.getItem('permCounter');
                 if(getPermCounter <= 3){
-                  getBG.permablock(website, getPermCounter);
+                  getBG.permablock(website);
                   makeCookie.setItem(getPermCounter, website, null);
                   getPermItems(getPermCounter);
                 }
@@ -145,7 +145,6 @@ $(".unblock-button").click(function(){
   console.log(parseId);
   getBG.disableBlocking(parseId);
   removeFromList(parseId);
-  getBG.removedCounter();
 })
 
 $("#blockAll").on('click', function(){
@@ -153,11 +152,9 @@ $("#blockAll").on('click', function(){
   $("#blockAll-popup").dialog("open");
 })
 //listens to the block button, and blocks the website entered into the input field once it's pressed
-buttonID.addEventListener('click', function(){
-  website = textbox.value;
-  n = getBG.addedCounter() - x;
-  console.log("X = " + x);
-  console.log("N = " + n);
+blockBttn.addEventListener('click', function(){
+  website = url.value;
+  n = getBG.addedCounter();
   getBG.enableBlocking(website, n);
   
   //regex expression to check whether the user inputted an empty string into the input field
@@ -172,11 +169,10 @@ buttonID.addEventListener('click', function(){
 });
 
 //event listener for the permaban button, opens the popup to double check with user before banning
-document.getElementById("permablock").addEventListener('click', function(){
-  website = textbox.value;
+permaBlockBttn.addEventListener('click', function(){
+  website = url.value;
   if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
     $("#permblock-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
-    getBG.enableBlocking(website);
     $("#permblock-popup").dialog("open");
   }
   else{
@@ -185,7 +181,7 @@ document.getElementById("permablock").addEventListener('click', function(){
 });
 
 //unblocks everthing when the unblock all button is clicked
-unBlock.onclick = function(){
+unblockAllBttn.onclick = function(){
   getBG.unblockAll();
 
   //remove after testing
