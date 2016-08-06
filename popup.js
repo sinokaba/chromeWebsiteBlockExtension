@@ -54,7 +54,7 @@ $("#warning-popup").dialog({
           confirmed = true;
           $( this ).dialog( "close" );
             if(confirmed){
-              if(!(/\s/).test(website) && website != ""){
+              if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
                 //cookie that stores the number of sites you have added
                 if (makeCookie.getItem('permCounter') == null) {
                     // If the cookie doesn't exist, save the cookie with the value of 1
@@ -122,7 +122,7 @@ buttonID.addEventListener('click', function(){
   getBG.enableBlocking(website, n);
   
   //regex expression to check whether the user inputted an empty string into the input field
-  if(!(/\s/).test(website) && website != ""){
+  if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
     tempSetKeys(n);
     console.log("2N = " + n);
     tempGetKeys();
