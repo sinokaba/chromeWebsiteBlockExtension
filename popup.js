@@ -1,12 +1,10 @@
 window.onload = function(){
 //all the global vars i'm using
 var obj = {};
-var permObj = {};
 var local = chrome.storage.local;
-var sync = chrome.storage.sync;
 var website;
 var getBG = chrome.extension.getBackgroundPage();
-var err;
+var err = chrome.runtime.lastError;
 var url = document.getElementById("websiteURL");
 var blockBttn = document.getElementById("blockNow");
 var unblockAllBttn = document.getElementById("unblockAll");
@@ -187,9 +185,8 @@ unblockAllBttn.onclick = function(){
   //remove after testing
   clearCookies();
 
-  //clears both local and sync chrome storage systems
+  //clears chrome  local storage systems
   local.clear(function(){
-    err = chrome.runtime.lastError;
     if(err){
       alert("An error occured, could not remove item.");
     }
@@ -269,7 +266,7 @@ var makeCookie = {
   }
 };
 
-
+//so the list of perma blocked sites doesn't dissappear after the popup is closed and reopened
 for(i = 1; i <= 3; i++){
     $("#perm" + i).text(makeCookie.getItem(i));
     $("#permStat" + i).removeClass("hide");
