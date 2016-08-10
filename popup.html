@@ -13,6 +13,20 @@
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
         font-size: 100%;
       }
+      ul > li{
+        list-style-type: none; 
+        background-color: #cde7f0;
+      }
+      ul{
+        padding-left: 0;
+      }
+      tr, th{
+        padding-right: 50px;
+      }
+      th{
+        border-bottom: 1px solid black;
+      }
+
       #status {
         /* avoid an excessively wide status text */
         text-overflow: ellipsis;
@@ -30,13 +44,27 @@
         width: 100%;
         text-align: center;
       }
-      ul > li{
-        list-style-type: none; 
-        background-color: #cde7f0;
+      #direct{
+        color: red;
+        text-align: center;
+        background-color: #f1f1f1;
       }
-      ul{
-        padding-left: 0;
+      #title{
+        color: #0000b3;
+        font-size: 20;
+        font-weight: bold;
+        text-align: center;
       }
+      #permablock{
+        background-color: red;
+      }
+      #unblockNow{
+        background-color: green;
+      }
+      #blockAll{
+        background-color: blue;
+      }
+
       .button-style{
         -webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
         -moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -56,20 +84,6 @@
       .inner{
         display: inline-block;
       }
-      #direct{
-        color: red;
-        text-align: center;
-        background-color: #f1f1f1;
-      }
-      #title{
-        color: #0000b3;
-        font-size: 20;
-        font-weight: bold;
-        text-align: center;
-      }
-      #permablock{
-        background-color: red;
-      }
       .ui-widget{
         border: 1px solid black;
       }
@@ -85,30 +99,18 @@
       .tableTitle{
         text-align: center;
         font-size: 16;
-        color: blue;
+        color: #72bcd4;
         font-weight: bold;
       }
       .hide{
         display: none;
       }
-      tr, th{
-        padding-right: 50px;
-      }
-      th{
-        border-bottom: 1px solid black;
-      }
-      .pb{
+      .perm{
         color: red;
         font-weight: bold;
       }
       .rowBreak{
         border-right: 1px solid blue;
-      }
-      #unblockNow{
-        background-color: green;
-      }
-      #blockAll{
-        background-color: blue;
       }
       .unselectable{
         -moz-user-select: -moz-none;
@@ -202,15 +204,15 @@
         </tr>
         <tr>
           <td id="perm1"></td>
-          <td id="permStat1" class="hide pb">Permablocked</td>
+          <td id="permStat1" class="hide perm">Permablocked</td>
         </tr>
         <tr>
           <td id="perm2"></td>
-          <td id="permStat2" class="hide pb">Permablocked</td>
+          <td id="permStat2" class="hide perm">Permablocked</td>
         </tr>
         <tr>
           <td id="perm3"></td>
-          <td id="permStat3" class="hide pb">Permablocked</td>
+          <td id="permStat3" class="hide perm">Permablocked</td>
         </tr>
       </table>
     </div>
