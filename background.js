@@ -40,6 +40,21 @@ var callback7 = function(details){
 	console.log(details.timeStamp);
 	return {cancel: true};
 }
+var callback8 = function(details){
+	alert("Cancelling: " + details.url + ". Get back to work!");
+	console.log(details.timeStamp);
+	return {cancel: true};
+}
+var callback9 = function(details){
+	alert("Cancelling: " + details.url + ". Get back to work!");
+	console.log(details.timeStamp);
+	return {cancel: true};
+}
+var callback10 = function(details){
+	alert("Cancelling: " + details.url + ". Get back to work!");
+	console.log(details.timeStamp);
+	return {cancel: true};
+}
 
 var blockAllCallback = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
@@ -84,6 +99,21 @@ function enableBlocking(site, n){
 		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);			
 	}
+	else if(n == 7){
+		chrome.webRequest.onBeforeRequest.addListener(callback8,
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);		
+	}
+	else if(n == 8){
+		chrome.webRequest.onBeforeRequest.addListener(callback9,
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);
+	}
+	else if(n == 9){
+		chrome.webRequest.onBeforeRequest.addListener(callback10,
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);			
+	}
 }
 
 function disableBlocking(n){
@@ -108,6 +138,15 @@ function disableBlocking(n){
 	else if(n == 6){
 		chrome.webRequest.onBeforeRequest.removeListener(callback7);
 	}
+	else if(n == 7){
+		chrome.webRequest.onBeforeRequest.removeListener(callback8);
+	}
+	else if(n == 8){
+		chrome.webRequest.onBeforeRequest.removeListener(callback9);	
+	}
+	else if(n == 9){
+		chrome.webRequest.onBeforeRequest.removeListener(callback10);
+	}
 }
 
 function unblockAll(){
@@ -118,6 +157,9 @@ function unblockAll(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback5);
 	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
 	chrome.webRequest.onBeforeRequest.removeListener(callback7);
+	chrome.webRequest.onBeforeRequest.removeListener(callback8);
+	chrome.webRequest.onBeforeRequest.removeListener(callback9);	
+	chrome.webRequest.onBeforeRequest.removeListener(callback10);
 	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
 }
 function addedCounter(){
