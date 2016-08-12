@@ -120,6 +120,9 @@
         user-select: none;
         opacity: .7;
       }
+      #list-wrap{
+        border: 1px solid #72bcd4;
+      }
     </style>
 
     <!--
@@ -158,75 +161,77 @@
 
       <hr>
 
-      <p class="tableTitle">Blocked Websites</p>
-      <table>
-        <tr>
-          <th class="rowBreak">Website URL:</th>
-          <th>Status</th>
-        </tr>
-        <tr>
-          <td id="site0"></td>
-          <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site1"></td>
-          <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site2"></td>
-          <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site3"></td>
-          <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site4"></td>
-          <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site5"></td>
-          <td id="unblock-5" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site6"></td>
-          <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site7"></td>
-          <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site8"></td>
-          <td id="unblock-8" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-        <tr>
-          <td id="site9"></td>
-          <td id="unblock-9" class="unblock-button hide"><button>Unblock</button></td>
-        </tr>
-      </table>
+      <div id="list-wrap">
+        <p class="tableTitle">Blocked Websites</p>
+        <table>
+          <tr>
+            <th class="rowBreak">Website URL:</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td id="site0"></td>
+            <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site1"></td>
+            <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site2"></td>
+            <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site3"></td>
+            <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site4"></td>
+            <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site5"></td>
+            <td id="unblock-5" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site6"></td>
+            <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site7"></td>
+            <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site8"></td>
+            <td id="unblock-8" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+          <tr>
+            <td id="site9"></td>
+            <td id="unblock-9" class="unblock-button hide"><button>Unblock</button></td>
+          </tr>
+        </table>
 
-      <div class="inner"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
+        <div class="inner"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
-      <hr>
-      <table>
-        <tr>
-          <th class="rowBreak">Website URL:</th>
-          <th>Status</th>
-        </tr>
-        <tr>
-          <td id="perm1"></td>
-          <td id="permStat1" class="hide perm">Permablocked</td>
-        </tr>
-        <tr>
-          <td id="perm2"></td>
-          <td id="permStat2" class="hide perm">Permablocked</td>
-        </tr>
-        <tr>
-          <td id="perm3"></td>
-          <td id="permStat3" class="hide perm">Permablocked</td>
-        </tr>
-      </table>
+        <hr>
+        <table>
+          <tr>
+            <th class="rowBreak">Website URL:</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td id="perm1"></td>
+            <td id="permStat1" class="perm">Permablocked</td>
+          </tr>
+          <tr>
+            <td id="perm2"></td>
+            <td id="permStat2" class="perm">Permablocked</td>
+          </tr>
+          <tr>
+            <td id="perm3"></td>
+            <td id="permStat3" class="perm">Permablocked</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>
