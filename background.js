@@ -1,4 +1,4 @@
-var n = 0;
+var n = -1;
 
 var permanentlyBlock = function(details){
 	alert("Cancelling: " + details.url + ". Get back to work!");
@@ -162,8 +162,14 @@ function unblockAll(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback10);
 	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
 }
-function addedCounter(){
-	return n++;
+function addedCounter(act){
+	if(act == "blocking"){
+		n++;
+	}
+	else if(act == "unblocking"){
+		n--;
+	}
+	return n;
 }
 
 function permablock(site){

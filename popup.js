@@ -142,6 +142,7 @@ $(".unblock-button").click(function(){
   var parseId = id.substring(id.length - 1, id.length);
   console.log(parseId);
   getBG.disableBlocking(parseId);
+  getBG.addedCounter("unblocking");
   removeFromList(parseId);
 })
 
@@ -152,7 +153,8 @@ $("#blockAll").on('click', function(){
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 blockBttn.addEventListener('click', function(){
   website = url.value;
-  n = getBG.addedCounter();
+  n = getBG.addedCounter("blocking");
+  console.log(n);
   getBG.enableBlocking(website, n);
   
   //regex expression to check whether the user inputted an empty string into the input field
@@ -269,7 +271,6 @@ var makeCookie = {
 //so the list of perma blocked sites doesn't dissappear after the popup is closed and reopened
 for(i = 1; i <= 3; i++){
     $("#perm" + i).text(makeCookie.getItem(i));
-    $("#permStat" + i).removeClass("hide");
 }
 
 function getPermItems(n){
