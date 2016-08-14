@@ -59,13 +59,13 @@ $("#permblock-popup").dialog({
           confirmed = true;
           $(this).dialog("close");
             if(confirmed){
-                //cookie that stores the number of sites you have added
-                if (makeCookie.getItem('permCounter') == null) {
+                //cookie that stores the number of sites you have added to permaban list
+                if(makeCookie.getItem('permCounter') == null){
                     // If the cookie doesn't exist, save the cookie with the value of 1
 
                     //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
                     makeCookie.setItem('permCounter', '1', null);
-                } else {
+                }else{
                     // If the cookie exists, take the value
                     var permCookieValue = makeCookie.getItem('permCounter');
                     // Convert the value to an int to make sure
@@ -142,34 +142,53 @@ $(".unblock-button").click(function(){
   var parseId = id.substring(id.length - 1, id.length);
   console.log(parseId);
   getBG.disableBlocking(parseId);
+  makeCookie.removeItem("site" + parseId);
   getBG.addedCounter("unblocking");
   removeFromList(parseId);
 })
 
-$("#blockAll").on('click', function(){
+$("#blockAll").click(function(){
   $("#blockAll-text").html("You are about to block all websites. Are you sure you want to do this?");
   $("#blockAll-popup").dialog("open");
-})
+});
 //listens to the block button, and blocks the website entered into the input field once it's pressed
-blockBttn.addEventListener('click', function(){
+$("#blockNow").click(function(){
   website = url.value;
   n = getBG.addedCounter("blocking");
-  console.log(n);
-  getBG.enableBlocking(website, n);
-  
-  //regex expression to check whether the user inputted an empty string into the input field
-  if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
-    tempSetKeys(n);
-    console.log("2N = " + n);
-    tempGetKeys();
+  if(n < 9){
+    console.log("old " + n);
+    if(makeCookie.getItem('site' + n) == null){
+      console.log(document.cookie);
+      alert("this num has not been used yet");
+      // If the cookie doesn't exist, save the cookie with the value of 1
+
+      //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
+      makeCookie.setItem('site' + n, n, null);
+    }
+    else{
+      alert("this num has been used");
+      n = getBG.addedCounter("blocking");
+    }
+    console.log("new " + n);
+    getBG.enableBlocking(website, n);
+    
+    //regex expression to check whether the user inputted an empty string into the input field
+    if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
+      tempSetKeys(n);
+      console.log("2N = " + n);
+      tempGetKeys();
+    }
+    else{
+      alert("You did not enter a valid website!");
+    }
   }
   else{
-    alert("You did not enter a valid website!");
+    alert("You cannot block anymore websites.");
   }
 });
 
 //event listener for the permaban button, opens the popup to double check with user before banning
-permaBlockBttn.addEventListener('click', function(){
+$("#permablock").click(function(){
   website = url.value;
   if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
     $("#permblock-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
@@ -181,8 +200,10 @@ permaBlockBttn.addEventListener('click', function(){
 });
 
 //unblocks everthing when the unblock all button is clicked
-unblockAllBttn.onclick = function(){
+$("#unblockAll").click(function(){
   getBG.unblockAll();
+
+  getBG.addedCounter("ALL");
 
   //remove after testing
   clearCookies();
@@ -194,7 +215,7 @@ unblockAllBttn.onclick = function(){
     }
   });
   tempGetKeys();
-}
+});
 
 //checks whether popup is open or not
 tempGetKeys();
