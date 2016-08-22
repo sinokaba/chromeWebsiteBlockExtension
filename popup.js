@@ -159,14 +159,12 @@ $("#blockNow").click(function(){
     console.log("old " + n);
     if(makeCookie.getItem('site' + n) == null){
       console.log(document.cookie);
-      alert("this num has not been used yet");
       // If the cookie doesn't exist, save the cookie with the value of 1
 
       //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
       makeCookie.setItem('site' + n, n, null);
     }
     else{
-      alert("this num has been used");
       n = getBG.addedCounter("blocking");
     }
     console.log("new " + n);
