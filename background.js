@@ -2,55 +2,52 @@ var n = -1;
 
 var permanentlyBlock = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback0 = function(details){
 	console.log(details.timeStamp);
-	alert("callback0");
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback1 = function(details){
-	alert("callback1");
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback2 = function(details){
-	alert("callback2");
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback3 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback4 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback5 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback6 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback7 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback8 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback9 = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 
 var blockAllCallback = function(details){
 	console.log(details.timeStamp);
-	return {cancel: true};
+	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 
 function enableBlocking(site, x){
