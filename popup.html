@@ -30,12 +30,9 @@
       #status {
         /* avoid an excessively wide status text */
         text-overflow: ellipsis;
+        min-width: 270px;
         overflow: hidden;
 
-      }
-      #websiteURL{
-        border-radius: 5px;
-        -webkit-border-radius: 5px;
       }
       #websiteURL:focus{
         border-color: blue;
@@ -45,41 +42,59 @@
         text-align: center;
       }
       #direct{
-        color: red;
+        color: #B9121B;
         text-align: center;
-        background-color: #f1f1f1;
+        background-color: #E6E2AF;
       }
       #title{
-        color: #0000b3;
+        color: #002F2F;
         font-size: 20;
         font-weight: bold;
         text-align: center;
       }
       #permablock{
-        background-color: red;
+        background-color: #4C1B1B;
       }
-      #unblockNow{
-        background-color: green;
+      #permablock:hover{
+        background-color: #B9121B;
       }
-      #blockAll{
-        background-color: blue;
+      #unblockAll{
+        background-color:#00A388;
+        border:1px solid #046380;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:14px;
+        padding:7px 15px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #00A388;
       }
-
+      #unblockAll:hover{
+        background-color: #79BD8F;
+      }
+      #unblockAll:active{
+        position: relative;
+        top: 1px;
+      }
       .button-style{
-        -webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
-        -moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
-        box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
-        background-color:#5B74A8;
-        border:1px solid #29447E;
-        font-family:'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-        font-size:15px;
-        font-weight:700;
-        padding:2px 6px;
-        color:#fff;
-        border-radius:5px;
-        -moz-border-radius:5px;
-        -webkit-border-radius:5px;
-        cursor: pointer;
+        background-color:#046380;
+        border:1px solid #046380;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:14px;
+        padding:7px 15px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #046380;
+      }
+      .button-style:hover {
+        background-color:#008db8;
+      }
+      .button-style:active {
+        position:relative;
+        top:1px;
       }
       .inner{
         display: inline-block;
@@ -106,7 +121,7 @@
         display: none;
       }
       .perm{
-        color: red;
+        color: #B9121B;
         font-weight: bold;
       }
       .rowBreak{
@@ -122,6 +137,22 @@
       }
       #list-wrap{
         border: 1px solid #72bcd4;
+      }
+      .tabs { 
+        border-bottom: 1px solid #DDD;
+        padding-bottom:5px;
+      }
+      .tabs a {
+        border:1px solid #DDD;
+        color:#666666;
+        padding: 5px 10px;
+        text-decoration:none;
+        background-color: #EFECCA;
+      }
+      .tabs a.active{ 
+        background-color: #fff; 
+        border-bottom: 0; 
+        padding: 6px 11px;
       }
     </style>
 
@@ -144,95 +175,113 @@
         <p id="blockAll-text"></p>
     </div>
     <div id="status">
-      <div id="addSite">
-        <form>
-          <p id="title"><label>Pokus NOW: </label>
-          <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
+      <div class="tabs">
+        <a href="#" id="home-link" class="tab-link active">Home</a>
+        <a href="#" id="list-link" class="tab-link">Blocked List</a>
+        <a href="#" id="about-link" class="tab-link">About</a>
+      </div>
+        <div id="home" class="tabCon">
+            <div id="addSite">
+
+              <form>
+                <p id="title"><label>Pokus NOW: </label></p>
+                <p>Website address:</p>
+                <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
+                <p>Comments:</p>
+                <input name="comment" type="text" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input></p>
+              </form>
+            </div>
+            <div id="outer">
+              <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
+              <div class="inner"><input type="submit" class="button-style" id="permablock" value="Permablock"></div>
+              <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
+            </div>
+
+            <hr>
+        </div>
+
+        <div id="list" class="hide tabCon">
+          <div id="list-wrap">
+            <p id="title">Blocked Websites</p>
+            <table>
+              <tr>
+                <th class="rowBreak">Website URL:</th>
+                <th>Action</th>
+              </tr>
+              <tr>
+                <td id="site0"></td>
+                <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site1"></td>
+                <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site2"></td>
+                <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site3"></td>
+                <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site4"></td>
+                <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site5"></td>
+                <td id="unblock-5" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site6"></td>
+                <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site7"></td>
+                <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site8"></td>
+                <td id="unblock-8" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+              <tr>
+                <td id="site9"></td>
+                <td id="unblock-9" class="unblock-button hide"><button>Unblock</button></td>
+              </tr>
+            </table>
+            <br />
+
+            <div style="text-align: center"><input type="submit" id="unblockAll" value="Unblock All"></div>
+
+            <hr>
+            <table>
+              <tr>
+                <th class="rowBreak">Website URL:</th>
+                <th>Status</th>
+              </tr>
+              <tr>
+                <td id="perm1"></td>
+                <td id="permStat1" class="perm">Permablocked</td>
+              </tr>
+              <tr>
+                <td id="perm2"></td>
+                <td id="permStat2" class="perm">Permablocked</td>
+              </tr>
+              <tr>
+                <td id="perm3"></td>
+                <td id="permStat3" class="perm">Permablocked</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div id="about" class="hide tabCon">
           <div id="direct">
             <p><label>Enter website url, without 'www', then click block.</label></p>
           </div>
-        </form>
+
+          <h4>Feeling generous? Then throw me a <a href="#">penny. :)</h4>
+        </div>
       </div>
-      <div id="outer">
-        <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
-        <div class="inner"><input type="submit" class="button-style" id="permablock" value="Permablock"></div>
-        <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
-      </div>
-
-      <hr>
-
-      <div id="list-wrap">
-        <p class="tableTitle">Blocked Websites</p>
-        <table>
-          <tr>
-            <th class="rowBreak">Website URL:</th>
-            <th>Status</th>
-          </tr>
-          <tr>
-            <td id="site0"></td>
-            <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site1"></td>
-            <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site2"></td>
-            <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site3"></td>
-            <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site4"></td>
-            <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site5"></td>
-            <td id="unblock-5" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site6"></td>
-            <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site7"></td>
-            <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site8"></td>
-            <td id="unblock-8" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-          <tr>
-            <td id="site9"></td>
-            <td id="unblock-9" class="unblock-button hide"><button>Unblock</button></td>
-          </tr>
-        </table>
-
-        <div class="inner"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
-
-        <hr>
-        <table>
-          <tr>
-            <th class="rowBreak">Website URL:</th>
-            <th>Status</th>
-          </tr>
-          <tr>
-            <td id="perm1"></td>
-            <td id="permStat1" class="perm">Permablocked</td>
-          </tr>
-          <tr>
-            <td id="perm2"></td>
-            <td id="permStat2" class="perm">Permablocked</td>
-          </tr>
-          <tr>
-            <td id="perm3"></td>
-            <td id="permStat3" class="perm">Permablocked</td>
-          </tr>
-        </table>
-      </div>
-    </div>
   </body>
 </html>
 
