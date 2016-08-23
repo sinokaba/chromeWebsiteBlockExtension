@@ -12,6 +12,19 @@ var blockAllBttn = document.getElementById("blockAll");
 var permaBlockBttn = document.getElementById("permablock");
 var confirmed = false;
 var n;
+
+
+$(".tab-link").each(function(){
+  $(this).click(function(e){
+    var temp = e.target.id.split('-');
+    var tabID = temp[0];
+    $(".tab-link").removeClass("active");
+    $(this).addClass("active");
+    $(".tabCon").addClass("hide");
+    $("#"+tabID).removeClass("hide");
+    return false;
+  })
+})
 //disable enter key cause it causes a ton of unforseen bugs
 $('html').bind('keypress', function(e)
 {
