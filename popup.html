@@ -58,25 +58,6 @@
       #permablock:hover{
         background-color: #B9121B;
       }
-      #unblockAll{
-        background-color:#00A388;
-        border:1px solid #046380;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:14px;
-        padding:7px 15px;
-        text-decoration:none;
-        text-shadow:0px 1px 0px #00A388;
-      }
-      #unblockAll:hover{
-        background-color: #79BD8F;
-      }
-      #unblockAll:active{
-        position: relative;
-        top: 1px;
-      }
       .button-style{
         background-color:#046380;
         border:1px solid #046380;
@@ -125,7 +106,7 @@
         font-weight: bold;
       }
       .rowBreak{
-        border-right: 1px solid blue;
+        border-right: 1px solid black;
       }
       .unselectable{
         -moz-user-select: -moz-none;
@@ -184,7 +165,7 @@
             <div id="addSite">
 
               <form>
-                <p id="title"><label>Pokus NOW: </label></p>
+                <p id="title"><label>Pokus NOW</label></p>
                 <p>Website address:</p>
                 <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
                 <p>Comments:</p>
@@ -240,18 +221,9 @@
                 <td id="site7"></td>
                 <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
               </tr>
-              <tr>
-                <td id="site8"></td>
-                <td id="unblock-8" class="unblock-button hide"><button>Unblock</button></td>
-              </tr>
-              <tr>
-                <td id="site9"></td>
-                <td id="unblock-9" class="unblock-button hide"><button>Unblock</button></td>
-              </tr>
             </table>
-            <br />
 
-            <div style="text-align: center"><input type="submit" id="unblockAll" value="Unblock All"></div>
+            <div style="text-align: center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
             <hr>
             <table>
