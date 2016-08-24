@@ -159,13 +159,16 @@
       <div class="tabs">
         <a href="#" id="home-link" class="tab-link active">Home</a>
         <a href="#" id="list-link" class="tab-link">Blocked List</a>
-        <a href="#" id="about-link" class="tab-link">About</a>
+        <a href="#" id="buy-link" class="tab-link">Buy</a>
       </div>
         <div id="home" class="tabCon">
             <div id="addSite">
 
               <form>
                 <p id="title"><label>Pokus NOW</label></p>
+                <div id="direct">
+                  <p><label>Enter website url, without 'www', then click block.</label></p>
+                </div>
                 <p>Website address:</p>
                 <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
                 <p>Comments:</p>
@@ -246,12 +249,19 @@
             </table>
           </div>
         </div>
-        <div id="about" class="hide tabCon">
-          <div id="direct">
-            <p><label>Enter website url, without 'www', then click block.</label></p>
+        <div id="buy" class="hide tabCon">
+
+          <h4>This extension will always be free, and I will try to push updates regularly to improve it. However, if you are feeling generous and want to support me, you can buy it for $1.99.</h4>
+          
+          <div style="text-align: center">
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="5BNFPYVGZWYJG">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
           </div>
 
-          <h4>Feeling generous? Then throw me a <a href="#">penny. :)</h4>
         </div>
       </div>
   </body>
