@@ -168,7 +168,7 @@ $("#blockAll").click(function(){
 $("#blockNow").click(function(){
   website = url.value;
   n = getBG.addedCounter("blocking");
-  if(n < 9){
+  if(n < 7){
     console.log("old " + n);
     if(makeCookie.getItem('site' + n) == null){
       console.log(document.cookie);
