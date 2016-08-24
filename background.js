@@ -36,14 +36,6 @@ var callback7 = function(details){
 	console.log(details.timeStamp);
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
-var callback8 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback9 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
 
 var blockAllCallback = function(details){
 	console.log(details.timeStamp);
@@ -91,16 +83,6 @@ function enableBlocking(site, x){
 		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);
 	}
-	else if(x == 8){
-		chrome.webRequest.onBeforeRequest.addListener(callback8,
-		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-		["blocking"]);
-	}
-	else if(x == 9){
-		chrome.webRequest.onBeforeRequest.addListener(callback9,
-		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-		["blocking"]);			
-	}
 }
 
 function disableBlocking(z){
@@ -128,12 +110,6 @@ function disableBlocking(z){
 	else if(z == 7){
 		chrome.webRequest.onBeforeRequest.removeListener(callback7);
 	}
-	else if(z == 8){
-		chrome.webRequest.onBeforeRequest.removeListener(callback8);	
-	}
-	else if(z == 9){
-		chrome.webRequest.onBeforeRequest.removeListener(callback9);
-	}
 }
 
 function unblockAll(){
@@ -145,8 +121,6 @@ function unblockAll(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback5);
 	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
 	chrome.webRequest.onBeforeRequest.removeListener(callback7);
-	chrome.webRequest.onBeforeRequest.removeListener(callback8);
-	chrome.webRequest.onBeforeRequest.removeListener(callback9);	
 	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
 }
 function addedCounter(act){
