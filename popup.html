@@ -58,6 +58,9 @@
       #permablock:hover{
         background-color: #B9121B;
       }
+      #list-wrap{
+        border: 1px solid #72bcd4;
+      }
       .button-style{
         background-color:#046380;
         border:1px solid #046380;
@@ -80,18 +83,6 @@
       .inner{
         display: inline-block;
       }
-      .ui-widget{
-        border: 1px solid black;
-      }
-      .ui-widget-header,.ui-state-default, ui-button{
-        background: red;
-        border: 1px solid red;
-        color: #FFFFFF;
-        font-weight: bold;
-      }
-      .ui-widget-content{
-        background-color: white;
-      }
       .tableTitle{
         text-align: center;
         font-size: 16;
@@ -107,17 +98,6 @@
       }
       .rowBreak{
         border-right: 1px solid black;
-      }
-      .unselectable{
-        -moz-user-select: -moz-none;
-        -khtml-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        opacity: .7;
-      }
-      #list-wrap{
-        border: 1px solid #72bcd4;
       }
       .tabs { 
         border-bottom: 1px solid #DDD;
@@ -135,6 +115,9 @@
         border-bottom: 0; 
         padding: 6px 11px;
       }
+      .input-field{
+        height: 25px;
+      }
     </style>
 
     <!--
@@ -145,16 +128,8 @@
      -->
     <script src="popup.js"></script>
     <script src="jquery.js"></script>
-    <script src="jquery-ui.min.js"></script>
   </head>
   <body>
-    <div id="permblock-popup" title="Warning">
-        <p id="permblock-text"></p>
-    </div>
-
-    <div id="blockAll-popup" title="Warning">
-        <p id="blockAll-text"></p>
-    </div>
     <div id="status">
       <div class="tabs">
         <a href="#" id="home-link" class="tab-link active">Home</a>
@@ -170,9 +145,9 @@
                   <p><label>Enter website url, without 'www', then click block.</label></p>
                 </div>
                 <p>Website address:</p>
-                <input name="blockWebsite" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
+                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
                 <p>Comments:</p>
-                <input name="comment" type="text" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input></p>
+                <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input></p>
               </form>
             </div>
             <div id="outer">
