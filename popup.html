@@ -73,8 +73,16 @@
         text-decoration:none;
         text-shadow:0px 1px 0px #046380;
       }
+      .unblock-button{
+        background-color: #167F39;
+        border:1px solid #167F39;
+        text-shadow:0px 1px 0px #167F39;
+      }
+      .unblock-button:hover{
+        background-color: #45BF55 !important;
+      }
       .button-style:hover {
-        background-color:#008db8;
+        background-color: #008db8;
       }
       .button-style:active {
         position:relative;
@@ -133,8 +141,8 @@
     <div id="status">
       <div class="tabs">
         <a href="#" id="home-link" class="tab-link active">Home</a>
-        <a href="#" id="list-link" class="tab-link">Blocked List</a>
-        <a href="#" id="buy-link" class="tab-link">Buy</a>
+        <a href="#" id="list-link" class="tab-link">Block List</a>
+        <a href="#" id="support-link" class="tab-link">Support Me</a>
       </div>
         <div id="home" class="tabCon">
             <div id="addSite">
@@ -142,12 +150,26 @@
               <form>
                 <p id="title"><label>Pokus NOW</label></p>
                 <div id="direct">
-                  <p><label>Enter website url, without 'www', then click block.</label></p>
+                  <p><label>Enter website url, then click add.</label></p>
                 </div>
-                <p>Website address:</p>
+                <p>Website Address:</p>
                 <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
                 <p>Comments:</p>
                 <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input></p>
+                <p>Block Period:
+                  <select>
+                    <option>Unblock Manually</option>
+                    <option>10 Min</option>
+                    <option>30 Min</option>
+                    <option>1 Hr</option>
+                    <option>2 Hrs</option>
+                    <option>6 Hrs</option>
+                    <option>12 Hrs</option>
+                    <option>1 Day</option>
+                    <option>Permanently</option>
+                  </select>
+                </p>
+
               </form>
             </div>
             <div id="outer">
@@ -169,35 +191,35 @@
               </tr>
               <tr>
                 <td id="site0"></td>
-                <td id="unblock-0" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site1"></td>
-                <td id="unblock-1" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site2"></td>
-                <td id="unblock-2" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site3"></td>
-                <td id="unblock-3" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site4"></td>
-                <td id="unblock-4" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site5"></td>
-                <td id="unblock-5" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site6"></td>
-                <td id="unblock-6" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site7"></td>
-                <td id="unblock-7" class="unblock-button hide"><button>Unblock</button></td>
+                <td><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
             </table>
 
@@ -224,15 +246,15 @@
             </table>
           </div>
         </div>
-        <div id="buy" class="hide tabCon">
+        <div id="support" class="hide tabCon">
 
-          <h4>This extension will always be free, and I will try to push updates regularly to improve it. However, if you are feeling generous and want to support me, you can buy it for $1.99.</h4>
+          <h4 style="text-align: center">If you like this extension, and want to support me please donate below. This will allow me to push updates regularly, and help me make more things like it.</h4>
           
           <div style="text-align: center">
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_s-xclick">
-            <input type="hidden" name="hosted_button_id" value="5BNFPYVGZWYJG">
-            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <input type="hidden" name="hosted_button_id" value="XAUJAYA7SWDRC">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
             </form>
           </div>
