@@ -10,9 +10,10 @@ var blockBttn = document.getElementById("blockNow");
 var unblockAllBttn = document.getElementById("unblockAll");
 var blockAllBttn = document.getElementById("blockAll");
 var permaBlockBttn = document.getElementById("permablock");
-var confirmed = false;
-var n;
-
+var getReason = document.getElementById("comment");
+var reason;
+var websiteURL;
+var urlList;
 
 $(".tab-link").each(function(){
   $(this).click(function(e){
@@ -25,6 +26,14 @@ $(".tab-link").each(function(){
     return false;
   })
 })
+
+$("#list-link").click(function(){
+  tempGetKeys();
+})
+$("#home-link").click(function(){
+  //clears input field
+  $(".input-field").val('');
+})
 //disable enter key cause it causes a ton of unforseen bugs
 $('html').bind('keypress', function(e)
 {
@@ -34,202 +43,137 @@ $('html').bind('keypress', function(e)
    }
 });
 
-function disablePopup(bool){
-  if(bool){
-    blockBttn.disabled = true;
-    unblockAllBttn.disabled = true;
-    blockAllBttn.disabled = true;
-    permaBlockBttn.disabled = true;
-    url.disabled = true;
-    $("#status").addClass("unselectable");
-  }
-  else{
-    blockBttn.disabled = false;
-    unblockAllBttn.disabled = false;
-    blockAllBttn.disabled = false;
-    permaBlockBttn.disabled = false;
-    url.disabled = false;
-    $("#status").removeClass("unselectable");   
+//checks if url exists
+function ValidURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  if(!pattern.test(str)) {
+    return false;
+  } else {
+    return true;
   }
 }
 
-//the dialog for the warning message that appears when the user decides to permanently block a site
-$("#permblock-popup").dialog({
-  autoOpen: false,
-  draggable: false,
-  //will disable the background when the popup is opened, so nothing can be interacted with except the popup
-  open: function(event, ui) {
-    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); /*removes close button*/
-    disablePopup(true);
-  },
-  close: function(event, ui){
-    disablePopup(false);
-  },
-  buttons: [
-      {
-        text: "Ok",
-        click: function() {
-          confirmed = true;
-          $(this).dialog("close");
-            if(confirmed){
-                //cookie that stores the number of sites you have added to permaban list
-                if(makeCookie.getItem('permCounter') == null){
-                    // If the cookie doesn't exist, save the cookie with the value of 1
+//trims url if it contains protocols, or www.
+function trimURL(url){
+  var trimmedURL = "";
+  if(url.indexOf("http://") != -1){
+    trimmedURL = url.substring(7, url.length);
+  }
+  else if(url.indexOf("https://") != -1){
+    trimmedURL = url.substring(8, url.length);
+  }
+  else{
+    trimmedURL = url;
+  }
+  if(trimmedURL.indexOf("www.") != -1){
+    trimmedURL = trimmedURL.substring(4, url.length);
+  }
+  return trimmedURL;
+}
 
-                    //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
-                    makeCookie.setItem('permCounter', '1', null);
-                }else{
-                    // If the cookie exists, take the value
-                    var permCookieValue = makeCookie.getItem('permCounter');
-                    // Convert the value to an int to make sure
-                    permCookieValue = parseInt(permCookieValue);
-                    // Add 1 to the cookie_value
-                    permCookieValue++;
-
-                    // Or make a pretty one liner
-                    // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
-
-                    // Save the incremented value to the cookie
-                    makeCookie.setItem('permCounter', permCookieValue, null);
-                }
-
-                var getPermCounter = makeCookie.getItem('permCounter');
-                if(getPermCounter <= 3){
-                  getBG.permablock(website);
-                  makeCookie.setItem(getPermCounter, website, null);
-                  getPermItems(getPermCounter);
-                }
-                else{
-                  alert("You can only permablock up to three websites.");
-                }
-            }
-        }
-        //showText: false
-      },
-
-      {
-        text: "Close",
-        click: function() {
-          $(this).dialog("close");
-        }
-        //showText: false
-      }
-    ]
-});
-
-$("#blockAll-popup").dialog({
-  autoOpen: false,
-  draggable: false,
-  //will disable the background when the popup is opened, so nothing can be interacted with except the popup
-  open: function(event, ui) {
-    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); /*removes close button*/
-    disablePopup(true);
-  },
-  close: function(event, ui){
-    disablePopup(false);
-  },
-  buttons: [
-      {
-        text: "Ok",
-        click: function() {
-          confirmed = true;
-          $(this).dialog("close");
-            if(confirmed){
-                getBG.blockAllWebsites();
-            }
-        }
-        //showText: false
-      },
-
-      {
-        text: "Close",
-        click: function() {
-          $(this).dialog("close");
-        }
-        //showText: false
-      }
-    ]
-})
 $(".unblock-button").click(function(){
-  var id = $(this).attr('id');
-  var parseId = id.substring(id.length - 1, id.length);
-  console.log(parseId);
-  getBG.disableBlocking(parseId);
-  makeCookie.removeItem("site" + parseId);
-  getBG.addedCounter("unblocking");
-  removeFromList(parseId);
+  var buttonID = $(this).attr('id');
+  var siteID = buttonID.substring(buttonID.length - 1, buttonID.length);
+  var unblockThis = $("#site"+siteID).text();
+
+  //need to grab key value;
+  local.get(unblockThis, function(items){
+    chrome.runtime.sendMessage({siteID: items[unblockThis], siteURL: unblockThis, fn: "disableBlocking"});
+  });
+  tempGetKeys();
 })
+
 
 $("#blockAll").click(function(){
-  $("#blockAll-text").html("You are about to block all websites. Are you sure you want to do this?");
-  $("#blockAll-popup").dialog("open");
+  if(getBG.extensionDialogs("blockAll", "")){
+    getBG.blockAllWebsites();
+  }
+
 });
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 $("#blockNow").click(function(){
-  website = url.value;
-  n = getBG.addedCounter("blocking");
-  if(n < 7){
-    console.log("old " + n);
-    if(makeCookie.getItem('site' + n) == null){
-      console.log(document.cookie);
-      // If the cookie doesn't exist, save the cookie with the value of 1
-
-      //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
-      makeCookie.setItem('site' + n, n, null);
-    }
-    else{
-      n = getBG.addedCounter("blocking");
-    }
-    console.log("new " + n);
-    getBG.enableBlocking(website, n);
-    
-    //regex expression to check whether the user inputted an empty string into the input field
-    if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
-      tempSetKeys(n);
-      console.log("2N = " + n);
-      tempGetKeys();
-    }
-    else{
-      alert("You did not enter a valid website!");
-    }
+  websiteURL = url.value;
+  if(ValidURL(websiteURL)){
+    websiteURL = trimURL(websiteURL);
+    chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, fn: "enableBlocking"});
   }
   else{
-    alert("You cannot block anymore websites.");
+    getBG.extensionDialogs("invalidURL", websiteURL)
   }
+  $(".input-field").val('');
+
 });
 
 //event listener for the permaban button, opens the popup to double check with user before banning
 $("#permablock").click(function(){
-  website = url.value;
-  if(!(/\s/).test(website) && website != "" && (website.substring(0,4) != "www.")){
-    $("#permblock-text").html("You are about to permanently block <b>" + website + "</b>. Are you sure you want to do this?");
-    $("#permblock-popup").dialog("open");
+  websiteURL = url.value;
+
+  if(ValidURL(websiteURL)){
+    if(getBG.extensionDialogs("permablock", websiteURL)){
+      //cookie that stores the number of sites you have added to permaban list
+      if(makeCookie.getItem('permCounter') == null){            
+      // If the cookie doesn't exist, save the cookie with the value of 1
+
+      //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
+        makeCookie.setItem('permCounter', '1', null);
+      }else{
+      // If the cookie exists, take the value
+        var permCookieValue = makeCookie.getItem('permCounter');
+      // Convert the value to an int to make sure
+        permCookieValue = parseInt(permCookieValue);
+      // Add 1 to the cookie_value
+        permCookieValue++;
+
+      // Or make a pretty one liner
+      // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
+
+      // Save the incremented value to the cookie
+        makeCookie.setItem('permCounter', permCookieValue, null);
+      }
+
+      var getPermCounter = makeCookie.getItem('permCounter');
+      if(getPermCounter <= 3){
+        getBG.permablock(websiteURL);
+        websiteURL = trimURL(websiteURL);
+        makeCookie.setItem(getPermCounter, websiteURL, null);
+        getPermItems(getPermCounter);
+      }
+      else{
+        getBG.extensionDialogs("reachedLimit", websiteURL);
+      }
+    }
+    
   }
   else{
-    alert("You did not enter a valid website!");
+    getBG.extensionDialogs("invalidURL", websiteURL);
   }
 });
 
 //unblocks everthing when the unblock all button is clicked
 $("#unblockAll").click(function(){
-  getBG.unblockAll();
+  if(getBG.extensionDialogs("unblockAll", "")){
+    getBG.unblockAll();
 
-  getBG.addedCounter("ALL");
+    getBG.addedCounter("ALL");
 
-  //remove after testing
-  clearCookies();
+    //remove after testing
+    clearCookies();
 
-  //clears chrome  local storage systems
-  local.clear(function(){
-    if(err){
-      alert("An error occured, could not remove item.");
-    }
-  });
-  tempGetKeys();
+    //clears chrome  local storage systems
+    local.clear(function(){
+      if(err){
+        alert("An error occured, could not remove item.");
+      }
+    });
+    tempGetKeys();
+  }
 });
 
-//checks whether popup is open or not
-tempGetKeys();
 
 //this function to store keys and their respected values to chrome local storage
 function tempSetKeys(k){
@@ -240,18 +184,61 @@ function tempSetKeys(k){
           }
     });
 }
-//grabbing the keys and their values and creating <li> elements to store them in
+
+//grabbing the keys and their values
 function tempGetKeys(){
+  console.log("you called meee");
     local.get(null, function(items){
       var allkeys = Object.keys(items);
-      console.log(items);
-      for(i = 0; i < allkeys.length; i++){
-        var key = allkeys[i];
-        $("#site" + i).text(items[key]);
-        $("#unblock-" + i).removeClass("hide");
+      var len = allkeys.length;
+      console.log(len);
+
+      //sort list based on the date they were added
+      if(allkeys.length > 0){
+        for(urlList = []; urlList.length < allkeys.length; urlList.push([]));
+        for (i = 0; i < allkeys.length; i++){
+          urlList[i][0] = allkeys[i];
+          urlList[i][1] = items[allkeys[i]];
+        }
+        urlList.sort(function (a, b) {
+          if (a[1] > b[1]) {
+            return 1;
+          }
+          if (a[1] < b[1]) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
+        });
       }
+
+      //call createlist function so the list of block sites will show up in the popup
+      createList(urlList, len);
     });
 }
+
+function createList(urlList, listLen){
+  for(i = 0; i < listLen; i++){
+    if(urlList[i][0].length > 20){
+      var part1 = urlList[i][0].substring(0, 20);
+      var part2 = urlList[i][0].substring(20, urlList[i][0].length);
+      document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
+      $("#unblock-" + i).removeClass("hide");
+      }
+    else{
+      document.getElementById("site" + i).innerHTML = (urlList[i][0]);
+      $("#unblock-" + i).removeClass("hide");
+      console.log(urlList[i][0])
+
+    }
+  }
+}
+
+$(".more").click(function(){
+    $(this).text("less..").siblings(".complete").show();    
+}, function(){
+    $(this).text("more..").siblings(".complete").hide();    
+});
 
 function removeFromList(n){
   local.remove('website'+n, function(items){
@@ -358,4 +345,5 @@ function clearCookies(){
     makeCookie.removeItem(key2[0]);
   }
 }
+
 }

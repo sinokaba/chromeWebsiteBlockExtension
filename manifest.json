@@ -15,7 +15,7 @@
     "default_title": "Let's Pokus"
   },
   "background":{
-    "scripts": ["background.js"],
+    "scripts": ["jquery.js", "background.js"],
     "persistent": true
   },
   "permissions": [
@@ -25,6 +25,7 @@
     "webRequestBlocking",
     "tabs",
     "storage",
-    "<all_urls>"
+    "<all_urls>",
+    "contextMenus"
   ]
 }
