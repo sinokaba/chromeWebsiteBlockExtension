@@ -224,12 +224,11 @@ function createList(urlList, listLen){
       var part2 = urlList[i][0].substring(20, urlList[i][0].length);
       document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
       $("#unblock-" + i).removeClass("hide");
-      }
+    }
     else{
       document.getElementById("site" + i).innerHTML = (urlList[i][0]);
       $("#unblock-" + i).removeClass("hide");
       console.log(urlList[i][0])
-
     }
   }
 }
@@ -240,11 +239,6 @@ $(".more").click(function(){
     $(this).text("more..").siblings(".complete").hide();    
 });
 
-function removeFromList(n){
-  local.remove('website'+n, function(items){
-    console.log("Website removed");
-  })
-}
 
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
@@ -300,39 +294,6 @@ function getPermItems(n){
   }
 }
 
-/*
-//this function to store keys and their respected values to chrome sync storage
-function permSetKeys(){
-  //stores the website value to permobj variable
-  permObj[website] = website;
-  sync.set(permObj, function(){
-    if(chrome.extension.lastError){
-      alert("An error occured: " + chrome.extension.lastError.message);
-    }
-  })
-}
-
-function permGetKeys(){
-    sync.get(null, function(items){
-      var allkeys = Object.keys(items);
-      console.log(allkeys);
-      if(allkeys.length <= 3){
-        for(i = 0; i < allkeys.length; i++){
-          var key = allkeys[i];
-          $("#perm" + i).text(items[key]);
-          $("#permStat" + i).removeClass("hide");
-        }
-      }
-      else{
-          for(i = 0; i < 3; i++){
-          var key = allkeys[i];
-          $("#perm" + i).text(items[key]);
-          $("#permStat" + i).removeClass("hide");
-      }
-    }
-    });
-}
-*/
 //remove after finished with testing
 function clearCookies(){
   if(makeCookie.getItem("permCounter") != null){
