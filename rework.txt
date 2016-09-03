@@ -1,0 +1,11 @@
+chrome extension outline:
+
+1. user fill outs input fields, then clicks block
+2. js detects that the button has been clicked and grabs the information inputted
+3. js sends the background.js the info that it has obtained
+4. background received the message, stores it, then calls the block function
+5. add get url and comments function in background, have js call it
+6. popup.js gets the items it requests and prints it out on the popup.html
+
+
+https://www.youtube.com/watch?v=Q_55oY2jX8I
