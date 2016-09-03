@@ -32,7 +32,6 @@
         text-overflow: ellipsis;
         min-width: 270px;
         overflow: hidden;
-
       }
       #websiteURL:focus{
         border-color: blue;
@@ -40,11 +39,6 @@
       #outer{
         width: 100%;
         text-align: center;
-      }
-      #direct{
-        color: #B9121B;
-        text-align: center;
-        background-color: #E6E2AF;
       }
       #title{
         color: #002F2F;
@@ -60,6 +54,10 @@
       }
       #list-wrap{
         border: 1px solid #72bcd4;
+      }
+      #timeUnits{
+        -webkit-appearance: menulist-button;
+        height: 30px;
       }
       .button-style{
         background-color:#046380;
@@ -107,16 +105,16 @@
       .rowBreak{
         border-right: 1px solid black;
       }
-      .tabs { 
+      .tabs{ 
         border-bottom: 1px solid #DDD;
         padding-bottom:5px;
       }
-      .tabs a {
+      .tabs a{
         border:1px solid #DDD;
         color:#666666;
         padding: 5px 10px;
         text-decoration:none;
-        background-color: #EFECCA;
+        background-color: #EAEAEA;
       }
       .tabs a.active{ 
         background-color: #fff; 
@@ -149,32 +147,25 @@
 
               <form>
                 <p id="title"><label>Pokus NOW</label></p>
-                <div id="direct">
-                  <p><label>Enter website url, then click add.</label></p>
-                </div>
                 <p>Website Address:</p>
-                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input></p>
+                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input>
                 <p>Comments:</p>
-                <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input></p>
-                <p>Block Period:
-                  <select>
-                    <option>Unblock Manually</option>
-                    <option>10 Min</option>
-                    <option>30 Min</option>
-                    <option>1 Hr</option>
-                    <option>2 Hrs</option>
-                    <option>6 Hrs</option>
-                    <option>12 Hrs</option>
-                    <option>1 Day</option>
-                    <option>Permanently</option>
+                <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input>
+                <p>Block Period:</p>
+                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="18" maxlength="6" placeholder="For how long?">
+                  <select id="timeUnits">
+                    <option value="1" selected="selected">Minutes</option>
+                    <option value="2">Hours</option>
+                    <option value="3">Days</option>
+                    <option value="4">Unblock Manually</option>
+                    <option value="5">Permanently</option>
                   </select>
-                </p>
-
+                </input>
               </form>
             </div>
+            <hr>
             <div id="outer">
               <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
-              <div class="inner"><input type="submit" class="button-style" id="permablock" value="Permablock"></div>
               <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
             </div>
 

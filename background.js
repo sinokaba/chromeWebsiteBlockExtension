@@ -13,7 +13,6 @@ var callback0 = function(details){
 	console.log(details.timeStamp);
 	return {cancel: true};
 	changeBlockedSite();
-
 }
 var callback1 = function(details){
 	console.log(details.timeStamp);
@@ -192,6 +191,9 @@ function unblockAll(){
 	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
 	chrome.webRequest.onBeforeRequest.removeListener(callback7);
 	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
+
+	//remove before publishing
+	chrome.webRequest.onBeforeRequest.removeListener(permanentlyBlock);
 }
 function addedCounter(act){
 	if(act == "blocking"){

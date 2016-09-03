@@ -9,8 +9,9 @@ var url = document.getElementById("websiteURL");
 var blockBttn = document.getElementById("blockNow");
 var unblockAllBttn = document.getElementById("unblockAll");
 var blockAllBttn = document.getElementById("blockAll");
-var permaBlockBttn = document.getElementById("permablock");
 var getReason = document.getElementById("comment");
+var timeUnit = document.getElementById("timeUnits");
+var time = document.getElementById("blockPeriod");
 var reason;
 var websiteURL;
 var urlList;
@@ -26,6 +27,16 @@ $(".tab-link").each(function(){
     return false;
   })
 })
+
+$("#timeUnits").click(function(){
+  timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
+  console.log(timeUnitSelected);
+  if(timeUnitSelected == "4" || timeUnitSelected == "5"){
+    $("#blockPeriod").prop('disabled', true);
+  }else{
+    $("#blockPeriod").prop('disabled', false);
+  }
+});
 
 $("#list-link").click(function(){
   tempGetKeys();
@@ -98,60 +109,56 @@ $("#blockAll").click(function(){
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 $("#blockNow").click(function(){
   websiteURL = url.value;
+  timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
+  timeAmount = time.value;
   if(ValidURL(websiteURL)){
-    websiteURL = trimURL(websiteURL);
-    chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, fn: "enableBlocking"});
+    //website blocked normally, user can unblock anytime
+    if(timeUnitSelected == "4"){
+      websiteURL = trimURL(websiteURL);
+      chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, fn: "enableBlocking"});
+    }
+    //website will be permablocked
+    else if(timeUnitSelected == "5"){
+      if(getBG.extensionDialogs("permablock", websiteURL)){
+        //cookie that stores the number of sites you have added to permaban list
+        if(makeCookie.getItem('permCounter') == null){            
+        // If the cookie doesn't exist, save the cookie with the value of 1
+
+        //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
+          makeCookie.setItem('permCounter', '1', null);
+        }else{
+        // If the cookie exists, take the value
+          var permCookieValue = makeCookie.getItem('permCounter');
+        // Convert the value to an int to make sure
+          permCookieValue = parseInt(permCookieValue);
+        // Add 1 to the cookie_value
+          permCookieValue++;
+
+        // Or make a pretty one liner
+        // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
+
+        // Save the incremented value to the cookie
+          makeCookie.setItem('permCounter', permCookieValue, null);
+        }
+
+        var getPermCounter = makeCookie.getItem('permCounter');
+        if(getPermCounter <= 3){
+          websiteURL = trimURL(websiteURL);
+          getBG.permablock(websiteURL);
+          makeCookie.setItem(getPermCounter, websiteURL, null);
+          getPermItems(getPermCounter);
+        }
+        else{
+          getBG.extensionDialogs("reachedLimit", websiteURL);
+        }
+      }
+    }
   }
   else{
     getBG.extensionDialogs("invalidURL", websiteURL)
   }
   $(".input-field").val('');
 
-});
-
-//event listener for the permaban button, opens the popup to double check with user before banning
-$("#permablock").click(function(){
-  websiteURL = url.value;
-
-  if(ValidURL(websiteURL)){
-    if(getBG.extensionDialogs("permablock", websiteURL)){
-      //cookie that stores the number of sites you have added to permaban list
-      if(makeCookie.getItem('permCounter') == null){            
-      // If the cookie doesn't exist, save the cookie with the value of 1
-
-      //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
-        makeCookie.setItem('permCounter', '1', null);
-      }else{
-      // If the cookie exists, take the value
-        var permCookieValue = makeCookie.getItem('permCounter');
-      // Convert the value to an int to make sure
-        permCookieValue = parseInt(permCookieValue);
-      // Add 1 to the cookie_value
-        permCookieValue++;
-
-      // Or make a pretty one liner
-      // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
-
-      // Save the incremented value to the cookie
-        makeCookie.setItem('permCounter', permCookieValue, null);
-      }
-
-      var getPermCounter = makeCookie.getItem('permCounter');
-      if(getPermCounter <= 3){
-        getBG.permablock(websiteURL);
-        websiteURL = trimURL(websiteURL);
-        makeCookie.setItem(getPermCounter, websiteURL, null);
-        getPermItems(getPermCounter);
-      }
-      else{
-        getBG.extensionDialogs("reachedLimit", websiteURL);
-      }
-    }
-    
-  }
-  else{
-    getBG.extensionDialogs("invalidURL", websiteURL);
-  }
 });
 
 //unblocks everthing when the unblock all button is clicked
