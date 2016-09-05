@@ -152,7 +152,7 @@
                 <p>Comments:</p>
                 <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input>
                 <p>Block Period:</p>
-                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="18" maxlength="6" placeholder="For how long?">
+                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="18" maxlength="3" placeholder="Whole numbers only">
                   <select id="timeUnits">
                     <option value="1" selected="selected">Minutes</option>
                     <option value="2">Hours</option>
@@ -165,8 +165,8 @@
             </div>
             <hr>
             <div id="outer">
-              <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
-              <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
+              <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></input></div>
+              <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></input></div>
             </div>
 
             <hr>
@@ -182,35 +182,35 @@
               </tr>
               <tr>
                 <td id="site0"></td>
-                <td><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-0" class="hide"></p><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
               </tr>
               <tr>
                 <td id="site1"></td>
-                <td><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-1" class="hide"></p><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
               <tr>
                 <td id="site2"></td>
-                <td><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-2" class="hide"></p><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
               <tr>
                 <td id="site3"></td>
-                <td><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-3" class="hide"></p><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
               <tr>
                 <td id="site4"></td>
-                <td><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-4" class="hide"></p><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>             
               </tr>
               <tr>
                 <td id="site5"></td>
-                <td><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-5" class="hide"></p><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
               <tr>
                 <td id="site6"></td>
-                <td><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-6" class="hide"></p><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
               <tr>
                 <td id="site7"></td>
-                <td><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                <td><p id="unblockTimer-7" class="hide"></p><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
               </tr>
             </table>
 

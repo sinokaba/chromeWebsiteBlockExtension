@@ -9,3 +9,29 @@ chrome extension outline:
 
 
 https://www.youtube.com/watch?v=Q_55oY2jX8I
+
+
+countdown timer functionality:
+
+1) user chooses unit of time, min/hour/day, and the amount of time
+2) clicks block with url filled out
+3) popup.js sends message to background about url, time, time unit and function
+4) background.js starts the countdown timer, adds url to blocklist
+
+*most likely cannot continously send updated timer from background to popup using chrome send message
+might have to just show static text, such as "banned for: 5 min", no countdown
+
+
+**NEED to set block counter using cookies, the counter in background.js disappears after session ends
+or when user closes browser
+
+
+..
+
+
+
+https://jsfiddle.net/w38Lbkwt/
+
+https://www.khanacademy.org/computing/computer-science/algorithms/intro-to-algorithms/a/route-finding
+
+https://www.youtube.com/watch?v=_fNg3qHdEcY

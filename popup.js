@@ -87,6 +87,16 @@ function trimURL(url){
   return trimmedURL;
 }
 
+//checks if entered value is an integer, also tests for if the input value is empty
+function isNum(val){
+  var pattern = new RegExp('^[0-9]+$');
+  if(pattern.test(val)){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
 $(".unblock-button").click(function(){
   var buttonID = $(this).attr('id');
   var siteID = buttonID.substring(buttonID.length - 1, buttonID.length);
@@ -110,11 +120,11 @@ $("#blockAll").click(function(){
 $("#blockNow").click(function(){
   websiteURL = url.value;
   timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
-  timeAmount = time.value;
   if(ValidURL(websiteURL)){
+    websiteURL = trimURL(websiteURL);
     //website blocked normally, user can unblock anytime
     if(timeUnitSelected == "4"){
-      websiteURL = trimURL(websiteURL);
+
       chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, fn: "enableBlocking"});
     }
     //website will be permablocked
@@ -124,8 +134,8 @@ $("#blockNow").click(function(){
         if(makeCookie.getItem('permCounter') == null){            
         // If the cookie doesn't exist, save the cookie with the value of 1
 
-        //change null to infinity after testing so cookie does not expire. As user to enter a password in order to remove permabanned sites 
-          makeCookie.setItem('permCounter', '1', null);
+        //change null to infinity after testing so cookie does not expire. Ask user to enter a password in order to remove permabanned sites 
+          makeCookie.setItem('permCounter', '1', Infinity);
         }else{
         // If the cookie exists, take the value
           var permCookieValue = makeCookie.getItem('permCounter');
@@ -138,19 +148,28 @@ $("#blockNow").click(function(){
         // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
 
         // Save the incremented value to the cookie
-          makeCookie.setItem('permCounter', permCookieValue, null);
+          makeCookie.setItem('permCounter', permCookieValue, Infinity);
         }
 
         var getPermCounter = makeCookie.getItem('permCounter');
         if(getPermCounter <= 3){
-          websiteURL = trimURL(websiteURL);
           getBG.permablock(websiteURL);
-          makeCookie.setItem(getPermCounter, websiteURL, null);
+          makeCookie.setItem(getPermCounter, websiteURL, Infinity);
           getPermItems(getPermCounter);
         }
         else{
           getBG.extensionDialogs("reachedLimit", websiteURL);
         }
+      }
+    }
+    else{
+      timeAmount = time.value;
+      //calls isnum function to check whether the user inputted an integer value
+      if((isNum(timeAmount))){
+        chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, unit: timeUnitSelected, t: timeAmount, fn: "enableBlocking"});
+      }
+      else{
+        getBG.extensionDialogs("invalidTime", timeAmount);
       }
     }
   }
@@ -201,8 +220,8 @@ function tempGetKeys(){
       console.log(len);
 
       //sort list based on the date they were added
-      if(allkeys.length > 0){
-        for(urlList = []; urlList.length < allkeys.length; urlList.push([]));
+      if(len > 0){
+        for(urlList = []; urlList.length < len; urlList.push([]));
         for (i = 0; i < allkeys.length; i++){
           urlList[i][0] = allkeys[i];
           urlList[i][1] = items[allkeys[i]];

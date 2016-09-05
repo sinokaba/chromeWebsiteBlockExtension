@@ -48,6 +48,19 @@ var blockAllCallback = function(details){
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 
+function keepBlocked(){
+	storage.get(null, function(items){
+		var allkeys = Object.keys(items);
+		var len = allkeys.length;
+		if(len > 0){
+			for(i = 0; i < len; i++){
+				enableBlocking(allkeys[i], items[allkeys[i]], "entireWebsite");
+			}
+		}
+	})
+}
+
+keepBlocked();
 function changeBlockedSite(){
     chrome.tabs.insertCSS(null, {file:"inject.css"})
 }
@@ -55,9 +68,24 @@ function getMessage(){
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		if(request.fn == "enableBlocking"){
 			blockedNum++;
+			console.log("bn " + blockedNum);
+			url = request.websiteURL;
 			if(blockedNum < 7){
-				url = request.websiteURL;
-				enableBlocking(url, blockedNum, "entireWebsite");
+				if(request.unit == "1"){
+					enableBlocking(url, blockedNum, "entireWebsite");
+					startTimer(request.t * 60, blockedNum);
+				}
+				else if(request.unit == "2"){
+					enableBlocking(url, blockedNum, "entireWebsite");
+					startTimer(request.t * 3600, blockedNum);
+				}
+				else if(request.unit == "3"){
+					enableBlocking(url, blockedNum, "entireWebsite");
+					startTimer(request.t * 86400, blockedNum);
+				}
+				else{
+					enableBlocking(url, blockedNum, "entireWebsite");
+				}
 			}
 			else{
 				extensionDialogs("reachedLimit", "");
@@ -272,7 +300,7 @@ function permablockDialog(website){
 	};
 }
 
-function extensionDialogs(dialog, website){
+function extensionDialogs(dialog, item){
 	if(dialog == "blockAll"){
 		if(confirm("You are about to block all websites. Are you sure you want to do this?")){
 			return true;
@@ -282,7 +310,7 @@ function extensionDialogs(dialog, website){
 		}
 	}
 	else if(dialog == "permablock"){
-		if(confirm("Are you sure you want to permablock '" + website + "'?")){
+		if(confirm("Are you sure you want to permablock '" + item + "'?")){
 			return true;
 		}else{
 			return false;
@@ -302,8 +330,81 @@ function extensionDialogs(dialog, website){
 			return false;
 		}
 	}
+	else if(dialog == "invalidTime"){
+		alert("You did not enter a valid value for the amount of time the website should be blocked for.");
+	}
 }
 
+function startTimer(duration, siteID){
+	var startTime = Math.floor(Date.now() / 1000);
+    var endTime = duration + startTime;
+  	if(siteID == 0){
+    	var countdownInterval0 = setInterval(function(){
+        formatTime(countdownInterval0, siteID, endTime);
+  		}, 1000);
+  	}
+  	else if(siteID == 1){
+    	var countdownInterval1 = setInterval(function(){
+        formatTime(countdownInterval1, siteID, endTime);
+  		}, 1000);  		
+  	}
+  	else if(siteID == 2){
+    	var countdownInterval2 = setInterval(function(){
+        formatTime(countdownInterval2, siteID, endTime);
+  		}, 1000);  		
+  	}
+  	else if(siteID == 3){
+    	var countdownInterval3 = setInterval(function(){
+        formatTime(countdownInterval3, siteID, endTime);
+  		}, 1000);  		
+  	}
+  	else if(siteID == 4){
+    	var countdownInterval4 = setInterval(function(){
+        formatTime(countdownInterval4, siteID, endTime);
+  		}, 1000);  		
+  	}
+}
+
+function formatTime(intervalName, siteID, endTime){
+	startTime = Math.floor(Date.now() / 1000);
+    var dur = endTime - startTime;
+    var day = Math.floor(dur/86400);
+	var hr = Math.floor((dur/3600) % 24);
+    var min = Math.floor((dur/60) % 60);
+    var sec = Math.floor(dur % 60);
+    day = day < 10 ? "0" + day : day;
+    hr = hr < 10 ? "0" + hr : hr;
+    min = min < 10 ? "0" + min : min;
+    sec = sec < 10 ? "0" + sec : sec;
+    if(dur >= 86400){
+    	//chrome.runtime.sendMessage(id : siteID, d : day, h : hr, m : min);
+    	console.log(day + ":" + hr + ":" + min);
+    }
+	else if(dur >= 3600){
+      	console.log(hr + ":" + min);     
+    }
+    else if(dur >= 60){
+      	console.log(min + ":" + sec);       
+    }
+    else{
+       	console.log(sec + " seconds");
+    }
+    if(startTime >= endTime){
+        disableBlocking(siteID);
+	    console.log("countdown over, website no longer blocked");
+	    stopCountdown(intervalName);
+    }	
+}
+function stopCountdown(interval){
+	if(interval == "all"){
+		for(i = 0; i < blockedNum; i++){
+			clearInterval("countdownInterval" + i);
+		}
+	}
+	else{
+		clearInterval(interval);
+	}
+}
 
 chrome.contextMenus.create({
   title: "Block this website", 
