@@ -40,9 +40,12 @@ $("#timeUnits").click(function(){
 
 $("#list-link").click(function(){
   tempGetKeys();
+<<<<<<< HEAD
   if(getBG.makeCookie.getItem('permCounter') != null){
     getPermItems(getBG.makeCookie.getItem('permCounter'));
   }
+=======
+>>>>>>> V2
 })
 $("#home-link").click(function(){
   //clears input field
@@ -83,10 +86,17 @@ function trimURL(url){
   }
   else{
     trimmedURL = url;
+<<<<<<< HEAD
   }
   if(trimmedURL.indexOf("www.") != -1){
     trimmedURL = trimmedURL.substring(4, url.length);
   }
+=======
+  }
+  if(trimmedURL.indexOf("www.") != -1){
+    trimmedURL = trimmedURL.substring(4, url.length);
+  }
+>>>>>>> V2
   return trimmedURL;
 }
 
@@ -104,6 +114,7 @@ $(".unblock-button").click(function(){
   var buttonID = $(this).attr('id');
   var siteID = buttonID.substring(buttonID.length - 1, buttonID.length);
   var unblockThis = $("#site"+siteID).text();
+<<<<<<< HEAD
   if(getBG.extensionDialogs("unblockConfirm", unblockThis)){
     //need to grab key value;
     local.get(unblockThis, function(items){
@@ -113,6 +124,14 @@ $(".unblock-button").click(function(){
     $("#site" + siteID).addClass("hide");
   }
 
+=======
+
+  //need to grab key value;
+  local.get(unblockThis, function(items){
+    chrome.runtime.sendMessage({siteID: items[unblockThis], siteURL: unblockThis, fn: "disableBlocking"});
+  });
+  tempGetKeys();
+>>>>>>> V2
 })
 
 
@@ -130,6 +149,7 @@ $("#blockNow").click(function(){
     websiteURL = trimURL(websiteURL);
     //website blocked normally, user can unblock anytime
     if(timeUnitSelected == "4"){
+<<<<<<< HEAD
         getBG.makeCounter("inc", "tempCounter");
         var getTempCounter = getBG.makeCookie.getItem('tempCounter');
         console.log(getTempCounter);
@@ -140,10 +160,15 @@ $("#blockNow").click(function(){
         else{
           getBG.extensionDialogs("reachedLimit", websiteURL);
         }
+=======
+
+      chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, fn: "enableBlocking"});
+>>>>>>> V2
     }
     //website will be permablocked
     else if(timeUnitSelected == "5"){
       if(getBG.extensionDialogs("permablock", websiteURL)){
+<<<<<<< HEAD
         getBG.makeCounter("inc", "permCounter");
         var getPermCounter = getBG.makeCookie.getItem('permCounter');
         console.log(getPermCounter);
@@ -153,6 +178,34 @@ $("#blockNow").click(function(){
           getBG.makeCookie.setItem(getPermCounter, websiteURL, Infinity);
           getPermItems(getPermCounter);
           $(".input-field").val('');
+=======
+        //cookie that stores the number of sites you have added to permaban list
+        if(makeCookie.getItem('permCounter') == null){            
+        // If the cookie doesn't exist, save the cookie with the value of 1
+
+        //change null to infinity after testing so cookie does not expire. Ask user to enter a password in order to remove permabanned sites 
+          makeCookie.setItem('permCounter', '1', Infinity);
+        }else{
+        // If the cookie exists, take the value
+          var permCookieValue = makeCookie.getItem('permCounter');
+        // Convert the value to an int to make sure
+          permCookieValue = parseInt(permCookieValue);
+        // Add 1 to the cookie_value
+          permCookieValue++;
+
+        // Or make a pretty one liner
+        // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
+
+        // Save the incremented value to the cookie
+          makeCookie.setItem('permCounter', permCookieValue, Infinity);
+        }
+
+        var getPermCounter = makeCookie.getItem('permCounter');
+        if(getPermCounter <= 3){
+          getBG.permablock(websiteURL);
+          makeCookie.setItem(getPermCounter, websiteURL, Infinity);
+          getPermItems(getPermCounter);
+>>>>>>> V2
         }
         else{
           getBG.extensionDialogs("reachedLimit", websiteURL);
@@ -163,9 +216,13 @@ $("#blockNow").click(function(){
       timeAmount = time.value;
       //calls isnum function to check whether the user inputted an integer value
       if((isNum(timeAmount))){
+<<<<<<< HEAD
         getBG.makeCounter("inc", "tempCounter");
         chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, n: getBG.makeCookie.getItem("tempCounter"), unit: timeUnitSelected, t: timeAmount, fn: "enableBlocking"});
         $(".input-field").val('');
+=======
+        chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, unit: timeUnitSelected, t: timeAmount, fn: "enableBlocking"});
+>>>>>>> V2
       }
       else{
         getBG.extensionDialogs("invalidTime", timeAmount);
@@ -175,6 +232,10 @@ $("#blockNow").click(function(){
   else{
     getBG.extensionDialogs("invalidURL", websiteURL)
   }
+<<<<<<< HEAD
+=======
+  $(".input-field").val('');
+>>>>>>> V2
 
 });
 
@@ -182,10 +243,28 @@ $("#blockNow").click(function(){
 $("#unblockAll").click(function(){
   if(getBG.extensionDialogs("unblockAll", "")){
     getBG.unblockAll();
+<<<<<<< HEAD
 
     if(getBG.makeCookie.getItem("tempCounter") != null){
       getBG.makeCookie.removeItem("tempCounter");
     }
+=======
+
+    getBG.addedCounter("ALL");
+
+    //remove after testing
+    clearCookies();
+
+    //clears chrome  local storage systems
+    local.clear(function(){
+      if(err){
+        alert("An error occured, could not remove item.");
+      }
+    });
+    tempGetKeys();
+  }
+});
+>>>>>>> V2
 
 
     //remove after testing
@@ -238,6 +317,7 @@ function tempGetKeys(){
       }
 
       //call createlist function so the list of block sites will show up in the popup
+<<<<<<< HEAD
       getStatus(urlList, len);
     });
 }
@@ -300,6 +380,56 @@ function createList(urlLen, url, dur, indx){
       $("#unblock-" + indx).removeClass("hide");
       $("#unblock-" + indx).addClass("dis");
       $("#unblock-" + indx).prop("disabled", true);
+=======
+      createList(urlList, len);
+    });
+}
+
+function createList(urlList, listLen){
+  for(i = 0; i < listLen; i++){
+    if(urlList[i][0].length > 20){
+      var part1 = urlList[i][0].substring(0, 20);
+      var part2 = urlList[i][0].substring(20, urlList[i][0].length);
+      document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
+      $("#unblock-" + i).removeClass("hide");
+    }
+    else{
+      document.getElementById("site" + i).innerHTML = (urlList[i][0]);
+      $("#unblock-" + i).removeClass("hide");
+      console.log(urlList[i][0])
+    }
+  }
+}
+
+$(".more").click(function(){
+    $(this).text("less..").siblings(".complete").show();    
+}, function(){
+    $(this).text("more..").siblings(".complete").hide();    
+});
+
+
+//cookie frame, for making cookies. taken from mozilla js docs
+var makeCookie = {
+  getItem: function (sKey) {
+    if (!sKey) { return null; }
+    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+  },
+  setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
+    var sExpires = "";
+    if (vEnd) {
+      switch (vEnd.constructor) {
+        case Number:
+          sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+          break;
+        case String:
+          sExpires = "; expires=" + vEnd;
+          break;
+        case Date:
+          sExpires = "; expires=" + vEnd.toUTCString();
+          break;
+      }
+>>>>>>> V2
     }
   }
   else{

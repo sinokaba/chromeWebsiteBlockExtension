@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <!--
  This page is shown when the extension button is clicked, because the
@@ -278,3 +279,262 @@
       </div>
   </body>
 </html>
+=======
+
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <title>Pokus: today, not tomorrow.</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+        font-size: 100%;
+      }
+      ul > li{
+        list-style-type: none; 
+        background-color: #cde7f0;
+      }
+      ul{
+        padding-left: 0;
+      }
+      tr, th{
+        padding-right: 50px;
+      }
+      th{
+        border-bottom: 1px solid black;
+      }
+
+      #status {
+        /* avoid an excessively wide status text */
+        text-overflow: ellipsis;
+        min-width: 270px;
+        overflow: hidden;
+      }
+      #websiteURL:focus{
+        border-color: blue;
+      }
+      #outer{
+        width: 100%;
+        text-align: center;
+      }
+      #title{
+        color: #002F2F;
+        font-size: 20;
+        font-weight: bold;
+        text-align: center;
+      }
+      #permablock{
+        background-color: #4C1B1B;
+      }
+      #permablock:hover{
+        background-color: #B9121B;
+      }
+      #list-wrap{
+        border: 1px solid #72bcd4;
+      }
+      #timeUnits{
+        -webkit-appearance: menulist-button;
+        height: 30px;
+      }
+      .button-style{
+        background-color:#046380;
+        border:1px solid #046380;
+        display:inline-block;
+        cursor:pointer;
+        color:#ffffff;
+        font-family:Arial;
+        font-size:14px;
+        padding:7px 15px;
+        text-decoration:none;
+        text-shadow:0px 1px 0px #046380;
+      }
+      .unblock-button{
+        background-color: #167F39;
+        border:1px solid #167F39;
+        text-shadow:0px 1px 0px #167F39;
+      }
+      .unblock-button:hover{
+        background-color: #45BF55 !important;
+      }
+      .button-style:hover {
+        background-color: #008db8;
+      }
+      .button-style:active {
+        position:relative;
+        top:1px;
+      }
+      .inner{
+        display: inline-block;
+      }
+      .tableTitle{
+        text-align: center;
+        font-size: 16;
+        color: #72bcd4;
+        font-weight: bold;
+      }
+      .hide{
+        display: none;
+      }
+      .perm{
+        color: #B9121B;
+        font-weight: bold;
+      }
+      .rowBreak{
+        border-right: 1px solid black;
+      }
+      .tabs{ 
+        border-bottom: 1px solid #DDD;
+        padding-bottom:5px;
+      }
+      .tabs a{
+        border:1px solid #DDD;
+        color:#666666;
+        padding: 5px 10px;
+        text-decoration:none;
+        background-color: #EAEAEA;
+      }
+      .tabs a.active{ 
+        background-color: #fff; 
+        border-bottom: 0; 
+        padding: 6px 11px;
+      }
+      .input-field{
+        height: 25px;
+      }
+    </style>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+     -->
+    <script src="popup.js"></script>
+    <script src="jquery.js"></script>
+  </head>
+  <body>
+    <div id="status">
+      <div class="tabs">
+        <a href="#" id="home-link" class="tab-link active">Home</a>
+        <a href="#" id="list-link" class="tab-link">Block List</a>
+        <a href="#" id="support-link" class="tab-link">Support Me</a>
+      </div>
+        <div id="home" class="tabCon">
+            <div id="addSite">
+
+              <form>
+                <p id="title"><label>Pokus NOW</label></p>
+                <p>Website Address:</p>
+                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input>
+                <p>Comments:</p>
+                <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input>
+                <p>Block Period:</p>
+                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="18" maxlength="3" placeholder="Whole numbers only">
+                  <select id="timeUnits">
+                    <option value="1" selected="selected">Minutes</option>
+                    <option value="2">Hours</option>
+                    <option value="3">Days</option>
+                    <option value="4">Unblock Manually</option>
+                    <option value="5">Permanently</option>
+                  </select>
+                </input>
+              </form>
+            </div>
+            <hr>
+            <div id="outer">
+              <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></input></div>
+              <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></input></div>
+            </div>
+
+            <hr>
+        </div>
+
+        <div id="list" class="hide tabCon">
+          <div id="list-wrap">
+            <p id="title">Blocked Websites</p>
+            <table>
+              <tr>
+                <th class="rowBreak">Website URL:</th>
+                <th>Action</th>
+              </tr>
+              <tr>
+                <td id="site0"></td>
+                <td><p id="unblockTimer-0" class="hide"></p><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+              </tr>
+              <tr>
+                <td id="site1"></td>
+                <td><p id="unblockTimer-1" class="hide"></p><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+              <tr>
+                <td id="site2"></td>
+                <td><p id="unblockTimer-2" class="hide"></p><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+              <tr>
+                <td id="site3"></td>
+                <td><p id="unblockTimer-3" class="hide"></p><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+              <tr>
+                <td id="site4"></td>
+                <td><p id="unblockTimer-4" class="hide"></p><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>             
+              </tr>
+              <tr>
+                <td id="site5"></td>
+                <td><p id="unblockTimer-5" class="hide"></p><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+              <tr>
+                <td id="site6"></td>
+                <td><p id="unblockTimer-6" class="hide"></p><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+              <tr>
+                <td id="site7"></td>
+                <td><p id="unblockTimer-7" class="hide"></p><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+              </tr>
+            </table>
+
+            <div style="text-align: center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
+
+            <hr>
+            <table>
+              <tr>
+                <th class="rowBreak">Website URL:</th>
+                <th>Status</th>
+              </tr>
+              <tr>
+                <td id="perm1"></td>
+                <td id="permStat1" class="perm">Permablocked</td>
+              </tr>
+              <tr>
+                <td id="perm2"></td>
+                <td id="permStat2" class="perm">Permablocked</td>
+              </tr>
+              <tr>
+                <td id="perm3"></td>
+                <td id="permStat3" class="perm">Permablocked</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div id="support" class="hide tabCon">
+
+          <h4 style="text-align: center">If you like this extension, and want to support me please donate below. This will allow me to push updates regularly, and help me make more things like it.</h4>
+          
+          <div style="text-align: center">
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="XAUJAYA7SWDRC">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+          </div>
+
+        </div>
+      </div>
+  </body>
+</html>
+
+>>>>>>> V2
