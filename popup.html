@@ -8,7 +8,7 @@
   <head>
     <title>Pokus: today, not tomorrow.</title>
     <style>
-      body {
+      body{
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
         font-size: 100%;
       }
@@ -20,10 +20,13 @@
         padding-left: 0;
       }
       tr, th{
-        padding-right: 50px;
+        padding-right: 40px;
       }
       th{
         border-bottom: 1px solid black;
+      }
+      table{
+        overflow: scroll;
       }
       #status {
         /* avoid an excessively wide status text */
@@ -53,6 +56,20 @@
       #timeUnits{
         -webkit-appearance: menulist-button;
         height: 30px;
+      }
+      #tempTableScroll{
+        height: 260px;
+        overflow: auto;
+      }
+      #tempTableScroll table th .head{
+        position: absolute;
+      }
+      #permaTableScroll{
+        height: 120px;
+        overflow: auto;
+      }
+      .addBorder{
+        border-right: 1px solid black;
       }
       .button-style{
         background-color:#046380;
@@ -97,9 +114,6 @@
         color: #B9121B;
         font-weight: bold;
       }
-      .rowBreak{
-        border-right: 1px solid black;
-      }
       .tabs{ 
         border-bottom: 1px solid #DDD;
         padding-bottom:5px;
@@ -118,6 +132,10 @@
       }
       .input-field{
         height: 25px;
+      }
+      .dis{
+        background-color: #45BF55;
+        cursor: default;
       }
     </style>
 
@@ -169,70 +187,78 @@
 
         <div id="list" class="hide tabCon">
             <p id="title">Blocked Websites</p>
-            <table>
-              <tr>
-                <th class="rowBreak">Website URL:</th>
-                <th>Action</th>
-              </tr>
-              <tr>
-                <td id="site0"></td>
-                <td><p id="unblockTimer-0" class="hide"></p><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
-              </tr>
-              <tr>
-                <td id="site1"></td>
-                <td><p id="unblockTimer-1" class="hide"></p><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-              <tr>
-                <td id="site2"></td>
-                <td><p id="unblockTimer-2" class="hide"></p><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-              <tr>
-                <td id="site3"></td>
-                <td><p id="unblockTimer-3" class="hide"></p><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-              <tr>
-                <td id="site4"></td>
-                <td><p id="unblockTimer-4" class="hide"></p><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>             
-              </tr>
-              <tr>
-                <td id="site5"></td>
-                <td><p id="unblockTimer-5" class="hide"></p><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-              <tr>
-                <td id="site6"></td>
-                <td><p id="unblockTimer-6" class="hide"></p><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-              <tr>
-                <td id="site7"></td>
-                <td><p id="unblockTimer-7" class="hide"></p><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
-              </tr>
-            </table>
-
+            <div id="tempTableScroll">
+              <table>
+                <tr>
+                  <th class="addBorder head">URL:</th>
+                  <th class="addBorder head">Duration</th>
+                  <th class="head">Act</th>
+                </tr>
+                <tr>
+                  <td id="site0"></td>
+                  <td id="unblockTimer-0" class="hide"></td>
+                  <td><input id="unblock-0" type="submit" class="button-style unblock-button hide" value="Unblock"></td>
+                </tr>
+                <tr>
+                  <td id="site1"></td>
+                  <td id="unblockTimer-1" class="hide"></td>
+                  <td><input id="unblock-1" type="submit" class="button-style unblock-button hide" value="Unblock"></td>         
+                </tr>
+                <tr>
+                  <td id="site2"></td>
+                  <td id="unblockTimer-2" class="hide"></td>
+                  <td><input id="unblock-2" type="submit" class="button-style unblock-button hide" value="Unblock"></td>          
+                </tr>
+                <tr>
+                  <td id="site3"></td>
+                  <td id="unblockTimer-3" class="hide"></td>
+                  <td><input id="unblock-3" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+                </tr>
+                <tr>
+                  <td id="site4"></td>
+                  <td><p id="unblockTimer-4" class="hide"></p><input id="unblock-4" type="submit" class="button-style unblock-button hide" value="Unblock"></td>             
+                </tr>
+                <tr>
+                  <td id="site5"></td>
+                  <td><p id="unblockTimer-5" class="hide"></p><input id="unblock-5" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+                </tr>
+                <tr>
+                  <td id="site6"></td>
+                  <td><p id="unblockTimer-6" class="hide"></p><input id="unblock-6" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+                </tr>
+                <tr>
+                  <td id="site7"></td>
+                  <td><p id="unblockTimer-7" class="hide"></p><input id="unblock-7" type="submit" class="button-style unblock-button hide" value="Unblock"></td>              
+                </tr>
+              </table>
+            </div>
             <div style="text-align: center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
             <hr>
-            <table>
-              <tr>
-                <th class="rowBreak">Website URL:</th>
-                <th>Status</th>
-              </tr>
-              <tr>
-                <td id="perm0"></td>
-                <td id="permStat0" class="perm hide">Permablocked</td>
-              </tr>
-              <tr>
-                <td id="perm1"></td>
-                <td id="permStat1" class="perm hide">Permablocked</td>
-              </tr>
-              <tr>
-                <td id="perm2"></td>
-                <td id="permStat2" class="perm hide">Permablocked</td>
-              </tr>
-              <tr>
-                <td id="perm2"></td>
-                <td id="permStat2" class="perm hide">Permablocked</td>
-              </tr>
-            </table>
+            <div id="permaTableScroll">
+              <table align="center">
+                <tr>
+                  <th class="addBorder head">Website URL:</th>
+                  <th class="head">Status</th>
+                </tr>
+                <tr>
+                  <td id="perm0"></td>
+                  <td id="permStat0" class="perm hide">Permablocked</td>
+                </tr>
+                <tr>
+                  <td id="perm1"></td>
+                  <td id="permStat1" class="perm hide">Permablocked</td>
+                </tr>
+                <tr>
+                  <td id="perm2"></td>
+                  <td id="permStat2" class="perm hide">Permablocked</td>
+                </tr>
+                <tr>
+                  <td id="perm2"></td>
+                  <td id="permStat2" class="perm hide">Permablocked</td>
+                </tr>
+              </table>
+            </div>
         </div>
         <div id="about" class="hide tabCon">
 
