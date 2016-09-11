@@ -435,10 +435,23 @@ function startTimer(duration, siteID){
 
 function checkTime(intervalName, siteID, end){
 	start = Date.now();
-	console.log("start: " + start + "   -   " + "end: " + end);
 	console.log(Math.floor((end - start)/1000));
     if(start >= end){
-        disableBlocking(siteID);
+    	storage.get(null, function(items){
+    		var allkeys = Object.keys(items);
+      		var len = allkeys.length;
+      		for(i = 0; i < len; i++){
+      			if(items[allkeys[i]] == siteID){
+					makeCounter("dec", "tempCounter");
+					removeFromList(allkeys[i]);
+					disableBlocking(siteID);
+      			}
+      			else{
+      				console.log("id from get: " + items[allkeys[i]] + " " + "id from function: " + siteID);
+      			}
+      		}
+    	})
+		//chrome.runtime.sendMessage({siteId: siteID, fn: 'unblock'});
 	    console.log("countdown over, website no longer blocked");
 	    stopCountdown(intervalName);
     }	
