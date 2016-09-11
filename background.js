@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-var obj = {};
-var storage = chrome.storage.local;
-var err = chrome.runtime.lastError;
-var blockedNum;
-=======
-var n = -1;
-var blockedNum = -1;
-var obj = {};
-var storage = chrome.storage.local;
-var err = chrome.runtime.lastError;
->>>>>>> V2
-var url;
+var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum;
 
 var permanentlyBlock = function(details){
 	console.log(details.timeStamp);
@@ -65,7 +53,7 @@ function keepBlocked(){
 			}
 		}
 	})
-<<<<<<< HEAD
+
 
 	for(i = 0; i <= 3; i++){
 	    permablock(makeCookie.getItem(i.toString()));
@@ -123,92 +111,52 @@ function makeCounter(action, counterName){
     makeCookie.setItem(counterName, '0', Infinity);
   }else{
     // If the cookie exists, take the value
-    var tempCookieValue = makeCookie.getItem(counterName);
+    var cookieValue = makeCookie.getItem(counterName);
     // Convert the value to an int to make sure
-    tempCookieValue = parseInt(tempCookieValue);
+    cookieValue = parseInt(cookieValue);
     // Add 1 to the cookie_value
     if(action == "inc"){
-      tempCookieValue++;
+      cookieValue++;
     }
     else if(action == "dec"){
-      tempCookieValue--;
+      cookieValue--;
     }
     // Or make a pretty one liner
     // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
 
     // Save the incremented value to the cookie
-    makeCookie.setItem(counterName, tempCookieValue, Infinity);
+    makeCookie.setItem(counterName, cookieValue, Infinity);
     }  
 }
 
+
 keepBlocked();
-
-
-function changeBlockedSite(){
-    chrome.tabs.insertCSS(null, {file:"inject.css"})
-}
-
-
 
 function getMessage(){
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		if(request.fn == "enableBlocking"){
 			blockedNum = request.n;
+			console.log("blocked number: " + blockedNum);
 			url = request.websiteURL;
 			if(request.unit == "1"){
-				enableBlocking(url, blockedNum, "entireWebsite", "pokusUnblockTimerM" + request.t);
-				startTimer(request.t * 60, blockedNum);
+				enableBlocking(url, blockedNum, "entireWebsite");
+				startTimer(request.t * 60000, blockedNum);
 			}
 			else if(request.unit == "2"){
-				enableBlocking(url, blockedNum, "entireWebsite", "pokusUnblockTimerHr" + request.t);
-				startTimer(request.t * 3600, blockedNum);
+				enableBlocking(url, blockedNum, "entireWebsite");
+				startTimer(request.t * 3600000, blockedNum);
 			}
 			else if(request.unit == "3"){
-				enableBlocking(url, blockedNum, "entireWebsite", "pokusUnblockTimerD" + request.t);
-				startTimer(request.t * 86400, blockedNum);
+				enableBlocking(url, blockedNum, "entireWebsite");
+				startTimer(request.t * 86400000, blockedNum);
 			}
 			else{
-				enableBlocking(url, blockedNum, "entireWebsite", "pokusNoUnblockTimer");
+				enableBlocking(url, blockedNum, "entireWebsite");
+				startTimer("na", blockedNum);
 			}
 		}
 		else if(request.fn == "disableBlocking"){
-=======
-}
-
-keepBlocked();
-function changeBlockedSite(){
-    chrome.tabs.insertCSS(null, {file:"inject.css"})
-}
-function getMessage(){
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-		if(request.fn == "enableBlocking"){
-			blockedNum++;
-			console.log("bn " + blockedNum);
-			url = request.websiteURL;
-			if(blockedNum < 7){
-				if(request.unit == "1"){
-					enableBlocking(url, blockedNum, "entireWebsite");
-					startTimer(request.t * 60, blockedNum);
-				}
-				else if(request.unit == "2"){
-					enableBlocking(url, blockedNum, "entireWebsite");
-					startTimer(request.t * 3600, blockedNum);
-				}
-				else if(request.unit == "3"){
-					enableBlocking(url, blockedNum, "entireWebsite");
-					startTimer(request.t * 86400, blockedNum);
-				}
-				else{
-					enableBlocking(url, blockedNum, "entireWebsite");
-				}
-			}
-			else{
-				extensionDialogs("reachedLimit", "");
-			}
-		}
-		else if(request.fn == "disableBlocking"){
-			blockedNum--;
->>>>>>> V2
+			makeCounter("dec", "tempCounter");
 			removeFromList(request.siteURL);
 			disableBlocking(request.siteID);
 		}
@@ -218,14 +166,9 @@ function getMessage(){
 	})
 }
 
-
-<<<<<<< HEAD
+getMessage();
 function setKeys(url, siteID){
     obj[url] = siteID;
-=======
-function setKeys(url, tstamp){
-    obj[url] = tstamp;
->>>>>>> V2
     storage.set(obj, function(){
        if (chrome.extension.lastError) {
               alert("An error occurred: " + chrome.extension.lastError.message);
@@ -239,11 +182,8 @@ function removeFromList(siteURL){
   })
 }
 
-<<<<<<< HEAD
-function enableBlocking(site, x, scope, blockDuration){
-=======
+
 function enableBlocking(site, x, scope){
->>>>>>> V2
 	if(x == 0){
 		if(scope == "entireWebsite"){
 			chrome.webRequest.onBeforeRequest.addListener(callback0,
@@ -254,11 +194,8 @@ function enableBlocking(site, x, scope){
 			{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
 			["blocking"]);			
 		}
-<<<<<<< HEAD
-		setKeys(site + blockDuration, x);
-=======
+
 		setKeys(site, x);
->>>>>>> V2
 	}
 	else if(x == 1){
 		if(scope == "entireWebsite"){
@@ -270,11 +207,9 @@ function enableBlocking(site, x, scope){
 			{urls: ["*://" + site, "*://www." + site]},
 			["blocking"]);				
 		}
-<<<<<<< HEAD
-		setKeys(site + blockDuration, x);
-=======
+
 		setKeys(site, x);
->>>>>>> V2
+
 	}
 	else if(x == 2){
 		if(scope == "entireWebsite"){
@@ -286,11 +221,8 @@ function enableBlocking(site, x, scope){
 			{urls: ["*://" + site, "*://www." + site]},
 			["blocking"]);						
 		}
-<<<<<<< HEAD
-		setKeys(site + blockDuration, x);
-=======
 		setKeys(site, x);
->>>>>>> V2
+
 	}
 	else if(x == 3){
 		if(scope == "entireWebsite"){
@@ -394,24 +326,7 @@ function unblockAll(){
 
 	//remove before publishing
 	chrome.webRequest.onBeforeRequest.removeListener(permanentlyBlock);
-<<<<<<< HEAD
-=======
-}
-function addedCounter(act){
-	if(act == "blocking"){
-		n++;
-	}
-	else if(act == "unblocking"){
-		n--;
-	}
-	else if(act == "ALL"){
-		n = -1;
-	}
-	else if(act == "get"){
-		n = n;
-	}
-	return n;
->>>>>>> V2
+
 }
 
 function permablock(site){
@@ -426,57 +341,6 @@ function blockAllWebsites(){
 	["blocking"]);
 }
 
-getMessage();
-<<<<<<< HEAD
-=======
-//gives user the ability to block a site when they right click a webpage
-function rightClickBlock(info,tab) {
-  console.log("This webpage has been blocked.");
-  addedCounter("blocking");
-  var ogURL = info.pageUrl;
-  var formattedURL;
-  if(ogURL.substring(ogURL.length - 1, ogURL.length) == "/"){
-  	temp = ogURL.substring(0, ogURL.length - 1);
-  }
-  else{
-  	temp = ogURL;
-  }
-  if(temp.indexOf("http://") != -1){
-  	formattedURL = temp.substring(7, temp.length);
-  }
-  else if(temp.indexOf("https://") != -1){
-  	formattedURL = temp.substring(8, temp.length);
-  }
-  else{
-  	formattedURL = temp;
-  }
-
-  var newURL = formattedURL.split("/");
-  var userConfirm = confirm("Are you sure you want to block this website?");
-  if(userConfirm){
-    var userAction = confirm("Hit 'yes' to block the entire website, or 'cancel' to only block this webpage.");
-  	if(userAction){
-	  	enableBlocking(newURL[0], n, "entireWebsite");
-	  	console.log(newURL[0] + "   " + n);
-	   	enableBlocking(newURL[0], n, "entireWebsite");
-	  	console.log(newURL[0] + "   " + n);
-  	}
-  	else{
-		enableBlocking(formattedURL, n, "onlyThis");
-  		console.log(formattedURL + "   " + n);
- 		console.log(temp);
-  	}
-}
-}
-
-function permablockDialog(website){
-	if(confirm("Are you sure you want to permablock '" + website + "'?")){
-		return true;
-	}else{
-		return false;
-	};
-}
->>>>>>> V2
 
 function extensionDialogs(dialog, item){
 	if(dialog == "blockAll"){
@@ -511,7 +375,6 @@ function extensionDialogs(dialog, item){
 	else if(dialog == "invalidTime"){
 		alert("You did not enter a valid value for the amount of time the website should be blocked for.");
 	}
-<<<<<<< HEAD
 	else if(dialog == "unblockConfirm"){
 		if(confirm("Are you sure you want to unblock " + item + "?")){
 			return true;
@@ -520,70 +383,61 @@ function extensionDialogs(dialog, item){
 			return false;
 		}
 	}
-=======
->>>>>>> V2
+
 }
 
 function startTimer(duration, siteID){
-	var startTime = Math.floor(Date.now() / 1000);
-    var endTime = duration + startTime;
-  	if(siteID == 0){
-    	var countdownInterval0 = setInterval(function(){
-        formatTime(countdownInterval0, siteID, endTime);
-  		}, 1000);
-  	}
-  	else if(siteID == 1){
-    	var countdownInterval1 = setInterval(function(){
-        formatTime(countdownInterval1, siteID, endTime);
-  		}, 1000);  		
-  	}
-  	else if(siteID == 2){
-    	var countdownInterval2 = setInterval(function(){
-        formatTime(countdownInterval2, siteID, endTime);
-  		}, 1000);  		
-  	}
-  	else if(siteID == 3){
-    	var countdownInterval3 = setInterval(function(){
-        formatTime(countdownInterval3, siteID, endTime);
-  		}, 1000);  		
-  	}
-  	else if(siteID == 4){
-    	var countdownInterval4 = setInterval(function(){
-        formatTime(countdownInterval4, siteID, endTime);
-  		}, 1000);  		
-  	}
+	console.log("startimer i value: " + siteID);
+	if(duration == "na"){
+    	makeCookie.setItem("tempCounter" + siteID, "N/A", Infinity);
+	}
+	else{
+		var sd = Date.now(), ed = new Date(duration + sd);
+	    var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
+		var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
+	    month = month < 10 ? "0" + month : month;
+	    day = day < 10 ? "0" + day : day;
+	    hr = hr < 10 ? "0" + hr : hr;
+	    min = min < 10 ? "0" + min : min;
+	    if(hr == 0){
+	    	hr = 12;
+	    }
+	    var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
+	    console.log(unblockDate);
+	    makeCookie.setItem("tempCounter" + siteID, unblockDate, Infinity);
+	  	if(siteID == 0){
+	    	var countdownInterval0 = setInterval(function(){
+	        checkTime(countdownInterval0, siteID, duration + sd);
+	  		}, 1000);
+	  	}
+	  	else if(siteID == 1){
+	    	var countdownInterval1 = setInterval(function(){
+	        checkTime(countdownInterval1, siteID, duration + sd);
+	  		}, 1000);  		
+	  	}
+	  	else if(siteID == 2){
+	    	var countdownInterval2 = setInterval(function(){
+	        checkTime(countdownInterval2, siteID, duration + sd);
+	  		}, 1000);  		
+	  	}
+	  	else if(siteID == 3){
+	    	var countdownInterval3 = setInterval(function(){
+	        checkTime(countdownInterval3, siteID, duration + sd);
+	  		}, 1000);  		
+	  	}
+	  	else if(siteID == 4){
+	    	var countdownInterval4 = setInterval(function(){
+	        checkTime(countdownInterval4, siteID, duration + sd);
+	  		}, 1000);  		
+	  	}
+	}
 }
 
-function formatTime(intervalName, siteID, endTime){
-	startTime = Math.floor(Date.now() / 1000);
-    var dur = endTime - startTime;
-    var day = Math.floor(dur/86400);
-	var hr = Math.floor((dur/3600) % 24);
-    var min = Math.floor((dur/60) % 60);
-    var sec = Math.floor(dur % 60);
-    day = day < 10 ? "0" + day : day;
-    hr = hr < 10 ? "0" + hr : hr;
-    min = min < 10 ? "0" + min : min;
-    sec = sec < 10 ? "0" + sec : sec;
-    if(dur >= 86400){
-    	//chrome.runtime.sendMessage(id : siteID, d : day, h : hr, m : min);
-    	console.log(day + ":" + hr + ":" + min);
-    }
-	else if(dur >= 3600){
-      	console.log(hr + ":" + min);     
-    }
-    else if(dur >= 60){
-<<<<<<< HEAD
-      	console.log(min + ":" + sec);
-      	chrome.runtime.sendMessage({m:min, s: sec, id: siteID});       
-=======
-      	console.log(min + ":" + sec);       
->>>>>>> V2
-    }
-    else{
-       	console.log(sec + " seconds");
-    }
-    if(startTime >= endTime){
+function checkTime(intervalName, siteID, end){
+	start = Date.now();
+	console.log("start: " + start + "   -   " + "end: " + end);
+	console.log(Math.floor((end - start)/1000));
+    if(start >= end){
         disableBlocking(siteID);
 	    console.log("countdown over, website no longer blocked");
 	    stopCountdown(intervalName);
@@ -604,7 +458,6 @@ chrome.contextMenus.create({
   title: "Block this website", 
   contexts:["page"], 
   onclick: rightClickBlock
-<<<<<<< HEAD
 });
 
 //gives user the ability to block a site when they right click a webpage
@@ -634,13 +487,10 @@ function rightClickBlock(info, tab) {
   if(userConfirm){
     var userAction = confirm("Hit 'yes' to block the entire website, or 'cancel' to only block this webpage.");
   	if(userAction){
-  		enableBlocking(newURL[0], n, "entireWebsite", "pokusNoUnblockTimer");
+  		enableBlocking(newURL[0], n, "entireWebsite");
   	}
   	else{
-		enableBlocking(formattedURL, n, "onlyThis", "pokusNoUnblockTimer");
+		enableBlocking(formattedURL, n, "onlyThis");
   	}
   }
-}
-=======
-});
->>>>>>> V2
+};
