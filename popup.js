@@ -238,7 +238,7 @@ function tempGetKeys(){
 function createList(urlList, listLen){
   for(i = 0; i < listLen; i++){
     if(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]) != "N/A"){
-      if(listLen > 10){
+      if(urlList[i][0] > 10){
         var part1 = urlList[i][0].substring(0, 20);
         var part2 = urlList[i][0].substring(20, urlList[i][0].length);
         document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
@@ -260,7 +260,7 @@ function createList(urlList, listLen){
       }      
     }
     else{
-      if(listLen > 10){
+      if(urlList[i][0] > 10){
         var part1 = urlList[i][0].substring(0, 20);
         var part2 = urlList[i][0].substring(20, urlList[i][0].length);
         document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
