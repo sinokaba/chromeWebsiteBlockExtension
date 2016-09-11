@@ -107,21 +107,10 @@ $(".unblock-button").click(function(){
   var buttonID = $(this).attr('id');
   var siteID = buttonID.substring(buttonID.length - 1, buttonID.length);
   var unblockThis = $("#site" + siteID).text();
-  var timerText = $("#unblockTimer" + siteID).text();
+  console.log(unblockThis);
+  var timerText = $("#unblockTimer-" + siteID).text();
   if(getBG.extensionDialogs("unblockConfirm", unblockThis)){
     //need to grab key value;
-    if(timerText == "N/A"){
-      local.get(unblockThis, function(items){
-        console.log(items[unblockThis]);
-        chrome.runtime.sendMessage({siteID: items[unblockThis + "pokusNoUnblockTimer"], siteURL: unblockThis, fn: "disableBlocking"});
-      });      
-    }
-    else if(timerText.substring(timerText.length - 1, timerText.length) == "m"){
-      local.get(unblockThis, function(items){
-        console.log(items[unblockThis]);
-        chrome.runtime.sendMessage({siteID: items[unblockThis + "pokusUnblockTimerM" + timerText], siteURL: unblockThis, fn: "disableBlocking"});
-      });
-    }
     local.get(unblockThis, function(items){
       console.log(items[unblockThis]);
       chrome.runtime.sendMessage({siteID: items[unblockThis], siteURL: unblockThis, fn: "disableBlocking"});
@@ -131,7 +120,6 @@ $(".unblock-button").click(function(){
   }
   tempGetKeys();
 })
-
 
 $("#blockAll").click(function(){
   if(getBG.extensionDialogs("blockAll", "")){
@@ -192,7 +180,6 @@ $("#blockNow").click(function(){
   else{
     getBG.extensionDialogs("invalidURL", websiteURL)
   }
-  $(".input-field").val('');
 });
 
 //unblocks everthing when the unblock all button is clicked
