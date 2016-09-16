@@ -2,23 +2,25 @@ var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, bl
 
 var permanentlyBlock = function(details){
 	console.log(details.timeStamp);
+	chrome.tabs.executeScript({
+		code: 'document.body.style.backgroundColor="red"'
+	});	
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback0 = function(details){
-	console.log(details.timeStamp);
+	console.log(details.url);
 	return {cancel: true};
-	changeBlockedSite();
 }
 var callback1 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
+	console.log(details.url);
+	return {cancel: true};
 }
 var callback2 = function(details){
-	console.log(details.timeStamp);
+	console.log(details.url);
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback3 = function(details){
-	console.log(details.timeStamp);
+	console.log(details.url);
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 var callback4 = function(details){
