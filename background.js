@@ -172,16 +172,23 @@ getMessage();
 function setKeys(url, siteID){
     obj[url] = siteID;
     storage.set(obj, function(){
-       if (chrome.extension.lastError) {
-              alert("An error occurred: " + chrome.extension.lastError.message);
-          }
+    	if(chrome.extension.lastError) {
+          alert("An error occurred: " + chrome.extension.lastError.message);
+       	}
     });
 }
 
 function removeFromList(siteURL){
-  storage.remove(siteURL, function(items){
-    console.log("Website removed");
-  })
+	storage.get(obj, function(items){
+		console.log(obj);
+		delete obj[siteURL];
+		console.log(obj);
+		storage.remove(siteURL, function(){
+		});
+		storage.set(obj, function(){
+			console.log(siteURL + " has been removed.");
+		})
+	})
 }
 
 
