@@ -4,7 +4,6 @@ var obj = {};
 var local = chrome.storage.local;
 var website;
 var getBG = chrome.extension.getBackgroundPage();
-var err = chrome.runtime.lastError;
 var url = document.getElementById("websiteURL");
 var getReason = document.getElementById("comment");
 var timeUnit = document.getElementById("timeUnits");
@@ -115,21 +114,53 @@ $(".unblock-button").click(function(){
       console.log(items[unblockThis]);
       chrome.runtime.sendMessage({siteID: items[unblockThis], siteURL: unblockThis, fn: "disableBlocking"});
     });
-    $("#" + buttonID).addClass("hide");
-    $("#site" + siteID).addClass("hide");
+    $("#row-" + siteID).addClass("hide");
   }
-  tempGetKeys();
 })
 
 $("#blockAll").click(function(){
   if(getBG.extensionDialogs("blockAll", "")){
     getBG.blockAllWebsites();
   }
-
 });
+
+function sendSiteInfo(num, url, res, unt, time){
+  var dup = 0;
+  var siteIndex = num;
+  var tries = 0;
+  if(num == 7 && tries == 0){
+    num = 0;
+    tries++;
+  }
+  console.log("checkUnique function test: " + num);
+  local.get(null, function(items){
+    var allkeys = Object.keys(items);
+    var len = allkeys.length;
+    console.log(allkeys);
+    if(len != 0){
+      if(items[allkeys[0]] == 0){
+        for(var i = 0; i < len; i++){
+          if(num == items[allkeys[i]]){
+            dup++;
+            console.log("number of duplicates: " + dup);
+          }
+        }
+      }
+      if(dup != 0){
+        sendSiteInfo(num++, url, res, unt, time);
+      }
+    }
+    console.log("siteIndex : " + siteIndex);
+    chrome.runtime.sendMessage({websiteURL: url, reason: res, n: siteIndex, unit: unt, t: time, fn: "enableBlocking"});
+  })
+}
+
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 $("#blockNow").click(function(){
+  $('tr', 'th').css('padding-right', '20px');
+  tempGetKeys();
   websiteURL = url.value;
+  var re = getReason.value;
   timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
   if(ValidURL(websiteURL)){
     websiteURL = trimURL(websiteURL);
@@ -138,8 +169,8 @@ $("#blockNow").click(function(){
         getBG.makeCounter("inc", "tempCounter");
         var getTempCounter = getBG.makeCookie.getItem('tempCounter');
         console.log("tempcounter: " + getTempCounter);
-        if(getTempCounter < 7){
-          chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, n: getTempCounter, fn: "enableBlocking"});
+        if(getTempCounter < 8){
+          sendSiteInfo(getTempCounter, websiteURL, re, timeUnitSelected, "na");
           $(".input-field").val('');
         }
         else{
@@ -169,8 +200,12 @@ $("#blockNow").click(function(){
       //calls isnum function to check whether the user inputted an integer value
       if((isNum(timeAmount))){
         getBG.makeCounter("inc", "tempCounter");
-        chrome.runtime.sendMessage({websiteURL: websiteURL, reason: getReason.value, n: getBG.makeCookie.getItem("tempCounter"), unit: timeUnitSelected, t: timeAmount, fn: "enableBlocking"});
-        $(".input-field").val('');
+        getTempCounter = getBG.makeCookie.getItem('tempCounter');
+        if(getTempCounter < 8){
+          console.log("tempcounter: " + getTempCounter);        
+          sendSiteInfo(getTempCounter, websiteURL, re, timeUnitSelected, timeAmount);
+          $(".input-field").val('');
+        }
       }
       else{
         getBG.extensionDialogs("invalidTime", timeAmount);
@@ -194,13 +229,9 @@ $("#unblockAll").click(function(){
     clearCookies();
 
     //clears chrome  local storage systems
-    local.clear(function(){
-      if(err){
-        alert("An error occured, could not remove item.");
-      }
-    });
-    tempGetKeys();
+    chrome.runtime.sendMessage({fn: "clearStorage"});
   }
+  location.reload();
 });
 
 //grabbing the keys and their values
@@ -214,7 +245,7 @@ function tempGetKeys(){
       //sort list based on the date they were added
       if(len > 0){
         for(urlList = []; urlList.length < len; urlList.push([]));
-        for (i = 0; i < allkeys.length; i++){
+        for (i = 0; i < len; i++){
           urlList[i][0] = allkeys[i];
           urlList[i][1] = items[allkeys[i]];
         }
@@ -228,60 +259,36 @@ function tempGetKeys(){
           // a must be equal to b
           return 0;
         });
-      }
 
+        createList(urlList, len);
+      }
       //call createlist function so the list of block sites will show up in the popup
-      createList(urlList, len);
     });
 }
 
 function createList(urlList, listLen){
+  console.log(listLen);
   for(i = 0; i < listLen; i++){
     if(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]) != "N/A"){
-      if(urlList[i][0] > 10){
-        var part1 = urlList[i][0].substring(0, 20);
-        var part2 = urlList[i][0].substring(20, urlList[i][0].length);
-        document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
-        $("#unblockTimer-" + i).removeClass("hide");
-        console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-        $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-        $("#unblock-" + i).removeClass("hide");
-        $("#unblock-" + i).addClass("dis");
-        $("#unblock-" + i).prop("disabled", true);
-      }
-      else{
-        document.getElementById("site" + i).innerHTML = urlList[i][0];
-        $("#unblockTimer-" + i).removeClass("hide");
-        console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-        $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-        $("#unblock-" + i).removeClass("hide");
-        $("#unblock-" + i).addClass("dis");
-        $("#unblock-" + i).prop("disabled", true);
-      }      
+      document.getElementById("site" + i).innerHTML = urlList[i][0];
+      console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
+      $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
+      $("#row-" + i).removeClass("hide");
+      $("#unblock-" + i).addClass("dis");
+      $("#unblock-" + i).prop("disabled", true);
     }
     else{
-      if(urlList[i][0] > 10){
-        var part1 = urlList[i][0].substring(0, 20);
-        var part2 = urlList[i][0].substring(20, urlList[i][0].length);
-        document.getElementById("site" + i).innerHTML = part1 + "<a class='showMore'>...</a>";
-        $("#unblockTimer-" + i).removeClass("hide");
-        console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-        $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-        $("#unblock-" + i).removeClass("hide");
-      }
-      else{
-        document.getElementById("site" + i).innerHTML = urlList[i][0];
-        $("#unblockTimer-" + i).removeClass("hide");
-        console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-        $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-        $("#unblock-" + i).removeClass("hide");
-      }
+      console.log("called: " + i + " times");
+      document.getElementById("site" + i).innerHTML = urlList[i][0];
+      $("#row-" + i).removeClass("hide");
+      console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
+      $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
     }
   }
 };
 
 
-$(".more").click(function(){
+$(".showMore").click(function(){
     $(this).text("less..").siblings(".complete").show();    
 }, function(){
     $(this).text("more..").siblings(".complete").hide();    
@@ -293,7 +300,6 @@ function getPermItems(n){
   for(i = 0; i <= n; i++){
     console.log(getBG.makeCookie.getItem(i.toString()));
     $("#perm" + i).text(getBG.makeCookie.getItem(i.toString()));
-    $("#permStat" + i).removeClass("hide");
   }
 }
 
