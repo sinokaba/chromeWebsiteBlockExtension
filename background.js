@@ -159,11 +159,23 @@ function getMessage(){
 		}
 		else if(request.fn == "disableBlocking"){
 			makeCounter("dec", "tempCounter");
+			console.log(makeCookie.getItem('tempCounter'));
 			removeFromList(request.siteURL);
 			disableBlocking(request.siteID);
 		}
 		else if(request.fn == "getBlockedInfo"){
 			getBlockedInfo(request, sender, sendResponse);
+		}
+		else if(request.fn == "clearStorage"){
+			storage.clear(function(){
+				var err = chrome.runtime.lastError;
+				if(err){
+					console.log(err);
+				}	
+			})
+			storage.get(null, function(items){
+				console.log(items);
+			})
 		}
 	})
 }
@@ -510,9 +522,12 @@ function rightClickBlock(info, tab) {
     var userAction = confirm("Hit 'yes' to block the entire website, or 'cancel' to only block this webpage.");
   	if(userAction){
   		enableBlocking(newURL[0], n, "entireWebsite");
+		startTimer("na", n);
   	}
   	else{
+  		console.log(formattedURL);
 		enableBlocking(formattedURL, n, "onlyThis");
+		startTimer("na", n);
   	}
   }
 };
