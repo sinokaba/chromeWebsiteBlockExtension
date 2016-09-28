@@ -7,39 +7,14 @@ var permanentlyBlock = function(details){
 	});	
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
-var callback0 = function(details){
-	console.log(details.url);
-	return {cancel: true};
+var callback = [];
+for(var i = 0; i < 8; i++){
+	callback[i] = function(details){
+		console.log(details.url);
+		return {cancel: true};
+	}
 }
-var callback1 = function(details){
-	console.log(details.url);
-	return {cancel: true};
-}
-var callback2 = function(details){
-	console.log(details.url);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback3 = function(details){
-	console.log(details.url);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback4 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback5 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback6 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-var callback7 = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-
+console.log(callback[0]);
 var blockAllCallback = function(details){
 	console.log(details.timeStamp);
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
@@ -205,144 +180,25 @@ function removeFromList(siteURL){
 
 
 function enableBlocking(site, x, scope){
-	if(x == 0){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback0,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback0,
-			{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
-			["blocking"]);			
-		}
-
-		setKeys(site, x);
-	}
-	else if(x == 1){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback1,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback1,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);				
-		}
-
-		setKeys(site, x);
-
-	}
-	else if(x == 2){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback2,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback2,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
-
-	}
-	else if(x == 3){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback3,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback3,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
-	}
-	else if(x == 4){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback4,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback4,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
-	}
-	else if(x == 5){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback5,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback5,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
-	}
-	else if(x == 6){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback6,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback6,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
-	}
-	else if(x == 7){
-		if(scope == "entireWebsite"){
-			chrome.webRequest.onBeforeRequest.addListener(callback7,
-			{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-			["blocking"]);
-		}else{
-			chrome.webRequest.onBeforeRequest.addListener(callback7,
-			{urls: ["*://" + site, "*://www." + site]},
-			["blocking"]);						
-		}
-		setKeys(site, x);
+	if(scope == "entireWebsite"){
+		chrome.webRequest.onBeforeRequest.addListener(callback[x],
+		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
+		["blocking"]);
+	}else{
+		chrome.webRequest.onBeforeRequest.addListener(callback[x],
+		{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
+		["blocking"]);			
 	}
 }
 
 function disableBlocking(z){
-	if(z == 0){
-		chrome.webRequest.onBeforeRequest.removeListener(callback0);
-	}
-	else if(z == 1){
-		chrome.webRequest.onBeforeRequest.removeListener(callback1);
-	}
-	else if(z == 2){
-		chrome.webRequest.onBeforeRequest.removeListener(callback2);
-	}
-	else if(z == 3){
-		chrome.webRequest.onBeforeRequest.removeListener(callback3);	
-	}
-	else if(z == 4){
-		chrome.webRequest.onBeforeRequest.removeListener(callback4);
-	}
-	else if(z == 5){
-		chrome.webRequest.onBeforeRequest.removeListener(callback5);	
-	}
-	else if(z == 6){
-		chrome.webRequest.onBeforeRequest.removeListener(callback6);
-	}
-	else if(z == 7){
-		chrome.webRequest.onBeforeRequest.removeListener(callback7);
-	}
+	chrome.webRequest.onBeforeRequest.removeListener(callback[z]);
 }
 
 function unblockAll(){
-	chrome.webRequest.onBeforeRequest.removeListener(callback0);
-	chrome.webRequest.onBeforeRequest.removeListener(callback1);
-	chrome.webRequest.onBeforeRequest.removeListener(callback2);
-	chrome.webRequest.onBeforeRequest.removeListener(callback3);
-	chrome.webRequest.onBeforeRequest.removeListener(callback4);	
-	chrome.webRequest.onBeforeRequest.removeListener(callback5);
-	chrome.webRequest.onBeforeRequest.removeListener(callback6);	
-	chrome.webRequest.onBeforeRequest.removeListener(callback7);
+	for(var i = 0; i < 8; i++){
+		chrome.webRequest.onBeforeRequest.removeListener(callback[i]);
+	}
 	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
 
 	//remove before publishing
