@@ -189,6 +189,7 @@ function enableBlocking(site, x, scope){
 		{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
 		["blocking"]);			
 	}
+	setKeys(site, x);
 }
 
 function disableBlocking(z){
@@ -282,31 +283,13 @@ function startTimer(duration, siteID){
 	    var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
 	    console.log(unblockDate);
 	    makeCookie.setItem("tempCounter" + siteID, unblockDate, Infinity);
-	  	if(siteID == 0){
-	    	var countdownInterval0 = setInterval(function(){
-	        checkTime(countdownInterval0, siteID, duration + sd);
+	    var countdownInterval = [];
+	    for(var t = 0; t < 8; t++){
+	    	countdownInterval[i] = setInterval(function(){
+	        checkTime(countdownInterval + i, siteID, duration + sd);
 	  		}, 1000);
-	  	}
-	  	else if(siteID == 1){
-	    	var countdownInterval1 = setInterval(function(){
-	        checkTime(countdownInterval1, siteID, duration + sd);
-	  		}, 1000);  		
-	  	}
-	  	else if(siteID == 2){
-	    	var countdownInterval2 = setInterval(function(){
-	        checkTime(countdownInterval2, siteID, duration + sd);
-	  		}, 1000);  		
-	  	}
-	  	else if(siteID == 3){
-	    	var countdownInterval3 = setInterval(function(){
-	        checkTime(countdownInterval3, siteID, duration + sd);
-	  		}, 1000);  		
-	  	}
-	  	else if(siteID == 4){
-	    	var countdownInterval4 = setInterval(function(){
-	        checkTime(countdownInterval4, siteID, duration + sd);
-	  		}, 1000);  		
-	  	}
+	    }
+	  	countdownInterval[siteID];
 	}
 }
 
