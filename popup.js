@@ -24,15 +24,29 @@ $(".tab-link").each(function(){
   })
 })
 
+//make input field auto select on start up
+focusInField(url);
+
+function focusInField(ele){
+  ele.focus();
+  ele.select();
+}
 $("#timeUnits").click(function(){
+  disableTField();
+});
+
+function disableTField(){
   timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
   console.log(timeUnitSelected);
   if(timeUnitSelected == "4" || timeUnitSelected == "5"){
     $("#blockPeriod").prop('disabled', true);
   }else{
     $("#blockPeriod").prop('disabled', false);
+    focusInField(document.getElementById("blockPeriod"));
   }
-});
+}
+
+disableTField();
 
 $("#list-link").click(function(){
   tempGetKeys();
@@ -46,13 +60,7 @@ $("#home-link").click(function(){
   $(".input-field").val('');
 })
 //disable enter key cause it causes a ton of unforseen bugs
-$('html').bind('keypress', function(e)
-{
-   if(e.keyCode == 13)
-   {
-      return false;
-   }
-});
+
 
 //checks if url exists
 function ValidURL(str) {
