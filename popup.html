@@ -28,25 +28,20 @@
       #websiteURL:focus{
         border-color: blue;
       }
-      #outer{
-        width: 100%;
-        text-align: center;
-      }
       #title{
         color: #002F2F;
         font-size: 20;
         font-weight: bold;
         text-align: center;
       }
-      #permablock{
-        background-color: #4C1B1B;
-      }
-      #permablock:hover{
-        background-color: #B9121B;
-      }
       #timeUnits{
         -webkit-appearance: menulist-button;
         height: 30px;
+      }
+      #blockAll{
+        background-color: #EA2E49;
+        border:1px solid #EA2E49;
+        text-shadow:0px 1px 0px #EA2E49;        
       }
       .addBorder{
         border-right: 1px solid black;
@@ -62,31 +57,22 @@
         padding:7px 15px;
         text-decoration:none;
         text-shadow:0px 1px 0px #046380;
+        opacity: .85;
       }
       .unblock-button{
         background-color: #167F39;
         border:1px solid #167F39;
         text-shadow:0px 1px 0px #167F39;
       }
-      .unblock-button:hover{
-        background-color: #45BF55 !important;
-      }
       .button-style:hover {
-        background-color: #008db8;
+        opacity: 1;
       }
       .button-style:active {
-        position:relative;
-        top:1px;
-      }
-      .inner{
-        display: inline-block;
+        position: relative;
+        top: 1px;
       }
       .hide{
         display: none;
-      }
-      .perm{
-        color: #B9121B;
-        font-weight: bold;
       }
       .tabs{ 
         border-bottom: 1px solid #DDD;
@@ -116,6 +102,9 @@
       }
       .wrap {
           height: 260px;
+      }
+      .center{
+        text-align: center;
       }
 
       /*table css*/
@@ -161,26 +150,26 @@
               <form>
                 <p id="title"><label>Pokus NOW</label></p>
                 <p>Website Address:</p>
-                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="40" maxlength="30" placeholder="block this site"></input>
+                <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
                 <p>Comments:</p>
-                <input name="comment" type="text" class="input-field" value="" id="comment" size="40" maxlength="50" placeholder="Reason for blocking this site."></input>
+                <input name="comment" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
                 <p>Block Period:</p>
-                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="18" maxlength="3" placeholder="Whole numbers only">
-                  <select id="timeUnits">
-                    <option value="1" selected="selected">Minutes</option>
-                    <option value="2">Hours</option>
-                    <option value="3">Days</option>
-                    <option value="4">Unblock Manually</option>
-                    <option value="5">Permanently</option>
-                  </select>
-                </input>
+                <div class="center">
+                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="10" maxlength="3" placeholder="Whole numbers only">
+                <select id="timeUnits">
+                  <option value="1">Minutes</option>
+                  <option value="2">Hours</option>
+                  <option value="3">Days</option>
+                  <option value="4" selected="selected">Unblock Manually</option>
+                  <option value="5">Permanently</option>
+                </select>
+              </div>
+                <br />
+                <div class="center"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
               </form>
             </div>
             <hr>
-            <div id="outer">
-              <div class="inner"><input type="submit" class="button-style" id="blockNow" value="Block"></input></div>
-              <div class="inner"><input type="submit" class="button-style" id="blockAll" value="Block All"></input></div>
-            </div>
+            <div class="center"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
 
             <hr>
         </div>
@@ -196,7 +185,7 @@
                   </tr>
               </table>
               <div class="inner_table">
-              <table>
+              <table id="blockList">
                 <tr class="hide" id="row-0">
                     <td id="site0"></td>
                               <td id="unblockTimer-0" class="ubDate"></td>
@@ -240,7 +229,7 @@
                 </table>
                 </div>
             </div>
-            <div style="text-align: center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
+            <div class="center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
             <hr>
             <h4>Permablocked sites:</h4>
