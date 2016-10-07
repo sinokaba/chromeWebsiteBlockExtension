@@ -57,6 +57,7 @@ $("#list-link").click(function(){
 
 $("#home-link").click(function(){
   //clears input field
+  focusInField(url);
   $(".input-field").val('');
 })
 //disable enter key cause it causes a ton of unforseen bugs
@@ -223,6 +224,7 @@ $("#blockNow").click(function(){
   else{
     getBG.extensionDialogs("invalidURL", websiteURL)
   }
+  return false;
 });
 
 //unblocks everthing when the unblock all button is clicked
