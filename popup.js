@@ -1,4 +1,4 @@
-window.onload = function(){
+$(function() {
 //all the global vars i'm using
 var obj = {};
 var local = chrome.storage.local;
@@ -22,7 +22,7 @@ $(".tab-link").each(function(){
     $("#"+tabID).removeClass("hide");
     return false;
   })
-})
+});
 
 //make input field auto select on start up
 focusInField(url);
@@ -42,9 +42,8 @@ function disableTField(){
     $("#blockPeriod").prop('disabled', true);
   }else{
     $("#blockPeriod").prop('disabled', false);
-    focusInField(document.getElementById("blockPeriod"));
   }
-}
+};
 
 disableTField();
 
@@ -59,7 +58,7 @@ $("#home-link").click(function(){
   //clears input field
   focusInField(url);
   $(".input-field").val('');
-})
+});
 //disable enter key cause it causes a ton of unforseen bugs
 
 
@@ -76,7 +75,7 @@ function ValidURL(str) {
   } else {
     return true;
   }
-}
+};
 
 //trims url if it contains protocols, or www.
 function trimURL(url){
@@ -97,7 +96,7 @@ function trimURL(url){
     trimmedURL = trimmedURL.substring(4, url.length);
   }
   return trimmedURL;
-}
+};
 
 //checks if entered value is an integer, also tests for if the input value is empty
 function isNum(val){
@@ -108,13 +107,13 @@ function isNum(val){
   else{
     return false;
   }
-}
+};
 
-
-$(".unblock-button").click(function(){
+//unblock button, using .on so this function works for newly generated elements
+$("#blockList").on('click', '.unblock-button', function(){
   var buttonID = $(this).attr('id');
-  var siteID = buttonID.substring(buttonID.length - 1, buttonID.length);
-  var unblockThis = $("#site" + siteID).text();
+  var siteID = buttonID.split('-');
+  var unblockThis = $("#site-" + siteID[1]).text();
   console.log(unblockThis);
   var timerText = $("#unblockTimer-" + siteID).text();
   if(getBG.extensionDialogs("unblockConfirm", unblockThis)){
@@ -125,14 +124,13 @@ $(".unblock-button").click(function(){
     });
     $("#row-" + siteID).addClass("hide");
   }
-})
+});
 
 $("#blockAll").click(function(){
   if(getBG.extensionDialogs("blockAll", "")){
     getBG.blockAllWebsites();
   }
 });
-
 function sendSiteInfo(num, url, res, unt, time){
   var dup = 0;
   var siteIndex = num;
@@ -167,7 +165,6 @@ function sendSiteInfo(num, url, res, unt, time){
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 $("#blockNow").click(function(){
   $('tr', 'th').css('padding-right', '20px');
-  tempGetKeys();
   websiteURL = url.value;
   var re = getReason.value;
   timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
@@ -224,6 +221,7 @@ $("#blockNow").click(function(){
   else{
     getBG.extensionDialogs("invalidURL", websiteURL)
   }
+  tempGetKeys();
   return false;
 });
 
@@ -274,29 +272,66 @@ function tempGetKeys(){
       }
       //call createlist function so the list of block sites will show up in the popup
     });
-}
+};
 
+/*
 function createList(urlList, listLen){
-  console.log(listLen);
-  for(i = 0; i < listLen; i++){
-    if(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]) != "N/A"){
-      document.getElementById("site" + i).innerHTML = urlList[i][0];
-      console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-      $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-      $("#row-" + i).removeClass("hide");
-      $("#unblock-" + i).addClass("dis");
-      $("#unblock-" + i).prop("disabled", true);
+  var tbl = document.getElementById("blockList");
+  var output = "";
+  for(var i = 0; i < listLen; i++){
+    var unblockDate = getBG.makeCookie.getItem("tempCounter" + urlList[i][1]);
+    var row = document.createElement("tr");
+    var urlCell = document.createElement("td");
+    var dateCell = document.createElement("td");
+    var btnCell = document.createElement("td");
+    var btn = document.createElement("button");
+    urlCell.setAttribute("id", "site-" + i);
+    urlCell.innerHTML = urlList[i][0];
+    dateCell.setAttribute("id", "unblockTimer-" + i);
+    dateCell.innerHTML = unblockDate;
+    dateCell.className = "ubDate";
+
+    btn.setAttribute("id", "unblock-" + i);
+    btn.innerHTML = "Remove";
+    btn.className = "button-style unblock-button";
+
+    if(unblockDate != "N/A"){
+      btn.className += "dis";
+      btn.disabled = true;
     }
-    else{
-      console.log("called: " + i + " times");
-      document.getElementById("site" + i).innerHTML = urlList[i][0];
-      $("#row-" + i).removeClass("hide");
-      console.log(getBG.makeCookie.getItem("tempCounter" + i.toString()));
-      $("#unblockTimer-" + i).text(getBG.makeCookie.getItem("tempCounter" + urlList[i][1]));
-    }
+    btnCell.appendChild(btn);
+    row.appendChild(urlCell);
+    row.appendChild(dateCell);
+    row.appendChild(btnCell);
+
+    tbl.appendChild(row);
   }
 };
 
+*/
+function createList(urlList, listLen){
+  var tbl = document.getElementById("blockList");
+  var output = "";
+  for(i = 0; i < listLen; i++){
+    var unblockDate = getBG.makeCookie.getItem("tempCounter" + urlList[i][1]);
+    console.log(unblockDate);
+    if(unblockDate != "N/A"){
+      output += "<tr>";
+      output += "<td id='site-" + i + "'" + ">" + urlList[i][0]; + "</td>";
+      output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + unblockDate +"</td>";
+      output += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button dis' disabled>Remove</button></td>";
+      output += "</tr>";
+    }
+    else{
+      output += "<tr>";
+      output += "<td id='site-" + i + "'" + ">" + urlList[i][0]; + "</td>";
+      output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + unblockDate +"</td>";
+      output += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
+      output += "</tr>";
+    }
+  }
+  return tbl.innerHTML = output;
+};
 
 $(".showMore").click(function(){
     $(this).text("less..").siblings(".complete").show();    
@@ -311,7 +346,8 @@ function getPermItems(n){
     console.log(getBG.makeCookie.getItem(i.toString()));
     $("#perm" + i).text(getBG.makeCookie.getItem(i.toString()));
   }
-}
+};
+
 
 //remove after finished with testing
 function clearCookies(){
@@ -326,4 +362,4 @@ function clearCookies(){
   }
 }
 
-}
+});
