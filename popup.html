@@ -28,7 +28,7 @@
         width: 305px;
         overflow: hidden;
       }
-      #title{
+      .title{
         color: #002F2F;
         font-size: 20;
         font-weight: bold;
@@ -95,6 +95,7 @@
       }
       .dis{
         background-color: #45BF55;
+        opacity: 1;
         cursor: default;
       }
       .ubDate{
@@ -134,8 +135,8 @@
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
-    <script src="popup.js"></script>
     <script src="jquery.js"></script>
+    <script src="popup.js"></script>
   </head>
   <body>
     <div id="status">
@@ -148,7 +149,7 @@
             <div id="addSite">
 
               <form>
-                <p id="title"><label>Pokus NOW</label></p>
+                <p class="title"><label>Pokus NOW</label></p>
                 <p>Website Address:</p>
                 <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
                 <p>Comments:</p>
@@ -175,7 +176,7 @@
         </div>
 
         <div id="list" class="hide tabCon">
-            <p id="title">Blocked Websites</p>
+            <p class="title">Blocked Websites</p>
             <div class="wrap">
               <table class="head">
                   <tr>
@@ -185,49 +186,10 @@
                   </tr>
               </table>
               <div class="inner_table">
-              <table id="blockList">
-                <tr class="hide" id="row-0">
-                    <td id="site0"></td>
-                              <td id="unblockTimer-0" class="ubDate"></td>
-                              <td><input id="unblock-0" type="submit" class="button-style unblock-button" value="Remove"></td>
-                            </tr>
-                            <tr class="hide" id="row-1">
-                              <td id="site1"></td>
-                              <td id="unblockTimer-1" class="ubDate"></td>
-                              <td><input id="unblock-1" type="submit" class="button-style unblock-button" value="Remove"></td>         
-                            </tr>
-                            <tr class="hide" id="row-2">
-                              <td id="site2"></td>
-                              <td id="unblockTimer-2" class="ubDate"></td>
-                              <td><input id="unblock-2" type="submit" class="button-style unblock-button" value="Remove"></td>          
-                            </tr>
-                            <tr class="hide" id="row-3">
-                              <td id="site3"></td>
-                              <td id="unblockTimer-3" class="ubDate"></td>
-                              <td><input id="unblock-3" type="submit" class="button-style unblock-button" value="Remove"></td>        
-                            </tr>
-                            <tr class="hide" id="row-4">
-                              <td id="site4"></td>
-                              <td id="unblockTimer-4" class="ubDate"></td>
-                              <td><input id="unblock-4" type="submit" class="button-style unblock-button" value="Remove"></td>
-                            </tr>
-                            <tr class="hide" id="row-5">
-                              <td id="site5"></td>
-                              <td id="unblockTimer-5" class="ubDate"></td>
-                              <td><input id="unblock-5" type="submit" class="button-style unblock-button" value="Remove"></td>         
-                            </tr>
-                            <tr class="hide" id="row-6">
-                              <td id="site6"></td>
-                              <td id="unblockTimer-6" class="ubDate"></td>
-                              <td><input id="unblock-6" type="submit" class="button-style unblock-button" value="Remove"></td>          
-                            </tr>
-                            <tr class="hide" id="row-7">
-                              <td id="site7"></td>
-                              <td id="unblockTimer-7" class="ubDate"></td>
-                              <td><input id="unblock-7" type="submit" class="button-style unblock-button" value="Remove"></td>        
-                            </tr>
-                </table>
-                </div>
+              <table>
+                <tbody id="blockList"></tbody>
+              </table>
+              </div>
             </div>
             <div class="center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
 
