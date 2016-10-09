@@ -1,4 +1,4 @@
-var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum;
+var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum, Data = Array();
 
 var permanentlyBlock = function(details){
 	console.log(details.timeStamp);
@@ -24,6 +24,8 @@ function keepBlocked(){
 	storage.get(null, function(items){
 		var allkeys = Object.keys(items);
 		var len = allkeys.length;
+		console.log(len);
+		console.log(allkeys);
 		if(len > 0){
 			for(i = 0; i < len; i++){
 				enableBlocking(allkeys[i], items[allkeys[i]], "entireWebsite");
@@ -36,6 +38,7 @@ function keepBlocked(){
 	    permablock(makeCookie.getItem(i.toString()));
 	}
 }
+
 
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
@@ -156,6 +159,7 @@ function getMessage(){
 }
 
 getMessage();
+
 function setKeys(url, siteID){
     obj[url] = siteID;
     storage.set(obj, function(){
@@ -164,6 +168,44 @@ function setKeys(url, siteID){
        	}
     });
 }
+
+
+function loadOldData(){
+	storage.get("data", function(result){
+		var rawD = Object.keys(result).map(function (key){ 
+        	return result[key]; 
+	    });
+	    if(rawD != ""){
+		    var len = rawD[0].match((/\[/g) || []).length - 1; 
+
+			var temp = rawD[0].replace(/['"]+/g, '');
+		    var tempParsed = temp.split(']');
+
+	        for(var  i = 0; i < len; i++){
+				var d = tempParsed[i].split('[');
+			   	if(i == 0){
+			        Data.push('[' + d[2] + ']');
+			    }
+			    else{
+			        Data.push('[' + d[1] + ']');
+			    }
+		    }
+		}
+	});
+}
+loadOldData();
+console.log(Data);
+
+//test
+function testStoring(sInfo){	
+	Data.push(sInfo);
+	storage.set({"data": JSON.stringify(Data)}, function(){
+	if(chrome.extension.lastError) {
+		alert("An error occurred: " + chrome.extension.lastError.message);
+	}
+    });
+}
+
 
 function removeFromList(siteURL){
 	storage.get(obj, function(items){
@@ -295,7 +337,6 @@ function startTimer(duration, siteID){
 
 function checkTime(intervalName, siteID, end){
 	start = Date.now();
-	console.log(Math.floor((end - start)/1000));
     if(start >= end){
     	storage.get(null, function(items){
     		var allkeys = Object.keys(items);
@@ -306,13 +347,9 @@ function checkTime(intervalName, siteID, end){
 					removeFromList(allkeys[i]);
 					disableBlocking(siteID);
       			}
-      			else{
-      				console.log("id from get: " + items[allkeys[i]] + " " + "id from function: " + siteID);
-      			}
       		}
     	})
 		//chrome.runtime.sendMessage({siteId: siteID, fn: 'unblock'});
-	    console.log("countdown over, website no longer blocked");
 	    stopCountdown(intervalName);
     }	
 }
