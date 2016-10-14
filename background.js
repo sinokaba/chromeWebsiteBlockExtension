@@ -40,6 +40,8 @@ function keepBlocked(){
 }
 
 
+//fix this later keepBlocked();
+
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
   getItem: function (sKey) {
@@ -110,8 +112,6 @@ function makeCounter(action, counterName){
 }
 
 
-keepBlocked();
-
 function getMessage(){
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		if(request.fn == "enableBlocking"){
@@ -175,6 +175,7 @@ function loadOldData(){
 		var rawD = Object.keys(result).map(function (key){ 
         	return result[key]; 
 	    });
+	    console.log(rawD);
 	    if(rawD != ""){
 		    var len = rawD[0].match((/\[/g) || []).length - 1; 
 
@@ -193,18 +194,22 @@ function loadOldData(){
 		}
 	});
 }
+
 loadOldData();
 console.log(Data);
 
 //test
-function testStoring(sInfo){	
+function testStoring(sInfo){
+	console.log(Data);	
 	Data.push(sInfo);
+	console.log(sInfo);
 	storage.set({"data": JSON.stringify(Data)}, function(){
 	if(chrome.extension.lastError) {
 		alert("An error occurred: " + chrome.extension.lastError.message);
 	}
     });
 }
+
 
 
 function removeFromList(siteURL){
@@ -406,4 +411,5 @@ function rightClickBlock(info, tab) {
 		startTimer("na", n);
   	}
   }
+
 };
