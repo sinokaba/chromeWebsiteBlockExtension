@@ -112,6 +112,8 @@ function isNum(val){
 $("#blockList").on('click', '.unblock-button', function(){
   var buttonID = $(this).attr('id');
   var siteID = buttonID.split('-');
+  crd.del(siteID[1]);
+  /*
   var unblockThis = $("#site-" + siteID[1]).text();
   console.log(unblockThis);
   var timerText = $("#unblockTimer-" + siteID).text();
@@ -130,6 +132,7 @@ $("#blockAll").click(function(){
   if(getBG.extensionDialogs("blockAll", "")){
     getBG.blockAllWebsites();
   }
+  */
 });
 
 
@@ -137,7 +140,7 @@ $("#blockAll").click(function(){
 
 //reworked create/add/delete
 var crd = new function(){
-
+  var Data = Array();
   this.addSite = function(){
     var websiteURL = url.value;
     var rsn = getReason.value;
@@ -195,38 +198,50 @@ var crd = new function(){
       getBG.extensionDialogs("invalidURL", websiteURL)
     }
     getBG.testStoring(siteInfo);
+  }
+  this.del = function(id){
+    var index = id;
+    console.log(index);
+    Data.splice(index, 1);
+    console.log(Data);
     this.grabList();
   }
-  this.grabList = function(){
+  this.updateList = function(){
+    /*
     local.get("data", function(result){
-      var Data = Array();
       var rawD = Object.keys(result).map(function (key){ 
         return result[key]; 
       });
-      var len = rawD[0].match((/\[/g) || []).length - 1; 
+      if(rawD.length >= 1){
+        len = rawD[0].match((/\[/g) || []).length - 1; 
 
-      var temp = rawD[0].replace(/['"]+/g, '');
-      var tempParsed = temp.split(']');
-
-      for(var  i = 0; i < len; i++){
-        var d = tempParsed[i].split('[');
-        if(i == 0){
-          Data.push(d[2]);
+        var temp = rawD[0].replace(/['"]+/g, '');
+        var tempParsed = temp.split(']');
+        console.log(len);
+        for(var  i = 0; i < len; i++){
+          var d = tempParsed[i].split('[');
+          console.log(d);
+          if(i == 0){
+            Data.push(d[2]);
+          }
+          else{
+            Data.push(d[1]);
+          }
         }
-        else{
-          Data.push(d[1]);
-        }
+        console.log(Data);
       }
-      console.log(Data);
-      if(Data.length >= 1){
-        var tbl = document.getElementById("blockList");
-        var output = "";
-        for(i = 0; i < len; i++){
-          var split = Data[i].split(',');
-          console.log(split);
-          var url = split[1].replace(/['"]+/g, '');
-          var ubDateRaw = split[3].split(']');
-          var ubDate = ubDateRaw[0].replace(/['"]+/g, '');
+    });
+    */
+  }
+  this.grabList = function(){
+    Data = getBG.Data;
+    console.log(Data + " len: " + Data.length);
+    var output = "";
+    var tbl = document.getElementById("blockList");
+    if(Data.length > 0){
+        for(i = 0; i < Data.length; i++){
+          var url = Data[i][1];
+          var ubDate = Data[i][3];
           if(ubDate != "N/A"){
             output += "<tr>";
             output += "<td id='site-" + i + "'" + ">" + url + "</td>";
@@ -242,13 +257,11 @@ var crd = new function(){
             output += "</tr>";
           }
         }
-        return tbl.innerHTML = output;
-
       }
-    });
+    return tbl.innerHTML = output;
   }
 }
-
+crd.updateList();
 
 
 $('#mainForm').submit(function(e){
@@ -290,7 +303,6 @@ function sendSiteInfo(num, url, res, unt, time){
 //listens to the block button, and blocks the website entered into the input field once it's pressed
 $("#blockNow").click(function(){
   crd.addSite();
-  return false;
   /*
   $('tr', 'th').css('padding-right', '20px');
   websiteURL = url.value;
