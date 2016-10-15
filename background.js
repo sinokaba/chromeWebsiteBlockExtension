@@ -175,8 +175,8 @@ function loadOldData(){
 		var rawD = Object.keys(result).map(function (key){ 
         	return result[key]; 
 	    });
-	    console.log(rawD);
 	    if(rawD != ""){
+	    	console.log(rawD);
 		    var len = rawD[0].match((/\[/g) || []).length - 1; 
 
 			var temp = rawD[0].replace(/['"]+/g, '');
@@ -200,7 +200,7 @@ console.log(Data);
 
 //test
 function addSite(sInfo){
-console.log(Data);
+	console.log(Data);
 	Data.push(sInfo);
 	console.log(sInfo);
 	storage.set({"data": JSON.stringify(Data)}, function(){
@@ -208,6 +208,7 @@ console.log(Data);
 			alert("An error occurred: " + chrome.extension.lastError.message);
 		}
     });
+	updateFilters();
 }
 
 function removeSite(index){
@@ -218,6 +219,7 @@ function removeSite(index){
 		}
     });
     console.log(Data);
+    updateFilters();
 }
 
 
@@ -235,21 +237,26 @@ function removeFromList(siteURL){
 }
 
 
-function enBlock(){
+function updateFilters(){
+	var siteUrls = [];
 	for(var i = 0; i < Data.length; i++){
-		updateFilters(Data[i][1]);
+		siteUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
 	}
+	console.log(siteUrls);
+	enBlocking(siteUrls);
 }
 function blockRequest(details) {
   return {cancel: true};
 }
 
-function updateFilters(site) {
+function enBlocking(urls) {
 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest)){
+		console.log(urls);
     	chrome.webRequest.onBeforeRequest.removeListener(blockRequest)
 	};
+	console.log(urls);
 	chrome.webRequest.onBeforeRequest.addListener(blockRequest,
-	{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},['blocking']);
+	{urls: urls},['blocking']);
 }
 
 function enableBlocking(site, x, scope){
