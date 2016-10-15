@@ -199,17 +199,26 @@ loadOldData();
 console.log(Data);
 
 //test
-function testStoring(sInfo){
-	console.log(Data);	
+function addSite(sInfo){
+console.log(Data);
 	Data.push(sInfo);
 	console.log(sInfo);
 	storage.set({"data": JSON.stringify(Data)}, function(){
-	if(chrome.extension.lastError) {
-		alert("An error occurred: " + chrome.extension.lastError.message);
-	}
+		if(chrome.extension.lastError) {
+			alert("An error occurred: " + chrome.extension.lastError.message);
+		}
     });
 }
 
+function removeSite(index){
+	Data.splice(index, 1);
+	storage.set({"data": JSON.stringify(Data)}, function(){
+		if(chrome.extension.lastError) {
+			alert("An error occurred: " + chrome.extension.lastError.message);
+		}
+    });
+    console.log(Data);
+}
 
 
 function removeFromList(siteURL){
@@ -225,6 +234,23 @@ function removeFromList(siteURL){
 	})
 }
 
+
+function enBlock(){
+	for(var i = 0; i < Data.length; i++){
+		updateFilters(Data[i][1]);
+	}
+}
+function blockRequest(details) {
+  return {cancel: true};
+}
+
+function updateFilters(site) {
+	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest)){
+    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest)
+	};
+	chrome.webRequest.onBeforeRequest.addListener(blockRequest,
+	{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},['blocking']);
+}
 
 function enableBlocking(site, x, scope){
 	if(scope == "entireWebsite"){
@@ -307,6 +333,9 @@ function extensionDialogs(dialog, item){
 		else{
 			return false;
 		}
+	}
+	else if(dialog == "alreadyBlocked"){
+		alert("You have already blocked this website!");
 	}
 
 }

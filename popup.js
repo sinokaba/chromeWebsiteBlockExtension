@@ -142,68 +142,80 @@ $("#blockAll").click(function(){
 var crd = new function(){
   var Data = Array();
   this.addSite = function(){
+    var repeat = false;
     var websiteURL = url.value;
     var rsn = getReason.value;
     var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
     var siteInfo = [];
     if(ValidURL(websiteURL)){
-      websiteURL = trimURL(websiteURL);
-      //website blocked normally, user can unblock anytime
-      if(timeUnitSelected == "4"){
-        siteInfo = ["n", websiteURL, rsn, "N/A"];
-        $(".input-field").val('');
+      for(var j = 0; j < Data.length; j++){
+        if(websiteURL == Data[j][1]){
+          repeat = true;
+        }
       }
-      //website will be permablocked
-      else if(timeUnitSelected == "5"){
-        if(getBG.extensionDialogs("permablock", websiteURL)){
-          siteInfo = ["p", websiteURL, rsn, "INFN"];
+      if(!repeat){
+        websiteURL = trimURL(websiteURL);
+        //website blocked normally, user can unblock anytime
+        if(timeUnitSelected == "4"){
+          siteInfo = ["n", websiteURL, rsn, "N/A"];
           $(".input-field").val('');
+        }
+        //website will be permablocked
+        else if(timeUnitSelected == "5"){
+          if(getBG.extensionDialogs("permablock", websiteURL)){
+            siteInfo = ["p", websiteURL, rsn, "INFN"];
+            $(".input-field").val('');
+          }
+        }
+        else{
+          var timeAmount = time.value;
+          if(timeUnitSelected == "1"){
+            timeAmount *= 60000;
+          }
+          else if(timeUnitSelected == "2"){
+            timeAmount *= 3600000;
+          }
+          else if(timeUnitSelected == "3"){
+            timeAmount *= 86400000;
+          }
+          //calls isnum function to check whether the user inputted an integer value
+          if((isNum(timeAmount))){
+            var sd = Date.now(), ed = new Date(timeAmount + sd);
+            var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
+            var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
+            month = month < 10 ? "0" + month : month;
+            day = day < 10 ? "0" + day : day;
+            hr = hr < 10 ? "0" + hr : hr;
+            min = min < 10 ? "0" + min : min;
+            if(hr == 0){
+              hr = 12;
+            }
+            var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
+            getBG.makeCounter("inc", "tempCounter");
+            var siteId = getBG.makeCookie.getItem('tempCounter');
+            siteInfo = ["n", websiteURL, rsn, unblockDate];
+            $(".input-field").val('');
+          }
+          else{
+            getBG.extensionDialogs("invalidTime", timeAmount);
+          }
         }
       }
       else{
-        var timeAmount = time.value;
-        if(timeUnitSelected == "1"){
-          timeAmount *= 60000;
-        }
-        else if(timeUnitSelected == "2"){
-          timeAmount *= 3600000;
-        }
-        else if(timeUnitSelected == "3"){
-          timeAmount *= 86400000;
-        }
-        //calls isnum function to check whether the user inputted an integer value
-        if((isNum(timeAmount))){
-          var sd = Date.now(), ed = new Date(timeAmount + sd);
-          var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
-          var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
-          month = month < 10 ? "0" + month : month;
-          day = day < 10 ? "0" + day : day;
-          hr = hr < 10 ? "0" + hr : hr;
-          min = min < 10 ? "0" + min : min;
-          if(hr == 0){
-            hr = 12;
-          }
-          var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-          getBG.makeCounter("inc", "tempCounter");
-          var siteId = getBG.makeCookie.getItem('tempCounter');
-          siteInfo = ["n", websiteURL, rsn, unblockDate];
-          $(".input-field").val('');
-        }
-        else{
-          getBG.extensionDialogs("invalidTime", timeAmount);
-        }
+        getBG.extensionDialogs("alreadyBlocked", websiteURL);
       }
     }
     else{
       getBG.extensionDialogs("invalidURL", websiteURL)
     }
-    getBG.testStoring(siteInfo);
+    console.log(siteInfo.length);
+    if(siteInfo.length > 0){
+      getBG.addSite(siteInfo);
+    }
   }
   this.del = function(id){
     var index = id;
-    console.log(index);
-    Data.splice(index, 1);
-    console.log(Data);
+    getBG.removeSite(index);
     this.grabList();
   }
   this.updateList = function(){
@@ -261,7 +273,6 @@ var crd = new function(){
     return tbl.innerHTML = output;
   }
 }
-crd.updateList();
 
 
 $('#mainForm').submit(function(e){
