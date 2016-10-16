@@ -1,4 +1,4 @@
-var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum, Data = Array();
+var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum, Data = Array(), tbCount = 10;
 
 var permanentlyBlock = function(details){
 	console.log(details.timeStamp);
@@ -7,40 +7,38 @@ var permanentlyBlock = function(details){
 	});	
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
-var callback = [];
-for(var i = 0; i < 8; i++){
-	callback[i] = function(details){
+var tBlockRequest = [];
+for(var i = 0; i < tbCount; i++){
+	tBlockRequest[i] = function(details){
 		console.log(details.url);
 		return {cancel: true};
 	}
 }
-console.log(callback[0]);
+var blockRequest = [];
+for(var i = 0; i < 3; i++){
+	blockRequest[i] = function(details){
+		return {cancel: true};
+	}
+}
+
+function nBlockRequest(details) {
+	  return {cancel: true};
+}
+function nBlockRequest(details) {
+	  return {cancel: true};
+}
+
 var blockAllCallback = function(details){
 	console.log(details.timeStamp);
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
 
-function keepBlocked(){
-	storage.get(null, function(items){
-		var allkeys = Object.keys(items);
-		var len = allkeys.length;
-		console.log(len);
-		console.log(allkeys);
-		if(len > 0){
-			for(i = 0; i < len; i++){
-				enableBlocking(allkeys[i], items[allkeys[i]], "entireWebsite");
-			}
-		}
-	})
-
-
-	for(i = 0; i <= 3; i++){
-	    permablock(makeCookie.getItem(i.toString()));
-	}
-}
 
 
 //fix this later keepBlocked();
+
+
+
 
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
@@ -111,71 +109,12 @@ function makeCounter(action, counterName){
     }  
 }
 
-
-function getMessage(){
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-		if(request.fn == "enableBlocking"){
-			blockedNum = request.n;
-			console.log("blocked number: " + blockedNum);
-			url = request.websiteURL;
-			if(request.unit == "1"){
-				enableBlocking(url, blockedNum, "entireWebsite");
-				startTimer(request.t * 60000, blockedNum);
-			}
-			else if(request.unit == "2"){
-				enableBlocking(url, blockedNum, "entireWebsite");
-				startTimer(request.t * 3600000, blockedNum);
-			}
-			else if(request.unit == "3"){
-				enableBlocking(url, blockedNum, "entireWebsite");
-				startTimer(request.t * 86400000, blockedNum);
-			}
-			else{
-				enableBlocking(url, blockedNum, "entireWebsite");
-				startTimer("na", blockedNum);
-			}
-		}
-		else if(request.fn == "disableBlocking"){
-			makeCounter("dec", "tempCounter");
-			console.log(makeCookie.getItem('tempCounter'));
-			removeFromList(request.siteURL);
-			disableBlocking(request.siteID);
-		}
-		else if(request.fn == "getBlockedInfo"){
-			getBlockedInfo(request, sender, sendResponse);
-		}
-		else if(request.fn == "clearStorage"){
-			storage.clear(function(){
-				var err = chrome.runtime.lastError;
-				if(err){
-					console.log(err);
-				}	
-			})
-			storage.get(null, function(items){
-				console.log(items);
-			})
-		}
-	})
-}
-
-getMessage();
-
-function setKeys(url, siteID){
-    obj[url] = siteID;
-    storage.set(obj, function(){
-    	if(chrome.extension.lastError) {
-          alert("An error occurred: " + chrome.extension.lastError.message);
-       	}
-    });
-}
-
-
 function loadOldData(){
 	storage.get("data", function(result){
 		var rawD = Object.keys(result).map(function (key){ 
         	return result[key]; 
 	    });
-	    if(rawD != ""){
+	    if(rawD.length > 0){
 	    	console.log(rawD);
 		    var len = rawD[0].match((/\[/g) || []).length - 1; 
 
@@ -191,6 +130,8 @@ function loadOldData(){
 			        Data.push('[' + d[1] + ']');
 			    }
 		    }
+		    console.log(Data);
+		    updateFilters();
 		}
 	});
 }
@@ -202,16 +143,20 @@ console.log(Data);
 function addSite(sInfo){
 	console.log(Data);
 	Data.push(sInfo);
-	console.log(sInfo);
 	storage.set({"data": JSON.stringify(Data)}, function(){
 		if(chrome.extension.lastError) {
 			alert("An error occurred: " + chrome.extension.lastError.message);
 		}
     });
-	updateFilters();
+    if(sInfo[3] == "N/A"){
+		updateFilters("n");
+	}
+	else{
+		updateFilters("t");
+	}
 }
 
-function removeSite(index){
+function removeSite(index, type){
 	Data.splice(index, 1);
 	storage.set({"data": JSON.stringify(Data)}, function(){
 		if(chrome.extension.lastError) {
@@ -219,72 +164,119 @@ function removeSite(index){
 		}
     });
     console.log(Data);
-    updateFilters();
+    updateFilters(type);
 }
 
-
-function removeFromList(siteURL){
-	storage.get(obj, function(items){
-		console.log(obj);
-		delete obj[siteURL];
-		console.log(obj);
-		storage.remove(siteURL, function(){
-		});
-		storage.set(obj, function(){
-			console.log(siteURL + " has been removed.");
-		})
-	})
-}
-
-
-function updateFilters(){
-	var siteUrls = [];
+function updateFilters(type){
+	var nUrls = [];
+	var tUrls = [];
+	var tDates = [];
 	for(var i = 0; i < Data.length; i++){
-		siteUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
+		if(Data[i][3] == "N/A"){
+			nUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
+		}
+		else{
+			tUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
+			tDates.push(Data[i][4]);
+		}	
 	}
-	console.log(siteUrls);
-	enBlocking(siteUrls);
-}
-function blockRequest(details) {
-  return {cancel: true};
+	if(type == "n"){
+		if(nUrls.length > 0){
+			nBlocking(nUrls);
+		}
+		else{
+			console.log("hmmmm");
+	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
+		}
+	}
+	else if(type == "t"){
+		if(tUrls.length > 0){
+			tBlocking(tUrls, tDates, "comp");
+		}
+		else{
+			chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);		
+		}
+	}
+	else{
+		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
+		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
+	}
 }
 
-function enBlocking(urls) {
-	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest)){
+function nBlocking(urls) {
+	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[0])){
 		console.log(urls);
-    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest)
+    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
 	};
 	console.log(urls);
-	chrome.webRequest.onBeforeRequest.addListener(blockRequest,
+	chrome.webRequest.onBeforeRequest.addListener(blockRequest[0],
 	{urls: urls},['blocking']);
 }
 
-function enableBlocking(site, x, scope){
+function tBlocking(urls, tDates, scope){
+	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[1])){
+		console.log(urls);
+    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
+	};
+	if(scope == "comp"){
+		chrome.webRequest.onBeforeRequest.addListener(blockRequest[1],
+		{urls: urls},
+		["blocking"]);
+	}else{
+		chrome.webRequest.onBeforeRequest.addListener(blockRequest[1],
+		{urls: urls},
+		["blocking"]);			
+	}
+	var counter = 0;
+	var timer = setInterval(function(){
+		var curTime = Date.now();
+		for(var i = 0; i < tDates.length; i++){
+			console.log(Math.floor((tDates[i] - curTime)/1000));
+			if(curTime >= tDates[i]){
+				counter++;
+		    	for(var k = 0; k < Data.length; k++){
+		    		if(Data[k][4] == tDates[i]){
+		    			alert(Data[k][1] + " has been unblocked!");
+			   			removeSite(k, "t");
+			   		}
+			   	}
+			   	console.log(counter + " " + tDates.length) ;
+				if(counter == tDates.length){
+					console.log("yeaa i clear it mang");
+					clearInterval(timer);
+				}
+			}
+		}
+	}, 1000);
+	
+	/*
 	if(scope == "entireWebsite"){
-		chrome.webRequest.onBeforeRequest.addListener(callback[x],
+		chrome.webRequest.onBeforeRequest.addListener(tBlockRequest[x],
 		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
 		["blocking"]);
 	}else{
-		chrome.webRequest.onBeforeRequest.addListener(callback[x],
+		chrome.webRequest.onBeforeRequest.addListener(tBlockRequest[x],
 		{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
 		["blocking"]);			
 	}
-	setKeys(site, x);
-}
+	*/
 
-function disableBlocking(z){
-	chrome.webRequest.onBeforeRequest.removeListener(callback[z]);
 }
 
 function unblockAll(){
-	for(var i = 0; i < 8; i++){
-		chrome.webRequest.onBeforeRequest.removeListener(callback[i]);
-	}
-	chrome.webRequest.onBeforeRequest.removeListener(blockAllCallback);
-
+	if(chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3])){
+		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3]);	
+	};
 	//remove before publishing
 	chrome.webRequest.onBeforeRequest.removeListener(permanentlyBlock);
-
+	Data.length = 0;
+	updateFilters();
+	storage.clear(function(){
+		var err = chrome.runtime.lastError;
+		if(err){
+			console.log(err);
+		}	
+	})
 }
 
 function permablock(site){
@@ -294,7 +286,7 @@ function permablock(site){
 }
 
 function blockAllWebsites(){
-	chrome.webRequest.onBeforeRequest.addListener(blockAllCallback, 
+	chrome.webRequest.onBeforeRequest.addListener(blockRequest[3], 
 	{urls: ["http://*/*", "https://*/*"]},
 	["blocking"]);
 }
@@ -347,64 +339,6 @@ function extensionDialogs(dialog, item){
 
 }
 
-function startTimer(duration, siteID){
-	console.log("startimer i value: " + siteID);
-	if(duration == "na"){
-    	makeCookie.setItem("tempCounter" + siteID, "N/A", Infinity);
-	}
-	else{
-		var sd = Date.now(), ed = new Date(duration + sd);
-	    var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
-		var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
-	    month = month < 10 ? "0" + month : month;
-	    day = day < 10 ? "0" + day : day;
-	    hr = hr < 10 ? "0" + hr : hr;
-	    min = min < 10 ? "0" + min : min;
-	    if(hr == 0){
-	    	hr = 12;
-	    }
-	    var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-	    console.log(unblockDate);
-	    makeCookie.setItem("tempCounter" + siteID, unblockDate, Infinity);
-	    var countdownInterval = [];
-	    for(var t = 0; t < 8; t++){
-	    	countdownInterval[i] = setInterval(function(){
-	        checkTime(countdownInterval + i, siteID, duration + sd);
-	  		}, 1000);
-	    }
-	  	countdownInterval[siteID];
-	}
-}
-
-function checkTime(intervalName, siteID, end){
-	start = Date.now();
-    if(start >= end){
-    	storage.get(null, function(items){
-    		var allkeys = Object.keys(items);
-      		var len = allkeys.length;
-      		for(i = 0; i < len; i++){
-      			if(items[allkeys[i]] == siteID){
-					makeCounter("dec", "tempCounter");
-					removeFromList(allkeys[i]);
-					disableBlocking(siteID);
-      			}
-      		}
-    	})
-		//chrome.runtime.sendMessage({siteId: siteID, fn: 'unblock'});
-	    stopCountdown(intervalName);
-    }	
-}
-function stopCountdown(interval){
-	if(interval == "all"){
-		for(i = 0; i < blockedNum; i++){
-			clearInterval("countdownInterval" + i);
-		}
-	}
-	else{
-		clearInterval(interval);
-	}
-}
-
 chrome.contextMenus.create({
   title: "Block this website", 
   contexts:["page"], 
@@ -438,12 +372,12 @@ function rightClickBlock(info, tab) {
   if(userConfirm){
     var userAction = confirm("Hit 'yes' to block the entire website, or 'cancel' to only block this webpage.");
   	if(userAction){
-  		enableBlocking(newURL[0], n, "entireWebsite");
+  		enableBlocking(newURL[0], n, "comp");
 		startTimer("na", n);
   	}
   	else{
   		console.log(formattedURL);
-		enableBlocking(formattedURL, n, "onlyThis");
+		enableBlocking(formattedURL, n, "partial");
 		startTimer("na", n);
   	}
   }
