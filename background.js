@@ -7,34 +7,13 @@ var permanentlyBlock = function(details){
 	});	
 	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
 }
-var tBlockRequest = [];
-for(var i = 0; i < tbCount; i++){
-	tBlockRequest[i] = function(details){
-		console.log(details.url);
-		return {cancel: true};
-	}
-}
+
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
 		return {cancel: true};
 	}
 }
-
-function nBlockRequest(details) {
-	  return {cancel: true};
-}
-function nBlockRequest(details) {
-	  return {cancel: true};
-}
-
-var blockAllCallback = function(details){
-	console.log(details.timeStamp);
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-
-
-
 //fix this later keepBlocked();
 
 
