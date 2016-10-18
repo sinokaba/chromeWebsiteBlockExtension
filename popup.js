@@ -209,17 +209,14 @@ var crd = new function(){
         for(i = 0; i < Data.length; i++){
           var url = Data[i][1];
           var ubDate = Data[i][3];
+          output += "<tr>";
+          output += "<td id='site-" + i + "'" + ">" + url + "</td>";
+          output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
           if(ubDate != "N/A"){
-            output += "<tr>";
-            output += "<td id='site-" + i + "'" + ">" + url + "</td>";
-            output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
-            output += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button dis' disabled>Remove</button></td>";
+            output += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
             output += "</tr>";
           }
           else{
-            output += "<tr>";
-            output += "<td id='site-" + i + "'" + ">" + url; + "</td>";
-            output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
             output += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
             output += "</tr>";
           }
