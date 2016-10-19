@@ -96,21 +96,30 @@ function loadOldData(){
 	    if(rawD.length > 0){
 	    	console.log(rawD);
 		    var len = rawD[0].match((/\[/g) || []).length - 1; 
-
+		    console.log(len);
 			var temp = rawD[0].replace(/['"]+/g, '');
 		    var tempParsed = temp.split(']');
-
+		    var info = [];
 	        for(var  i = 0; i < len; i++){
 				var d = tempParsed[i].split('[');
+				var oldData = d[1].split(',');
 			   	if(i == 0){
-			        Data.push('[' + d[2] + ']');
+			   		oldData = d[2].split(',');
 			    }
-			    else{
-			        Data.push('[' + d[1] + ']');
-			    }
+			    Data.push(oldData);
 		    }
 		    console.log(Data);
-		    updateFilters();
+		    for(var i = 0; i < Data.length; i++){
+		    	if(Data[i][3] == "N/A"){
+		    		updateFilters("n");
+		    	}
+		    	else if(Data[i][3] == "INFN"){
+		    		console.log("need to add this");
+		    	}
+		    	else{
+		    		updateFilters("t");
+		    	}
+		    }
 		}
 	});
 }
@@ -147,6 +156,7 @@ function removeSite(index, type){
 }
 
 function updateFilters(type){
+	console.log("you called me");
 	var nUrls = [];
 	var tUrls = [];
 	var tDates = [];
