@@ -194,6 +194,7 @@ var crd = new function(){
     if(siteInfo.length > 0){
       getBG.addSite(siteInfo);
     }
+    this.grabList();
   }
   this.del = function(id){
     var index = id;
@@ -203,26 +204,38 @@ var crd = new function(){
   this.grabList = function(){
     Data = getBG.Data;
     console.log(Data + " len: " + Data.length);
-    var output = "";
+    var tempOutput = "";
+    var permOutput = "";
     var tbl = document.getElementById("blockList");
+    var permList = document.getElementById("permablocked");
+    $("#store").addClass("hide");
+    $("#unblockAll").addClass("hide");
     if(Data.length > 0){
-        for(i = 0; i < Data.length; i++){
-          var url = Data[i][1];
-          var ubDate = Data[i][3];
-          output += "<tr>";
-          output += "<td id='site-" + i + "'" + ">" + url + "</td>";
-          output += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
+      $("#store").removeClass("hide");
+      $("#unblockAll").removeClass("hide");      
+      for(i = 0; i < Data.length; i++){
+        var url = Data[i][1];
+        var ubDate = Data[i][3];
+        console.log(ubDate);
+        if(ubDate != "INFN"){
+          tempOutput += "<tr>";
+          tempOutput += "<td id='site-" + i + "'" + ">" + url + "</td>";
+          tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
           if(ubDate != "N/A"){
-            output += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
-            output += "</tr>";
+            tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
+            tempOutput += "</tr>";
           }
           else{
-            output += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
-            output += "</tr>";
+            tempOutput += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
+            tempOutput += "</tr>";
           }
         }
+        else{
+          permOutput += "<li>" + url + "</li>";
+        }
       }
-    return tbl.innerHTML = output;
+    }
+    return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
   }
 }
 

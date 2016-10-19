@@ -14,10 +14,6 @@ for(var i = 0; i < 3; i++){
 		return {cancel: true};
 	}
 }
-//fix this later keepBlocked();
-
-
-
 
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
@@ -139,6 +135,9 @@ function addSite(sInfo){
     if(sInfo[3] == "N/A"){
 		updateFilters("n");
 	}
+	else if(sInfo[3] == "INFN"){
+		updateFilters("i");
+	}
 	else{
 		updateFilters("t");
 	}
@@ -160,9 +159,13 @@ function updateFilters(type){
 	var nUrls = [];
 	var tUrls = [];
 	var tDates = [];
+	var iUrls = [];
 	for(var i = 0; i < Data.length; i++){
 		if(Data[i][3] == "N/A"){
 			nUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
+		}
+		else if(Data[i][3] == "INFN"){
+			iUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");		
 		}
 		else{
 			tUrls.push("*://" + Data[i][1]+ "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
@@ -171,19 +174,26 @@ function updateFilters(type){
 	}
 	if(type == "n"){
 		if(nUrls.length > 0){
-			nBlocking(nUrls);
+			normBlocking(nUrls);
 		}
 		else{
-			console.log("hmmmm");
 	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
 		}
 	}
 	else if(type == "t"){
 		if(tUrls.length > 0){
-			tBlocking(tUrls, tDates, "comp");
+			timeBlocking(tUrls, tDates, "comp");
 		}
 		else{
 			chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);		
+		}
+	}
+	else if(type == "i"){
+		if(iUrls.length > 0){
+			infnBlocking(iUrls);
+		}
+		else{
+	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[2]);
 		}
 	}
 	else{
@@ -192,7 +202,7 @@ function updateFilters(type){
 	}
 }
 
-function nBlocking(urls) {
+function normBlocking(urls) {
 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[0])){
 		console.log(urls);
     	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
@@ -202,7 +212,7 @@ function nBlocking(urls) {
 	{urls: urls},['blocking']);
 }
 
-function tBlocking(urls, tDates, scope){
+function timeBlocking(urls, tDates, scope){
 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[1])){
 		console.log(urls);
     	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
@@ -237,19 +247,12 @@ function tBlocking(urls, tDates, scope){
 			}
 		}
 	}, 1000);
-	
-	/*
-	if(scope == "entireWebsite"){
-		chrome.webRequest.onBeforeRequest.addListener(tBlockRequest[x],
-		{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-		["blocking"]);
-	}else{
-		chrome.webRequest.onBeforeRequest.addListener(tBlockRequest[x],
-		{urls: ["*://" + site, "*://" + site + "/", "*://www." + site, "*://www." + site + "/"]},
-		["blocking"]);			
-	}
-	*/
+}
 
+function infnBlocking(urls){
+	chrome.webRequest.onBeforeRequest.addListener(blockRequest[2],
+	{urls: urls},
+	["blocking"]);
 }
 
 function unblockAll(){
@@ -266,12 +269,6 @@ function unblockAll(){
 			console.log(err);
 		}	
 	})
-}
-
-function permablock(site){
-	chrome.webRequest.onBeforeRequest.addListener(permanentlyBlock,
-	{urls: ["*://" + site + "/*", "*://www." + site + "/*"]},
-	["blocking"]);
 }
 
 function blockAllWebsites(){

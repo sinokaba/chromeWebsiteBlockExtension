@@ -38,11 +38,6 @@
         -webkit-appearance: menulist-button;
         height: 30px;
       }
-      #blockAll{
-        background-color: #EA2E49;
-        border:1px solid #EA2E49;
-        text-shadow:0px 1px 0px #EA2E49;        
-      }
       .addBorder{
         border-right: 1px solid black;
       }
@@ -73,6 +68,11 @@
       }
       .hide{
         display: none;
+      }
+      .big{
+        background-color: #EA2E49;
+        border:1px solid #EA2E49;
+        text-shadow:0px 1px 0px #EA2E49;        
       }
       .tabs{ 
         border-bottom: 1px solid #DDD;
@@ -107,7 +107,20 @@
       .center{
         text-align: center;
       }
-
+      #permablocked li{
+        background-color: transparent !important;
+        display: block;
+        color: #EA2E49;
+        font-style: italic;
+        text-align: center;
+        text-decoration: none;
+        float: left;
+        padding-left: 10px;
+      }
+      #permablocked ul{
+        list-style-type: none;
+        overflow: hidden;
+      }
       /*table css*/
       .wrap table {
           width: 300px;
@@ -170,7 +183,7 @@
               </form>
             </div>
             <hr>
-            <div class="center"><input type="submit" class="button-style" id="blockAll" value="Block All"></div>
+            <div class="center"><input type="submit" class="big button-style" id="blockAll" value="Block All"></div>
 
             <hr>
         </div>
@@ -191,13 +204,15 @@
               </table>
               </div>
             </div>
-            <div class="center"><input type="submit" class="button-style" id="unblockAll" value="Unblock All"></div>
-
+            <div class="center">
+              <input type="submit" class="big button-style" id="unblockAll" value="Unblock All">
+              <input type="submit" class="button-style" id="store" value="Remember List">
+            </div>
             <hr>
             <h4>Permablocked sites:</h4>
-            <p id="perm0"></p>
-            <p id="perm1"></p>
-            <p id="perm2"></p>
+            <ul id="permablocked">
+              
+            </ul>
         </div>
         <div id="about" class="hide tabCon">
 
