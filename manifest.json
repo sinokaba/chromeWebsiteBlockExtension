@@ -6,22 +6,22 @@
   "version": "1.0",
   "author": "Sinokaba",
   "icons":{
-    "16": "icon16x16.png",
-    "48": "icon48x48.png",
-    "128": "icon128x128.png"
+    "16": "img/icon16x16.png",
+    "48": "img/icon48x48.png",
+    "128": "img/icon128x128.png"
   },
   "browser_action": {
     "default_popup": "popup.html",
     "default_title": "Let's Pokus"
   },
   "background":{
-    "scripts": ["jquery.js", "background.js"],
+    "scripts": ["js/jquery.js", "js/background.js"],
     "persistent": true
   },
   "content_scripts": [
     {
     "matches":["<all_urls>"],
-    "js": ["content.js"],
+    "js": ["js/content.js"],
     "run_at": "document_start",
     "all_frames": true
     }
