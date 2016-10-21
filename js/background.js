@@ -110,7 +110,7 @@ function loadOldData(){
 		    		updateFilters("n");
 		    	}
 		    	else if(Data[i][3] == "INFN"){
-		    		updateFilters()
+		    		updateFilters("i");
 		    	}
 		    	else{
 		    		updateFilters("t");
