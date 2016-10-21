@@ -1,15 +1,10 @@
 $(function() {
 //all the global vars i'm using
-var obj = {};
-var local = chrome.storage.local;
-var website;
 var getBG = chrome.extension.getBackgroundPage();
 var url = document.getElementById("websiteURL");
 var getReason = document.getElementById("comment");
 var timeUnit = document.getElementById("timeUnits");
 var time = document.getElementById("blockPeriod");
-var reason;
-var urlList;
 
 $(".tab-link").each(function(){
   $(this).click(function(e){
@@ -214,7 +209,7 @@ var crd = new function(){
         console.log(ubDate);
         if(ubDate != "INFN"){
           tempOutput += "<tr>";
-          tempOutput += "<td id='site-" + i + "'" + ">" + url + "</td>";
+          tempOutput += "<td class='url' id='site-" + i + "'" + ">" + url + "</td>";
           tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
           if(ubDate != "N/A"){
             tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
@@ -226,7 +221,7 @@ var crd = new function(){
           }
         }
         else{
-          permOutput += "<li>" + url + "</li>";
+          permOutput += "<li class='url'>" + url + "</li>";
         }
       }
     }

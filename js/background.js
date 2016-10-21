@@ -1,4 +1,4 @@
-var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum, Data = Array(), tbCount = 10;
+var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array();
 
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
@@ -119,8 +119,8 @@ function addSite(sInfo){
 	console.log(Data);
 	Data.push(sInfo);
 	storage.set({"data": JSON.stringify(Data)}, function(){
-		if(chrome.extension.lastError) {
-			alert("An error occurred: " + chrome.extension.lastError.message);
+		if(err) {
+			alert("An error occurred: " + err.message);
 		}
     });
       console.log(sInfo[3]);
@@ -139,8 +139,8 @@ function addSite(sInfo){
 function removeSite(index, type){
 	Data.splice(index, 1);
 	storage.set({"data": JSON.stringify(Data)}, function(){
-		if(chrome.extension.lastError) {
-			alert("An error occurred: " + chrome.extension.lastError.message);
+		if(err) {
+			alert("An error occurred: " + err.message);
 		}
     });
     console.log(Data);
