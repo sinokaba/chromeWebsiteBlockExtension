@@ -1,13 +1,5 @@
 var obj = {}, storage = chrome.storage.local, err = chrome.runtime.lastError, blockedNum, Data = Array(), tbCount = 10;
 
-var permanentlyBlock = function(details){
-	console.log(details.timeStamp);
-	chrome.tabs.executeScript({
-		code: 'document.body.style.backgroundColor="red"'
-	});	
-	return {redirectUrl: 'https://sinokaba.github.io/redirect/'};
-}
-
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
@@ -107,13 +99,13 @@ function loadOldData(){
 		    console.log(Data);
 		    for(var i = 0; i < Data.length; i++){
 		    	if(Data[i][3] == "N/A"){
-		    		updateFilters("n");
+		    		updateFilters("norm");
 		    	}
 		    	else if(Data[i][3] == "INFN"){
-		    		updateFilters("i");
+		    		updateFilters("infn");
 		    	}
 		    	else{
-		    		updateFilters("t");
+		    		updateFilters("time");
 		    	}
 		    }
 		}
@@ -123,7 +115,6 @@ function loadOldData(){
 loadOldData();
 console.log(Data);
 
-//test
 function addSite(sInfo){
 	console.log(Data);
 	Data.push(sInfo);
@@ -132,14 +123,16 @@ function addSite(sInfo){
 			alert("An error occurred: " + chrome.extension.lastError.message);
 		}
     });
+      console.log(sInfo[3]);
+
     if(sInfo[3] == "N/A"){
-		updateFilters("n");
+		updateFilters("norm");
 	}
 	else if(sInfo[3] == "INFN"){
-		updateFilters("i");
+		updateFilters("infn");
 	}
 	else{
-		updateFilters("t");
+		updateFilters("time");
 	}
 }
 
@@ -172,7 +165,7 @@ function updateFilters(type){
 			tDates.push(Data[i][4]);
 		}	
 	}
-	if(type == "n"){
+	if(type == "norm"){
 		if(nUrls.length > 0){
 			normBlocking(nUrls);
 		}
@@ -180,18 +173,21 @@ function updateFilters(type){
 	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
 		}
 	}
-	else if(type == "t"){
+	else if(type == "time"){
 		if(tUrls.length > 0){
-			timeBlocking(tUrls, tDates, "comp");
+			timeBlocking(tUrls, tDates);
 		}
 		else{
 			chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);		
 		}
 	}
-	else if(type == "i"){
+	else if(type == "infn"){
 		if(iUrls.length > 0){
 			infnBlocking(iUrls);
 		}
+		
+
+		//remove before publishing
 		else{
 	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[2]);
 		}
@@ -199,6 +195,10 @@ function updateFilters(type){
 	else{
 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
+
+		
+		//remove before publishing
+	    chrome.webRequest.onBeforeRequest.removeListener(blockRequest[2]);
 	}
 }
 
@@ -212,20 +212,14 @@ function normBlocking(urls) {
 	{urls: urls},['blocking']);
 }
 
-function timeBlocking(urls, tDates, scope){
+function timeBlocking(urls, tDates){
 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[1])){
 		console.log(urls);
     	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
 	};
-	if(scope == "comp"){
-		chrome.webRequest.onBeforeRequest.addListener(blockRequest[1],
-		{urls: urls},
-		["blocking"]);
-	}else{
-		chrome.webRequest.onBeforeRequest.addListener(blockRequest[1],
-		{urls: urls},
-		["blocking"]);			
-	}
+	chrome.webRequest.onBeforeRequest.addListener(blockRequest[1],
+	{urls: urls}, ["blocking"]);
+
 	var counter = 0;
 	var timer = setInterval(function(){
 		var curTime = Date.now();
@@ -236,7 +230,7 @@ function timeBlocking(urls, tDates, scope){
 		    	for(var k = 0; k < Data.length; k++){
 		    		if(Data[k][4] == tDates[i]){
 		    			alert(Data[k][1] + " has been unblocked!");
-			   			removeSite(k, "t");
+			   			removeSite(k, "time");
 			   		}
 			   	}
 			   	console.log(counter + " " + tDates.length) ;
@@ -256,11 +250,10 @@ function infnBlocking(urls){
 }
 
 function unblockAll(){
-	if(chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3])){
+	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[3])){
 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3]);	
 	};
-	//remove before publishing
-	chrome.webRequest.onBeforeRequest.removeListener(permanentlyBlock);
+
 	Data.length = 0;
 	updateFilters();
 	storage.clear(function(){
@@ -334,38 +327,29 @@ chrome.contextMenus.create({
 //gives user the ability to block a site when they right click a webpage
 function rightClickBlock(info, tab) {
   console.log("This webpage has been blocked.");
-  var ogURL = info.pageUrl;
-  var formattedURL;
-  makeCounter("inc", "tempCounter");
-  var n = makeCookie.getItem("tempCounter");
-  if(ogURL.substring(ogURL.length - 1, ogURL.length) == "/"){
-  	temp = ogURL.substring(0, ogURL.length - 1);
+  var siteURL = info.pageUrl;
+  if(siteURL.substring(siteURL.length - 1, siteURL.length) == "/"){
+  	temp = siteURL.substring(0, siteURL.length - 1);
   }
   else{
-  	temp = ogURL;
+  	temp = siteURL;
   }
+
   if(temp.indexOf("http://") != -1){
-  	formattedURL = temp.substring(7, temp.length);
+  	siteURL = temp.substring(7, temp.length);
   }
   else if(temp.indexOf("https://") != -1){
-  	formattedURL = temp.substring(8, temp.length);
+  	siteURL = temp.substring(8, temp.length);
   }
   else{
-  	formattedURL = temp;
+  	siteURL = temp;
   }
-  var newURL = formattedURL.split("/");
+  console.log(siteURL);
+  var newURL = siteURL.split("/");
+  console.log(newURL[0]);
   var userConfirm = confirm("Are you sure you want to block this website?");
   if(userConfirm){
-    var userAction = confirm("Hit 'yes' to block the entire website, or 'cancel' to only block this webpage.");
-  	if(userAction){
-  		enableBlocking(newURL[0], n, "comp");
-		startTimer("na", n);
-  	}
-  	else{
-  		console.log(formattedURL);
-		enableBlocking(formattedURL, n, "partial");
-		startTimer("na", n);
-  	}
+  	addSite(["n", newURL[0], "", "N/A"]);
   }
 
 };

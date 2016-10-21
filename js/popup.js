@@ -47,9 +47,6 @@ $("#timeUnits").change(function(){
 
 $("#list-link").click(function(){
   crd.grabList();
-  if(getBG.makeCookie.getItem('permCounter') != null){
-    getPermItems(getBG.makeCookie.getItem('permCounter'));
-  }
 });
 
 $("#home-link").click(function(){
@@ -173,8 +170,6 @@ var crd = new function(){
               hr = 12;
             }
             var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-            getBG.makeCounter("inc", "tempCounter");
-            var siteId = getBG.makeCookie.getItem('tempCounter');
             siteInfo = ["n", websiteURL, rsn, unblockDate, timeAmount + sd];
             $(".input-field").val('');
           }
@@ -198,7 +193,7 @@ var crd = new function(){
   }
   this.del = function(id){
     var index = id;
-    getBG.removeSite(index, "n");
+    getBG.removeSite(index, "norm");
     this.grabList();
   }
   this.grabList = function(){
@@ -254,34 +249,15 @@ $("#unblockAll").click(function(){
   if(getBG.extensionDialogs("unblockAll", "")){
     getBG.unblockAll();
 
-    if(getBG.makeCookie.getItem("Counter") != null){
-      getBG.makeCookie.removeItem("Counter");
-    }
     //remove after testing
     clearCookies();
     crd.grabList();
   }
 });
 
-function getPermItems(n){
-  for(i = 0; i <= n; i++){
-    console.log(getBG.makeCookie.getItem(i.toString()));
-    $("#perm" + i).text(getBG.makeCookie.getItem(i.toString()));
-  }
-};
 
-
-//remove after finished with testing
 function clearCookies(){
-  if(getBG.makeCookie.getItem("permCounter") != null){
-    getBG.makeCookie.removeItem("permCounter");
-  }
-  var items = document.cookie.split(';');
-  for(i = 0; i < getBG.makeCookie.keys().length; i++){
-    var key2 = items[i].split('=');
-    console.log("length: " + getBG.makeCookie.keys().length + "items: " + key2[0]);
-    getBG.makeCookie.removeItem(key2[0]);
-  }
+  console.log(document.cookie);
 }
 
 });
