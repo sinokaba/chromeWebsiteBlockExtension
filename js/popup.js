@@ -304,7 +304,6 @@ $("#unblockAll").click(function(){
   }
 });
 
-
 function clearCookies(){
   if(getBG.makeCookie.getItem("savedList") != null){
     getBG.makeCookie.removeItem("savedList");
