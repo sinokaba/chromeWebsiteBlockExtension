@@ -1,10 +1,7 @@
 $(function() {
 //all the global vars i'm using
-var getBG = chrome.extension.getBackgroundPage();
-var url = document.getElementById("websiteURL");
-var getReason = document.getElementById("comment");
-var timeUnit = document.getElementById("timeUnits");
-var time = document.getElementById("blockPeriod");
+var getBG = chrome.extension.getBackgroundPage(), url = document.getElementById("websiteURL"), getReason = document.getElementById("comment");
+var timeUnit = document.getElementById("timeUnits"), time = document.getElementById("blockPeriod"), Data = Array(), urlListStr;
 
 $(".tab-link").each(function(){
   $(this).click(function(e){
@@ -112,27 +109,84 @@ $("#blockAll").click(function(){
   }
 });
 
+$("#save").click(function(){
+  var urlList = [];
+  for(var i = 0; i < Data.length; i++){
+    urlList.push(Data[i][1]);
+  }
+  urlListStr = JSON.stringify(urlList); 
+  console.log(getBG.makeCookie.getItem("savedList"));
+  if(getBG.makeCookie.getItem("savedList") == null){
+    getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+  }
+  else{
+    if(getBG.extensionDialogs("overrideSave", urlListStr)){
+      getBG.makeCookie.setItem("savedList", urlListStr, Infinity);      
+    }
+  }
+  console.log(getBG.makeCookie.getItem("savedList"));
+})
+
+$("#loadList").click(function(){
+
+  if($(this).val() == "Load List"){
+    $(this).val("Unload List");
+    $("#loadedList").removeClass("hide");
+    $("#websiteURL").addClass("hide");
+    $("#websiteURL").prop("disabled", true);
+    if(getBG.makeCookie.getItem("savedList") != null){
+      var temp = JSON.parse(getBG.makeCookie.getItem("savedList"));
+      var info = [];
+      
+      /*
+      for(var i = 0; i < temp.length; i++){
+        if(!repeat(temp[i])){
+        
+          info = ["n", temp[i], "", "N/A"];
+          getBG.addSite(info);
+          
+        }
+      }
+      */
+      $("#loadedList").text(temp);
+    }
+  }
+  else{
+    $(this).val("Load List");
+    $("#loadedList").addClass("hide");
+    $("#websiteURL").removeClass("hide");
+    $("#websiteURL").prop("disabled", false);  
+    $("#loadedList").text("");
+  }
+})
+
+function repeat(url){
+  crd.grabList();
+  var re = false;
+  for(var j = 0; j < Data.length; j++){
+      console.log(url + " =? " + Data[j][1]);
+    if(url == Data[j][1]){
+      re = true;
+    }
+  }
+  console.log(re);
+  return re;
+}
 //reworked create/add/delete
 var crd = new function(){
-  var Data = Array();
-  this.addSite = function(){
-    var repeat = false;
+    this.addSite = function(){
     var websiteURL = url.value;
     var rsn = getReason.value;
     var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
     var siteInfo = [];
+    console.log(websiteURL);
     if(ValidURL(websiteURL)){
-      for(var j = 0; j < Data.length; j++){
-        if(websiteURL == Data[j][1]){
-          repeat = true;
-        }
-      }
-      if(!repeat){
+      if(!repeat(websiteURL)){
         websiteURL = trimURL(websiteURL);
         //website blocked normally, user can unblock anytime
         if(timeUnitSelected == "4"){
           siteInfo = ["n", websiteURL, rsn, "N/A"];
-          $(".input-field").val('');
+          $(".input-field").val('')
         }
         //website will be permablocked
         else if(timeUnitSelected == "5"){
@@ -252,7 +306,9 @@ $("#unblockAll").click(function(){
 
 
 function clearCookies(){
-  console.log(document.cookie);
+  if(getBG.makeCookie.getItem("savedList") != null){
+    getBG.makeCookie.removeItem("savedList");
+  }
 }
 
 });

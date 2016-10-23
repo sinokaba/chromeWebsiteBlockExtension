@@ -45,6 +45,10 @@
         list-style-type: none;
         overflow: hidden;
       }
+      #loadedList{
+        width: 295px;
+        height: 50px;
+      }
       .title{
         color: #002F2F;
         font-size: 20;
@@ -88,7 +92,7 @@
         text-shadow:0px 1px 0px #EA2E49;        
       }
       .url{
-        font-size: 13px;
+        font-size: 14px;
         font-style: italic;
       }
       .tabs{ 
@@ -166,8 +170,9 @@
 
               <form id="mainForm">
                 <p class="title"><label>Pokus NOW</label></p>
-                <p>Website Address:</p>
+                <p id="urlInput">URL:</p>
                 <input name="blockWebsite" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
+                <textarea id="loadedList" class="hide"></textarea>
                 <p>Comments:</p>
                 <input name="comment" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
                 <p>Block Period:</p>
@@ -182,7 +187,11 @@
                 </select>
               </div>
                 <br />
-                <div class="center"><input type="submit" class="button-style" id="blockNow" value="Block"></div>
+                <div class="center">
+                  <input type="submit" class="button-style" id="blockNow" value="Block">
+                  <input type="submit" class="button-style" id="loadList" value="Load List">
+                </div>
+              
               </form>
             </div>
             <hr>
@@ -209,7 +218,7 @@
             </div>
             <div class="center">
               <input type="submit" class="big button-style" id="unblockAll" value="Unblock All">
-              <input type="submit" class="button-style" id="store" value="Remember List">
+              <input type="submit" class="button-style" id="save" value="Save List">
             </div>
             <hr>
             <h4>Permablocked sites:</h4>
