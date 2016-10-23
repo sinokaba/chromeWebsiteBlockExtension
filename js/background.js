@@ -48,34 +48,6 @@ var makeCookie = {
   }
 };
 
-
-function makeCounter(action, counterName){
-  //cookie that stores the number of sites you have added to permaban list
-  if(makeCookie.getItem(counterName) == null){            
-    // If the cookie doesn't exist, save the cookie with the value of 1
-
-    //change null to infinity after testing so cookie does not expire. Ask user to enter a password in order to remove permabanned sites 
-    makeCookie.setItem(counterName, '0', Infinity);
-  }else{
-    // If the cookie exists, take the value
-    var cookieValue = makeCookie.getItem(counterName);
-    // Convert the value to an int to make sure
-    cookieValue = parseInt(cookieValue);
-    // Add 1 to the cookie_value
-    if(action == "inc"){
-      cookieValue++;
-    }
-    else if(action == "dec"){
-      cookieValue--;
-    }
-    // Or make a pretty one liner
-    // cookie_value = parseInt(jQuery.cookie('shownDialog')) + 1;
-
-    // Save the incremented value to the cookie
-    makeCookie.setItem(counterName, cookieValue, Infinity);
-    }  
-}
-
 function loadOldData(){
 	storage.get("data", function(result){
 		var rawD = Object.keys(result).map(function (key){ 
@@ -271,49 +243,33 @@ function blockAllWebsites(){
 }
 
 
-function extensionDialogs(dialog, item){
-	if(dialog == "blockAll"){
-		if(confirm("You are about to block all websites. Are you sure you want to do this?")){
-			return true;
-		}
-		else{
-			return false;
-		}
+function extensionDialogs(cmd, item){
+	if(cmd == "blockAll"){
+		return confirm("You are about to block all websites. Are you sure you want to do this?");
 	}
-	else if(dialog == "permablock"){
-		if(confirm("Are you sure you want to permablock '" + item + "'?")){
-			return true;
-		}else{
-			return false;
-		}
+	else if(cmd == "permablock"){
+		return confirm("Are you sure you want to permablock '" + item + "'?");
 	}
-	else if(dialog == "invalidURL"){
+	else if(cmd == "invalidURL"){
 		alert("Please enter a valid URL.");
 	}
-	else if(dialog == "reachedLimit"){
+	else if(cmd == "reachedLimit"){
 		alert("You have blocked the maximum number of websites.");
 	}
-	else if(dialog == "unblockAll"){
-		if(confirm("Are you sure you want to unblock all the websites on your blocklist?")){
-			return true;
-		}
-		else{
-			return false;
-		}
+	else if(cmd == "unblockAll"){
+		return confirm("Are you sure you want to unblock all the websites on your blocklist?");
 	}
-	else if(dialog == "invalidTime"){
+	else if(cmd == "invalidTime"){
 		alert("You did not enter a valid value for the amount of time the website should be blocked for.");
 	}
-	else if(dialog == "unblockConfirm"){
-		if(confirm("Are you sure you want to unblock " + item + "?")){
-			return true;
-		}
-		else{
-			return false;
-		}
+	else if(cmd == "unblockConfirm"){
+		return confirm("Are you sure you want to unblock " + item + "?");
 	}
-	else if(dialog == "alreadyBlocked"){
+	else if(cmd == "alreadyBlocked"){
 		alert("You have already blocked this website!");
+	}
+	else if(cmd == "overrideSave"){
+		return confirm("A saved list already exists, are you sure you want to override it?");
 	}
 
 }
