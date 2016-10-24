@@ -1,8 +1,8 @@
 $(function() {
 //all the global vars i'm using
-var getBG = chrome.extension.getBackgroundPage(), url = document.getElementById("websiteURL"), getReason = document.getElementById("comment");
-var timeUnit = document.getElementById("timeUnits"), time = document.getElementById("blockPeriod"), Data = Array(), urlListStr;
-
+var getBG = chrome.extension.getBackgroundPage(), url = document.getElementById("websiteURL");
+var timeUnit = document.getElementById("timeUnits"), time = document.getElementById("blockPeriod"), Data = Array();
+var urlListStr, siteInfo = [], getReason = document.getElementById("comment");
 $(".tab-link").each(function(){
   $(this).click(function(e){
     var temp = e.target.id.split('-');
@@ -42,7 +42,14 @@ $("#list-link").click(function(){
 });
 
 $("#home-link").click(function(){
-  //clears input field
+
+  $(this).val("Load List");
+  $("#loadedList").addClass("hide");
+  $("#websiteURL").removeClass("hide");
+  $("#websiteURL").prop("disabled", false);  
+  $("#loadedList").text("");
+
+//clears input field
   focusInField(url);
   $(".input-field").val('');
 });
@@ -65,7 +72,7 @@ function ValidURL(str) {
 };
 
 //trims url if it contains protocols, or www.
-function trimURL(url){
+function trim(url){
   var trimmedURL = "";
   if(url.indexOf("http://") != -1){
     trimmedURL = url.substring(7, url.length);
@@ -130,25 +137,17 @@ $("#save").click(function(){
 $("#loadList").click(function(){
 
   if($(this).val() == "Load List"){
-    $(this).val("Unload List");
-    $("#loadedList").removeClass("hide");
-    $("#websiteURL").addClass("hide");
-    $("#websiteURL").prop("disabled", true);
     if(getBG.makeCookie.getItem("savedList") != null){
+      $(this).val("Unload List");
+      $("#loadedList").removeClass("hide");
+      $("#websiteURL").addClass("hide");
+      $("#websiteURL").prop("disabled", true);
       var temp = JSON.parse(getBG.makeCookie.getItem("savedList"));
-      var info = [];
-      
-      /*
-      for(var i = 0; i < temp.length; i++){
-        if(!repeat(temp[i])){
-        
-          info = ["n", temp[i], "", "N/A"];
-          getBG.addSite(info);
-          
-        }
-      }
-      */
+
       $("#loadedList").text(temp);
+    }
+    else{
+      getBG.extensionDialogs("noSave", "");
     }
   }
   else{
@@ -175,68 +174,39 @@ function repeat(url){
 //reworked create/add/delete
 var crd = new function(){
     this.addSite = function(){
-    var websiteURL = url.value;
     var rsn = getReason.value;
     var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
-    var siteInfo = [];
-    console.log(websiteURL);
-    if(ValidURL(websiteURL)){
-      if(!repeat(websiteURL)){
-        websiteURL = trimURL(websiteURL);
-        //website blocked normally, user can unblock anytime
-        if(timeUnitSelected == "4"){
-          siteInfo = ["n", websiteURL, rsn, "N/A"];
-          $(".input-field").val('')
-        }
-        //website will be permablocked
-        else if(timeUnitSelected == "5"){
-          if(getBG.extensionDialogs("permablock", websiteURL)){
-            siteInfo = ["p", websiteURL, rsn, "INFN"];
-            $(".input-field").val('');
-          }
+    if(!$("#websiteURL").is(":disabled")){
+      var websiteURL = url.value;
+      if(ValidURL(websiteURL)){
+        if(!repeat(websiteURL)){
+          trimmedURL = trim(websiteURL);
+          sendInfo(trimmedURL, timeUnitSelected, rsn, "single");
         }
         else{
-          var timeAmount = time.value;
-          if(timeUnitSelected == "1"){
-            timeAmount *= 60000;
-          }
-          else if(timeUnitSelected == "2"){
-            timeAmount *= 3600000;
-          }
-          else if(timeUnitSelected == "3"){
-            timeAmount *= 86400000;
-          }
-          //calls isnum function to check whether the user inputted an integer value
-          if((isNum(timeAmount))){
-            var sd = Date.now(), ed = new Date(timeAmount + sd);
-            var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
-            var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
-            month = month < 10 ? "0" + month : month;
-            day = day < 10 ? "0" + day : day;
-            hr = hr < 10 ? "0" + hr : hr;
-            min = min < 10 ? "0" + min : min;
-            if(hr == 0){
-              hr = 12;
-            }
-            var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-            siteInfo = ["n", websiteURL, rsn, unblockDate, timeAmount + sd];
-            $(".input-field").val('');
-          }
-          else{
-            getBG.extensionDialogs("invalidTime", timeAmount);
-          }
+          getBG.extensionDialogs("alreadyBlocked", websiteURL);
         }
       }
       else{
-        getBG.extensionDialogs("alreadyBlocked", websiteURL);
+        getBG.extensionDialogs("invalidURL", websiteURL)
+      }
+      console.log(siteInfo.length);
+      if(siteInfo.length > 0){
+        getBG.addSite(siteInfo);
       }
     }
     else{
-      getBG.extensionDialogs("invalidURL", websiteURL)
-    }
-    console.log(siteInfo.length);
-    if(siteInfo.length > 0){
-      getBG.addSite(siteInfo);
+      var ls = $("#loadedList").val().split(',');
+      for(var i = 0; i < ls.length; i++){
+        if(!repeat(ls[i])){
+          sendInfo(ls[i], timeUnitSelected, rsn, "list");
+          getBG.addSite(siteInfo);
+        }
+        else{
+          console.log("site already blocked");
+        }
+      }
+      $(".input-field").val('');
     }
     this.grabList();
   }
@@ -280,6 +250,56 @@ var crd = new function(){
       }
     }
     return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
+  }
+}
+
+function sendInfo(url, unit, rsn, tp){
+  
+  //website blocked normally, user can unblock anytime
+  if(unit == "4"){
+    siteInfo = ["n", url, rsn, "N/A"];
+    $(".input-field").val('');
+  }
+  //website will be permablocked
+  else if(unit == "5"){
+    if(getBG.extensionDialogs("permablock", url)){
+      siteInfo = ["p", url, rsn, "INFN"];
+      $(".input-field").val('');
+    }
+  }
+  else{
+    var timeAmount = time.value;
+    console.log(timeAmount);
+    if(unit == "1"){
+      timeAmount *= 60000;
+    }
+    else if(unit == "2"){
+      timeAmount *= 3600000;
+    }
+    else if(unit == "3"){
+      timeAmount *= 86400000;
+    }
+    //calls isnum function to check whether the user inputted an integer value
+    if((isNum(timeAmount))){
+      var sd = Date.now(), ed = new Date(timeAmount + sd);
+      var year = ed.getFullYear(), month = ed.getMonth() + 1, day = ed.getDate(), hr = ed.getHours() % 12, min = ed.getMinutes();
+      var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
+      month = month < 10 ? "0" + month : month;
+      day = day < 10 ? "0" + day : day;
+      hr = hr < 10 ? "0" + hr : hr;
+      min = min < 10 ? "0" + min : min;
+      if(hr == 0){
+        hr = 12;
+      }
+      var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
+      siteInfo = ["n", url, rsn, unblockDate, timeAmount + sd];
+      if(tp != "list"){
+        $(".input-field").val('');
+      }
+    }
+    else{
+      getBG.extensionDialogs("invalidTime", timeAmount);
+    }
   }
 }
 
