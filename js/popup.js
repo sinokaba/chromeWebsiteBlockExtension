@@ -116,6 +116,11 @@ $("#blockAll").click(function(){
   }
 });
 
+$("#password").click(function(){
+  if(getBG.makeCookie.getItem("password") != null){
+    
+  }
+})
 $("#save").click(function(){
   var urlList = [];
   for(var i = 0; i < Data.length; i++){
