@@ -3,7 +3,15 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
-		return {cancel: true};
+		chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    		var url = tabs[0].url;
+			var test = "<p class='center'><b>" + url + " has been blocked.</b></p>";
+			chrome.tabs.executeScript(null,
+	      		{code:"document.body.innerHTML= '<h1>" + url + " has been banned.</h1>'"});
+			chrome.tabs.insertCSS(null, {
+	            file: "inject.css"
+	        });		
+		});
 	}
 }
 
@@ -270,6 +278,9 @@ function extensionDialogs(cmd, item){
 	}
 	else if(cmd == "overrideSave"){
 		return confirm("A saved list already exists, are you sure you want to override it?");
+	}
+	else if(cmd == "noSave"){
+		alert("You do not have a saved list.");
 	}
 
 }
