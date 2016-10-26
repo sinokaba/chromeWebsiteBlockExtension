@@ -3,8 +3,8 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
-	    chrome.tabs.executeScript(null, {code:"window.stop()"});
 		chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {		
+	    	chrome.tabs.executeScript(null, {code:"window.stop()"});
 			var url = tabs[0].url;
 			var msg = " ";
 	    	for(var i = 0; i < Data.length; i++){
@@ -288,6 +288,9 @@ function extensionDialogs(cmd, item){
 	}
 	else if(cmd == "noSave"){
 		alert("You do not have a saved list.");
+	}
+	else if(cmd = "listSaved"){
+		alert("Your block list has been saved!");
 	}
 
 }

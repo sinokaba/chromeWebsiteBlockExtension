@@ -2,7 +2,7 @@ $(function() {
 //all the global vars i'm using
 var getBG = chrome.extension.getBackgroundPage(), url = document.getElementById("websiteURL");
 var timeUnit = document.getElementById("timeUnits"), time = document.getElementById("blockPeriod"), Data = Array();
-var urlListStr, siteInfo = [], getReason = document.getElementById("comment");
+var urlListStr, getReason = document.getElementById("comment");
 $(".tab-link").each(function(){
   $(this).click(function(e){
     var temp = e.target.id.split('-');
@@ -116,11 +116,7 @@ $("#blockAll").click(function(){
   }
 });
 
-$("#password").click(function(){
-  if(getBG.makeCookie.getItem("password") != null){
-    
-  }
-})
+
 $("#save").click(function(){
   var urlList = [];
   for(var i = 0; i < Data.length; i++){
@@ -130,6 +126,7 @@ $("#save").click(function(){
   console.log(getBG.makeCookie.getItem("savedList"));
   if(getBG.makeCookie.getItem("savedList") == null){
     getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+    getBG.extensionDialogs("listSaved", "");
   }
   else{
     if(getBG.extensionDialogs("overrideSave", urlListStr)){
@@ -181,12 +178,13 @@ var crd = new function(){
     this.addSite = function(){
     var rsn = getReason.value;
     var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
+    var siteInfo;
     if(!$("#websiteURL").is(":disabled")){
       var websiteURL = url.value;
       if(ValidURL(websiteURL)){
         if(!repeat(websiteURL)){
           trimmedURL = trim(websiteURL);
-          sendInfo(trimmedURL, timeUnitSelected, rsn, "single");
+          siteInfo = sendInfo(trimmedURL, timeUnitSelected, rsn, "single");
         }
         else{
           getBG.extensionDialogs("alreadyBlocked", websiteURL);
@@ -198,13 +196,14 @@ var crd = new function(){
       console.log(siteInfo.length);
       if(siteInfo.length > 0){
         getBG.addSite(siteInfo);
+
       }
     }
     else{
       var ls = $("#loadedList").val().split(',');
       for(var i = 0; i < ls.length; i++){
         if(!repeat(ls[i])){
-          sendInfo(ls[i], timeUnitSelected, rsn, "list");
+          siteInfo = sendInfo(ls[i], timeUnitSelected, rsn, "list");
           getBG.addSite(siteInfo);
         }
         else{
@@ -259,16 +258,16 @@ var crd = new function(){
 }
 
 function sendInfo(url, unit, rsn, tp){
-  
+  var info = [];
   //website blocked normally, user can unblock anytime
   if(unit == "4"){
-    siteInfo = ["n", url, rsn, "N/A"];
+    info = ["n", url, rsn, "N/A"];
     $(".input-field").val('');
   }
   //website will be permablocked
   else if(unit == "5"){
     if(getBG.extensionDialogs("permablock", url)){
-      siteInfo = ["p", url, rsn, "INFN"];
+      info = ["p", url, rsn, "INFN"];
       $(".input-field").val('');
     }
   }
@@ -297,7 +296,7 @@ function sendInfo(url, unit, rsn, tp){
         hr = 12;
       }
       var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-      siteInfo = ["n", url, rsn, unblockDate, timeAmount + sd];
+      info = ["n", url, rsn, unblockDate, timeAmount + sd];
       if(tp != "list"){
         $(".input-field").val('');
       }
@@ -306,6 +305,7 @@ function sendInfo(url, unit, rsn, tp){
       getBG.extensionDialogs("invalidTime", timeAmount);
     }
   }
+  return info;
 }
 
 
