@@ -3,14 +3,21 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
-		chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-    		var url = tabs[0].url;
-			var test = "<p class='center'><b>" + url + " has been blocked.</b></p>";
+	    chrome.tabs.executeScript(null, {code:"window.stop()"});
+		chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {		
+			var url = tabs[0].url;
+			var msg = " ";
+	    	for(var i = 0; i < Data.length; i++){
+	    		//url received matches url in array
+	    		if(url.indexOf(Data[i][1]) != -1){
+	    			msg = Data[i][2];
+	    		}
+	    	}			
 			chrome.tabs.executeScript(null,
-	      		{code:"document.body.innerHTML= '<h1>" + url + " has been banned.</h1>'"});
+	      		{code:"document.body.innerHTML= '<h1>" + url + " has been banned.</h1><h2> Why it was blocked: " + msg + "</h2>'"});
 			chrome.tabs.insertCSS(null, {
 	            file: "inject.css"
-	        });		
+	        });	
 		});
 	}
 }
