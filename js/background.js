@@ -11,6 +11,7 @@ for(var i = 0; i < 3; i++){
 	    		//url received matches url in array
 	    		if(url.indexOf(Data[i][1]) != -1){
 	    			msg = Data[i][2];
+	    			url = Data[i][1];
 	    		}
 	    	}			
 			chrome.tabs.executeScript(null,
