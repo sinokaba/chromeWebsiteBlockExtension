@@ -1,11 +1,10 @@
-body.b{
-    background-color: #D3D3D3 !important;
+html, body.b{
+    background-color: #708090 !important;
     background-image: none !important;
 }
 h1{
 	font-size: 36px !important;	
     top: 50%;
-
 }
 h2{
     font-size: 26px !important;
@@ -18,4 +17,7 @@ h2{
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%)
+}
+#text h1, h2{
+    font-weight: bold !important;
 }

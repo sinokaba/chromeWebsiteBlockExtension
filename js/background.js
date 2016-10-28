@@ -3,7 +3,6 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
-		chrome.tabs.executeScript(null, {code: "window.stop()"});
 		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {		
 			var url = tabs[0].url;
 			var exists = false;
@@ -11,7 +10,10 @@ for(var i = 0; i < 3; i++){
 	    	for(var i = 0; i < Data.length; i++){
 	    		//url received matches url in array
 	    		if(url.indexOf(Data[i][1]) != -1){
-	    			msg = Data[i][2];
+	    			if(Data[i][2] != ""){
+	    				msg = Data[i][2];
+	    				console.log(msg);
+	    			}	
 	    			url = Data[i][1];
 	    			exists = true;
 	    		}
@@ -20,9 +22,6 @@ for(var i = 0; i < 3; i++){
 				chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
 					chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
 				});
-				chrome.tabs.insertCSS(tabs[0].id, {
-		            file: "inject.css"
-		        });	
 			}
 		});
 	}

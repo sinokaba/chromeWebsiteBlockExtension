@@ -18,6 +18,9 @@
     "scripts": ["js/jquery.js", "js/background.js"],
     "persistent": true
   },
+  "web_accessible_resources": [
+    "inject.css"
+  ],
   "permissions": [
     "activeTab",
     "contextMenus",
