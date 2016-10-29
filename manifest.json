@@ -25,10 +25,12 @@
     "activeTab",
     "contextMenus",
     "alarms",
+    "webNavigation",
     "webRequest",
     "webRequestBlocking",
     "tabs",
     "storage",
-    "<all_urls>"
+    "<all_urls>",
+    "http://localhost/*"
   ]
 }

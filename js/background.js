@@ -3,6 +3,7 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
+
 		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {		
 			var url = tabs[0].url;
 			var exists = false;
@@ -18,12 +19,22 @@ for(var i = 0; i < 3; i++){
 	    			exists = true;
 	    		}
 	    	}
-	    	if(exists){	
-				chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
-					chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
-				});
+			function onWebNav(details) {
+	    		if(details.frameId === 0){
+					chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
+						chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
+					});
+				}
 			}
+			var filter = {
+			    url: [{
+			        hostContains: url
+			    }]
+			};
+	    	chrome.webNavigation.onCommitted.addListener(onWebNav, filter);
+			chrome.webNavigation.onHistoryStateUpdated.addListener(onWebNav, filter);
 		});
+		//return {cancel: true};
 	}
 }
 
@@ -201,7 +212,7 @@ function normBlocking(urls) {
 	};
 	console.log(urls);
 	chrome.webRequest.onBeforeRequest.addListener(blockRequest[0],
-	{urls: urls},['blocking']);
+	{urls: urls},["blocking"]);
 }
 
 function timeBlocking(urls, tDates){
