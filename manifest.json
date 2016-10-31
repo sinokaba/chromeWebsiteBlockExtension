@@ -31,6 +31,6 @@
     "tabs",
     "storage",
     "<all_urls>",
-    "http://localhost/*"
+    "notifications"
   ]
 }

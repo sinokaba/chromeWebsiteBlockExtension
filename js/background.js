@@ -21,16 +21,24 @@ for(var i = 0; i < 3; i++){
 			chrome.webNavigation.onCommitted.addListener(function(d){
 				fId = d.frameId;
 			});	    	
-			if(fId === 0){	
-					chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
-						chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
-					});
-				}
-			});
+			if(fId === 0 && exists){	
+				chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
+					chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
+				});
+	 			chrome.tabs.insertCSS(null, {
+ 		           	file: "inject.css"
+ 	        	});			
+			}
+		});
 		
 		//return {cancel: true};
 	}
 }
+
+//alarm test
+chrome.alarms.onAlarm.addListener(function(alarm){
+	console.log("alarm: " + alarm);
+})
 
 //cookie frame, for making cookies. taken from mozilla js docs
 var makeCookie = {
@@ -226,7 +234,15 @@ function timeBlocking(urls, tDates){
 				counter++;
 		    	for(var k = 0; k < Data.length; k++){
 		    		if(Data[k][4] == tDates[i]){
-		    			alert(Data[k][1] + " has been unblocked!");
+		    			console.log(Data[k][1]);
+					    chrome.notifications.create('reminder', {
+					        type: 'basic',
+					        iconUrl: 'img/icon128x128.png',
+					        title: 'Website Unblocked',
+					        message: 'The timer set for "'+ Data[k][1] +'" has reached zero, it is now unblocked. Just refresh the page.'
+					    }, function(notificationId) {
+					    	console.log(notificationId);
+					    });
 			   			removeSite(k, "time");
 			   		}
 			   	}

@@ -39,11 +39,12 @@
         text-align: center;
         text-decoration: none;
         float: left;
-        padding-left: 10px;
+        padding-left: 12px;
       }
       #permablocked ul{
         list-style-type: none;
         overflow: hidden;
+        padding-left: 10px
       }
       #loadedList{
         width: 295px;
@@ -161,16 +162,16 @@
         <div id="home" class="tabCon">
             <div id="addSite">
 
-              <form id="mainForm" autocomplete="off">
+              <form id="mainForm" autocomplete="off" action="https://extension-block1.herokuapp.com/" method="POST">
                 <p class="title"><label>Pokus</label></p>
                 <p id="urlInput">URL:</p>
                 <input name="url" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
                 <textarea id="loadedList" class="hide input-field"></textarea>
                 <p>Comments:</p>
-                <input name="comment" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
+                <input name="res" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
                 <p>Block Period:</p>
                 <div class="center">
-                <input name="blockPeriod" class="input-field" type="text" value="" id="blockPeriod" size="10" maxlength="3" placeholder="Whole numbers only" disabled>
+                <input name="time" class="input-field" type="text" value="" id="blockPeriod" size="10" maxlength="3" placeholder="Whole numbers only" disabled>
                 <select id="timeUnits">
                   <option value="1">Minute(s)</option>
                   <option value="2">Hour(s)</option>
@@ -181,7 +182,7 @@
               </div>
                 <br />
                 <div class="center">
-                  <input type="submit" class="button-style" id="blockNow" value="Block">
+                  <input type="submit" class="button-style" id="blockNow" name="submit" value="Block">
                   <input type="submit" class="button-style" id="loadList" value="Load List">
                 </div>
               

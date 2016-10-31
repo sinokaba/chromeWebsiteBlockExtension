@@ -25,6 +25,11 @@ function focusInField(ele){
 
 //disables/enables the input field depending depending on option selected
 $("#timeUnits").change(function(){
+  checkOpSelected();
+})
+
+
+function checkOpSelected(){
   timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
   console.log(timeUnitSelected);
   if(timeUnitSelected == "4" || timeUnitSelected == "5"){
@@ -34,15 +39,18 @@ $("#timeUnits").change(function(){
     $("#blockPeriod").prop('disabled', false);
     focusInField(time);
   }
-})
-
-
+}
 $("#list-link").click(function(){
   crd.grabList();
 });
 
 $("#home-link").click(function(){
+  $('#timeUnits option').prop('selected', function() {
+    console.log(this.defaultSelected);
 
+    return this.defaultSelected;
+  });
+  checkOpSelected();
   $(this).val("Load List");
   $("#loadedList").addClass("hide");
   $("#websiteURL").removeClass("hide");
@@ -317,6 +325,50 @@ $('#mainForm').submit(function(e){
 $("#blockNow").click(function(){
   crd.addSite();
 });
+
+/* alarm, maybe replace countdown with this in the future
+(function () {
+  'use strict';
+   var alarmName = 'remindme';
+   function checkAlarm(callback) {
+     chrome.alarms.getAll(function(alarms) {
+       var hasAlarm = alarms.some(function(a) {
+         return a.name == alarmName;
+       });
+       var newLabel;
+       if (hasAlarm) {
+         newLabel = 'Cancel alarm';
+       } else {
+         newLabel = 'Activate alarm';
+       }
+       document.getElementById('alarm').innerText = newLabel;
+       if (callback) callback(hasAlarm);
+     })
+   }
+   function createAlarm() {
+     chrome.alarms.create(alarmName, {
+       delayInMinutes: 0.1, periodInMinutes: 0.1});
+   }
+   function cancelAlarm() {
+     chrome.alarms.clear(alarmName);
+   }
+   function doToggleAlarm() {
+     checkAlarm( function(hasAlarm) {
+       if (hasAlarm) {
+         cancelAlarm();
+       } else {
+         createAlarm();
+       }
+       checkAlarm();
+     });
+   }
+  $('#alarm').click(function(){
+    doToggleAlarm();
+  });
+  checkAlarm();
+})();
+
+*/
 
 //unblocks everthing when the unblock all button is clicked
 $("#unblockAll").click(function(){
