@@ -1,2 +1,3 @@
 # chromeWebsiteBlockExtension
-Clone of master, branch where i test changes.
+
+Pokus - A chrome extension that helps you stay focused and get your work done.

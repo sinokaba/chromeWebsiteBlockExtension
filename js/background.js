@@ -226,6 +226,7 @@ function timeBlocking(urls, tDates){
 	{urls: urls}, ["blocking"]);
 
 	var counter = 0;
+	//perhaps instead of using setInterval, use chrome.alarms.create 
 	var timer = setInterval(function(){
 		var curTime = Date.now();
 		for(var i = 0; i < tDates.length; i++){
