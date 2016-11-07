@@ -53,13 +53,15 @@
       #charities{
         text-align: center;
       }
-      #charitiesSq img{
-          position: relative;
+      #charities ul > li{
+        background-color: transparent !important;
+        margin: 10px 0;
+      }
+      .charitiesSq{
           width: 70px;
           height: 70px;
       }
-      #charitiesLng img{
-          position: relative;
+      .charitiesLng{
           width: 150px;
       }
       .title{
@@ -236,16 +238,14 @@
         </div>
         <div id="about" class="hide tabCon">
 
-          <h5 style="text-align: center">I made this extension to help with my procrastination problem. If you have some disposable income, and you would like to make a difference please consider donating to some of the charities I listed below. These charities are all very highly rated and do good work, and I think </h5>
+          <h5 style="text-align: center">I made this extension to help with my procrastination problem. If you have some disposable income, and you would like to make a difference please consider donating to some of the charities I listed below. These charities are all very highly rated and do good work, and I think it is important to support them however way we can.</h5>
           <div id="charities">
-            <div id="charitiesSq">
-              <a href="https://www.nrdc.org" target="_blank"><img src="img/nrdcLogo.png"/></a>
-            </div>
-            <div id="charitiesLng">
-              <a href="https://www.oxfamamerica.org" target="_blank"><img src="img/oxfamLogo.png"></a>
-              <a href="https://doctorswithoutborders.org/" target="_blank"><img src="img/dwbLogo.png"></a>
-              <a href="http://www.conservationfund.org/" target="_blank"><img src="img/conFundLogo.png"></a>
-            </div>
+            <ul>
+              <li><a href="https://www.nrdc.org" target="_blank"><img class="charitiesSq" src="img/nrdcLogo.png"/></a></li>
+              <li><a href="https://www.oxfamamerica.org" target="_blank"><img class="charitiesLng" src="img/oxfamLogo.png"></a></li>
+              <li><a href="https://doctorswithoutborders.org/" target="_blank"><img class="charitiesLng" src="img/dwbLogo.png"></a></li>
+              <li><a href="http://www.conservationfund.org/" target="_blank"><img class="charitiesLng" src="img/conFundLogo.png"></a></li>
+            </ul>
           </div>
         </div>
       </div>
