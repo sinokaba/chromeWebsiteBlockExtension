@@ -2,8 +2,8 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
-	blockRequest[i] = function(details){
-		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {		
+	blockRequest[i] = function(details){	
+		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
 			var url = tabs[0].url;
 			var exists = false;
 			var msg = "No reason specified.";		
@@ -18,17 +18,12 @@ for(var i = 0; i < 3; i++){
 	    			exists = true;
 	    		}
 	    	}
-			chrome.webNavigation.onCommitted.addListener(function(d){
-				fId = d.frameId;
-			});	    	
-			if(fId === 0 && exists){	
-				chrome.tabs.executeScript(tabs[0].id, {file: "js/content.js"}, function(){
-					chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
-				});
-	 			chrome.tabs.insertCSS(null, {
- 		           	file: "inject.css"
- 	        	});			
-			}
+	    	if(exists){
+	 		 	chrome.tabs.insertCSS(null, {
+	 		        file: "inject.css"
+	 	        }); 	    		
+				chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
+ 		 	}
 		});
 		
 		//return {cancel: true};

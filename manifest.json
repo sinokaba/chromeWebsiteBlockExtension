@@ -21,6 +21,15 @@
   "web_accessible_resources": [
     "inject.css"
   ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["js/content.js"],
+      "run_at": "document_start"
+    }
+  ],
   "permissions": [
     "activeTab",
     "contextMenus",
