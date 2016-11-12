@@ -51,17 +51,15 @@ $("#home-link").click(function(){
     return this.defaultSelected;
   });
   checkOpSelected();
-  $(this).val("Load List");
+  $("#loadList").val("Load List");
   $("#loadedList").addClass("hide");
   $("#websiteURL").removeClass("hide");
   $("#websiteURL").prop("disabled", false);  
-  $("#loadedList").text("");
 
 //clears input field
   focusInField(url);
   $(".input-field").val('');
 });
-//disable enter key cause it causes a ton of unforseen bugs
 
 
 //checks if url exists
@@ -218,7 +216,6 @@ var crd = new function(){
           console.log("site already blocked");
         }
       }
-      $(".input-field").val('');
     }
     this.grabList();
   }
@@ -235,10 +232,8 @@ var crd = new function(){
     var tbl = document.getElementById("blockList");
     var permList = document.getElementById("permablocked");
     $("#store").addClass("hide");
-    $("#unblockAll").addClass("hide");
     if(Data.length > 0){
       $("#store").removeClass("hide");
-      $("#unblockAll").removeClass("hide");      
       for(i = 0; i < Data.length; i++){
         var url = Data[i][1];
         var ubDate = Data[i][3];
@@ -325,22 +320,5 @@ $('#mainForm').submit(function(e){
 $("#blockNow").click(function(){
   crd.addSite();
 });
-
-//unblocks everthing when the unblock all button is clicked
-$("#unblockAll").click(function(){
-  if(getBG.extensionDialogs("unblockAll", "")){
-    getBG.unblockAll();
-
-    //remove after testing
-    clearCookies();
-    crd.grabList();
-  }
-});
-
-function clearCookies(){
-  if(getBG.makeCookie.getItem("savedList") != null){
-    getBG.makeCookie.removeItem("savedList");
-  }
-}
 
 });

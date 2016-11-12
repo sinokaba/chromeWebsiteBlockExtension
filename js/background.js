@@ -2,7 +2,7 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
-	blockRequest[i] = function(details){	
+	blockRequest[i] = function(details){
 		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
 			var url = tabs[0].url;
 			var exists = false;
@@ -18,15 +18,11 @@ for(var i = 0; i < 3; i++){
 	    			exists = true;
 	    		}
 	    	}
-	    	if(exists){
-	 		 	chrome.tabs.insertCSS(null, {
-	 		        file: "inject.css"
-	 	        }); 	    		
+	    	if(exists){    		
 				chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
  		 	}
 		});
 		
-		//return {cancel: true};
 	}
 }
 
@@ -185,20 +181,10 @@ function updateFilters(type){
 		if(iUrls.length > 0){
 			infnBlocking(iUrls);
 		}
-		
-
-		//remove before publishing
-		else{
-	    	chrome.webRequest.onBeforeRequest.removeListener(blockRequest[2]);
-		}
 	}
 	else{
 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
-
-		
-		//remove before publishing
-	    chrome.webRequest.onBeforeRequest.removeListener(blockRequest[2]);
 	}
 }
 
@@ -258,21 +244,6 @@ function infnBlocking(urls){
 	["blocking"]);
 }
 
-function unblockAll(){
-	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[3])){
-		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3]);	
-	};
-
-	Data.length = 0;
-	updateFilters();
-	storage.clear(function(){
-		var err = chrome.runtime.lastError;
-		if(err){
-			console.log(err);
-		}	
-	})
-}
-
 function blockAllWebsites(){
 	chrome.webRequest.onBeforeRequest.addListener(blockRequest[3], 
 	{urls: ["http://*/*", "https://*/*"]},
@@ -292,9 +263,6 @@ function extensionDialogs(cmd, item){
 	}
 	else if(cmd == "reachedLimit"){
 		alert("You have blocked the maximum number of websites.");
-	}
-	else if(cmd == "unblockAll"){
-		return confirm("Are you sure you want to unblock all the websites on your blocklist?");
 	}
 	else if(cmd == "invalidTime"){
 		alert("You did not enter a valid value for the amount of time the website should be blocked for.");
@@ -326,28 +294,23 @@ chrome.contextMenus.create({
 //gives user the ability to block a site when they right click a webpage
 function rightClickBlock(info, tab) {
   console.log("This webpage has been blocked.");
-  var siteURL = info.pageUrl;
-  if(siteURL.substring(siteURL.length - 1, siteURL.length) == "/"){
-  	temp = siteURL.substring(0, siteURL.length - 1);
+  var rawUrl = info.pageUrl;
+  if(rawUrl.substring(rawUrl.length - 1, rawUrl.length) == "/"){
+  	temp = rawUrl.substring(0, rawUrl.length - 1);
   }
   else{
-  	temp = siteURL;
+  	temp = rawUrl;
   }
-
-  if(temp.indexOf("http://") != -1){
-  	siteURL = temp.substring(7, temp.length);
+  var cut = ["http://www.", "http://", "https://", "https://www.", "www."];
+  for(var i = 0; i < cut.length; i++){
+  	console.log(temp.indexOf(cut[i]));
+  	if(temp.indexOf(cut[i]) != -1){
+  		temp = temp.substring(cut[i].length, temp.length);
+  	}
   }
-  else if(temp.indexOf("https://") != -1){
-  	siteURL = temp.substring(8, temp.length);
-  }
-  else{
-  	siteURL = temp;
-  }
-  console.log(siteURL);
-  var newURL = siteURL.split("/");
-  console.log(newURL[0]);
-  var userConfirm = confirm("Are you sure you want to block this website?");
-  if(userConfirm){
+  console.log(temp);
+  var newURL = temp.split("/");
+  if(confirm("Are you sure you want to block this website?")){
   	addSite(["n", newURL[0], "", "N/A"]);
   }
 

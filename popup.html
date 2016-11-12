@@ -176,11 +176,11 @@
         <div id="home" class="tabCon">
             <div id="addSite">
 
-              <form id="mainForm" autocomplete="off" action="https://extension-block1.herokuapp.com/" method="POST">
+              <form id="mainForm" autocomplete="off">
                 <p class="title"><label>Pokus</label></p>
                 <p id="urlInput">URL:</p>
                 <input name="url" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
-                <textarea id="loadedList" class="hide input-field"></textarea>
+                <textarea id="loadedList" class="hide"></textarea>
                 <p>Comments:</p>
                 <input name="res" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
                 <p>Block Period:</p>
@@ -227,7 +227,6 @@
               </div>
             </div>
             <div class="center">
-              <input type="submit" class="big button-style" id="unblockAll" value="Unblock All">
               <input type="submit" class="button-style" id="save" value="Save List">
             </div>
             <hr>
