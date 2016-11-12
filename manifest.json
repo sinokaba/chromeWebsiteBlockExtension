@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Pokus",
-  "description": "This extension allows you to block websites for a certain amount of time. In doing so, you will remain focused at the task at hand and increase your productivity.",
+  "description": "Website blocking extension",
   "version": "1.0",
   "author": "Sinokaba",
   "icons":{
