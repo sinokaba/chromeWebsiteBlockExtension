@@ -4,13 +4,18 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
+		  if (details.frameId !== 0) {
+		      // Don't trigger on iframes
+		      return;
+		  }
 
-		console.log(chrome.extension.getURL("redirect.html"));
-		return{redirectUrl: chrome.extension.getURL("redirect.html")};
+		  var tabIdToUrl = {};
+		  tabIdToUrl[details.tabId.toString()] = details.url;
+		  console.log(tabIdToUrl);
+		  storage.set(tabIdToUrl);
 		/*
 		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
 			var url = tabs[0].url;
-			var exists = false;
 			var msg = "No reason specified.";		
 	    	for(var i = 0; i < Data.length; i++){
 	    		//url received matches url in array
@@ -20,14 +25,14 @@ for(var i = 0; i < 3; i++){
 	    				console.log(msg);
 	    			}	
 	    			url = Data[i][1];
-	    			exists = true;
 	    		}
 	    	}
-	    	if(exists){    		
-				chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
- 		 	}
+			chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
+ 		 	console.log("message sent");
 		});
 		*/
+		console.log(chrome.extension.getURL("redirect.html"));
+ 		return{redirectUrl: chrome.extension.getURL("redirect.html")};
 	}
 }
 
