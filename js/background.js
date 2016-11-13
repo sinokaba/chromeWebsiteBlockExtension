@@ -4,33 +4,18 @@ var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
-		  if (details.frameId !== 0) {
-		      // Don't trigger on iframes
+		if (details.frameId !== 0) {
+	    // Don't trigger on iframes
 		      return;
-		  }
+		}
 
-		  var tabIdToUrl = {};
-		  tabIdToUrl[details.tabId.toString()] = details.url;
-		  console.log(tabIdToUrl);
-		  storage.set(tabIdToUrl);
-		/*
-		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
-			var url = tabs[0].url;
-			var msg = "No reason specified.";		
-	    	for(var i = 0; i < Data.length; i++){
-	    		//url received matches url in array
-	    		if(url.indexOf(Data[i][1]) != -1){
-	    			if(Data[i][2] != ""){
-	    				msg = Data[i][2];
-	    				console.log(msg);
-	    			}	
-	    			url = Data[i][1];
-	    		}
-	    	}
-			chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
- 		 	console.log("message sent");
-		});
-		*/
+		//stores tabid to local storage, when a blocked url is accessed an alternate js file access local storage with tab id to get url
+		//since url becomes redirect url, don't want that
+		var tabIdToUrl = {};
+		tabIdToUrl[details.tabId.toString()] = details.url;
+		console.log(tabIdToUrl);
+		storage.set(tabIdToUrl);
+
 		console.log(chrome.extension.getURL("redirect.html"));
  		return{redirectUrl: chrome.extension.getURL("redirect.html")};
 	}
@@ -229,9 +214,9 @@ function timeBlocking(urls, tDates){
 		    			console.log(Data[k][1]);
 					    chrome.notifications.create('reminder', {
 					        type: 'basic',
-					        iconUrl: 'img/icon128x128.png',
+					        iconUrl: 'img/pokusIcon.png',
 					        title: 'Website Unblocked',
-					        message: 'The timer set for "'+ Data[k][1] +'" has reached zero, it is now unblocked. Just refresh the page.'
+					        message: '"'+ Data[k][1] +'" is now unblocked. Just refresh the page.'
 					    }, function(notificationId) {
 					    	console.log(notificationId);
 					    });
