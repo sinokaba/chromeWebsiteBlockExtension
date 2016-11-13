@@ -1,8 +1,13 @@
 var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array();
 
+
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
 	blockRequest[i] = function(details){
+
+		console.log(chrome.extension.getURL("redirect.html"));
+		return{redirectUrl: chrome.extension.getURL("redirect.html")};
+		/*
 		chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
 			var url = tabs[0].url;
 			var exists = false;
@@ -22,7 +27,7 @@ for(var i = 0; i < 3; i++){
 				chrome.tabs.sendMessage(tabs[0].id, {act: "showBlockPage", websiteUrl: url, reason: msg});
  		 	}
 		});
-		
+		*/
 	}
 }
 
