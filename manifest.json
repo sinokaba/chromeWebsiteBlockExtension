@@ -3,12 +3,12 @@
 
   "name": "Pokus",
   "description": "Website blocking extension",
-  "version": "1.0",
+  "version": "1.1",
   "author": "Sinokaba",
   "icons":{
-    "16": "img/icon16x16.png",
-    "48": "img/icon48x48.png",
-    "128": "img/icon128x128.png"
+    "16": "img/pokusIcon16.png",
+    "48": "img/pokusIcon48.png",
+    "128": "img/pokusIcon.png"
   },
   "browser_action": {
     "default_popup": "popup.html",
@@ -30,6 +30,7 @@
       "run_at": "document_start"
     }
   ],
+  "web_accessible_resources": ["inject.css"],
   "permissions": [
     "activeTab",
     "contextMenus",

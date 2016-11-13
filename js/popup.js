@@ -167,18 +167,6 @@ $("#loadList").click(function(){
   }
 })
 
-function repeat(url){
-  crd.grabList();
-  var re = false;
-  for(var j = 0; j < Data.length; j++){
-      console.log(url + " =? " + Data[j][1]);
-    if(url == Data[j][1]){
-      re = true;
-    }
-  }
-  console.log(re);
-  return re;
-}
 //reworked create/add/delete
 var crd = new function(){
     this.addSite = function(){
@@ -188,7 +176,7 @@ var crd = new function(){
     if(!$("#websiteURL").is(":disabled")){
       var websiteURL = url.value;
       if(ValidURL(websiteURL)){
-        if(!repeat(websiteURL)){
+        if(getBG.unique(websiteURL)){
           trimmedURL = trim(websiteURL);
           siteInfo = sendInfo(trimmedURL, timeUnitSelected, rsn, "single");
         }
@@ -208,7 +196,7 @@ var crd = new function(){
     else{
       var ls = $("#loadedList").val().split(',');
       for(var i = 0; i < ls.length; i++){
-        if(!repeat(ls[i])){
+        if(getBG.unique(ls[i])){
           siteInfo = sendInfo(ls[i], timeUnitSelected, rsn, "list");
           getBG.addSite(siteInfo);
         }

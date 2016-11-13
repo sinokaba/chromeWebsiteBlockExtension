@@ -291,6 +291,18 @@ chrome.contextMenus.create({
   onclick: rightClickBlock
 });
 
+function unique(url){
+  var uq = true;
+  for(var j = 0; j < Data.length; j++){
+      console.log(url + " =? " + Data[j][1]);
+    if(url.indexOf(Data[j][1]) != -1){
+      uq = false;
+    }
+  }
+  console.log(uq);
+  return uq;
+}
+
 //gives user the ability to block a site when they right click a webpage
 function rightClickBlock(info, tab) {
   console.log("This webpage has been blocked.");
@@ -311,7 +323,12 @@ function rightClickBlock(info, tab) {
   console.log(temp);
   var newURL = temp.split("/");
   if(confirm("Are you sure you want to block this website?")){
-  	addSite(["n", newURL[0], "", "N/A"]);
+  	if(unique(newURL[0])){
+  		addSite(["n", newURL[0], "", "N/A"]);
+  	}
+  	else{
+  		extensionDialogs("alreadyBlocked", "k");
+  	}
   }
 
 };
