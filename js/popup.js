@@ -116,13 +116,27 @@ $("#blockList").on('click', '.unblock-button', function(){
   crd.del(siteID[1]);
 });
 
-$("#blockAll").click(function(){
-  if(getBG.extensionDialogs("blockAll", "")){
-    getBG.blockAllWebsites();
-  }
+$("#pw").click(function(){
+  getBG.storage.get("pw", function(result){
+    if(result.pw != undefined){
+      if(getBG.extensionDialogs("changePw", "")){
+        setPw();
+      }
+    }
+    else{
+      setPw();
+    }
+  })
+
 });
 
-
+function setPw(){
+  var pass = getBG.extensionDialogs("setPw", "");
+  while(pass.length < 4){
+    pass = getBG.extensionDialogs("setPw", "");
+  }
+  getBG.storage.set({"pw":pass});  
+}
 $("#save").click(function(){
   var urlList = [];
   for(var i = 0; i < Data.length; i++){

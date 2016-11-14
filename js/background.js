@@ -278,8 +278,15 @@ function extensionDialogs(cmd, item){
 	else if(cmd == "noSave"){
 		alert("You do not have a saved list.");
 	}
-	else if(cmd = "listSaved"){
+	else if(cmd == "listSaved"){
 		alert("Your block list has been saved!");
+	}
+	else if(cmd == "setPw"){
+		prompt("This password will be asked everytime you attempt to permablock a site, or unban all sites in a list."
+			+ "It must be at least 4 characters in length: ")
+	}
+	else if(cmd == "changePw"){
+		return confirm("You have already set a password, would you like to change it?");
 	}
 
 }
