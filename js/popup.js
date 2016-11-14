@@ -261,16 +261,31 @@ var crd = new function(){
       }
       if(!emptyMainList){
         $("#save").removeClass("hide");
-        $("#unblockAll").removeClass("hide");
+        //$("#unblockAll").removeClass("hide");
       }
       else{
         $("#save").addClass("hide");
-        $("#unblockAll").addClass("hide");
+        //$("#unblockAll").addClass("hide");
       }
     }
     return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
   }
 }
+
+
+/*
+$("#unblockAll").click(function(){
+  if(getBG.extensionDialogs("unblockAll")){
+    if(enterPw()){
+
+    }
+    else{
+
+    }
+  }
+})
+*/
+
 
 function enterPw(){
   var attempts = 0;

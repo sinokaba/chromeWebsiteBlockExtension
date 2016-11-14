@@ -243,18 +243,24 @@ function infnBlocking(urls){
 	["blocking"]);
 }
 
-function blockAllWebsites(){
-	chrome.webRequest.onBeforeRequest.addListener(blockRequest[3], 
-	{urls: ["http://*/*", "https://*/*"]},
-	["blocking"]);
+/*
+function unblockAll(){
+ 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[3])){
+ 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3]);	
+ 	};
+ 
+ 	Data.length = 0;
+ 	updateFilters();
+ 	storage.clear(function(){
+ 		var err = chrome.runtime.lastError;
+ 		if(err){
+ 			console.log(err);
+		}	
+	})
 }
-
-
+*/
 function extensionDialogs(cmd, item){
-	if(cmd == "blockAll"){
-		return confirm("You are about to block all websites. Are you sure you want to do this?");
-	}
-	else if(cmd == "permablock"){
+	if(cmd == "permablock"){
 		return confirm("Are you sure you want to permablock '" + item + "'?");
 	}
 	else if(cmd == "invalidURL"){
@@ -296,6 +302,9 @@ function extensionDialogs(cmd, item){
 	}
 	else if(cmd == "enterPw"){
 		return prompt("Password: ") === makeCookie.getItem("pw");
+	}
+	else if(cmd == "unblockAll"){
+		return confirm("Are you sure you want to unblock all the websites on this list?");
 	}
 
 }
