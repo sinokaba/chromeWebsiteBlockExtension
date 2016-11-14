@@ -1,5 +1,9 @@
 var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array();
 
+chrome.runtime.onUpdateAvailable.addListener(function(details) {
+  console.log("updating to version " + details.version);
+  chrome.runtime.reload();
+});
 
 var blockRequest = [];
 for(var i = 0; i < 3; i++){
