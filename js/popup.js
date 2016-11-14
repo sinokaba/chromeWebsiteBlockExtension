@@ -117,30 +117,32 @@ $("#blockList").on('click', '.unblock-button', function(){
 });
 
 $("#pw").click(function(){
-  getBG.storage.get("pw", function(result){
-    if(result.pw != undefined){
-      if(getBG.extensionDialogs("changePw", "")){
-        setPw();
-      }
-    }
-    else{
+  if(getBG.makeCookie.getItem("pw") != null){
+    console.log(getBG.makeCookie.getItem("pw"));
+    if(getBG.extensionDialogs("changePw", "")){
       setPw();
     }
-  })
-
+  }
+  else{
+    setPw();
+  }
 });
 
 function setPw(){
   var pass = getBG.extensionDialogs("setPw", "");
+  console.log(pass);
   while(pass.length < 4){
-    pass = getBG.extensionDialogs("setPw", "");
+    pass = getBG.extensionDialogs("pwShort", "");
   }
-  getBG.storage.set({"pw":pass});  
+  getBG.makeCookie.setItem("pw", pass, Infinity);  
 }
+
 $("#save").click(function(){
   var urlList = [];
   for(var i = 0; i < Data.length; i++){
-    urlList.push(Data[i][1]);
+    if(Data[i][3] != "INFN"){
+      urlList.push(Data[i][1]);
+    }
   }
   urlListStr = JSON.stringify(urlList); 
   console.log(getBG.makeCookie.getItem("savedList"));
@@ -233,14 +235,14 @@ var crd = new function(){
     var permOutput = "";
     var tbl = document.getElementById("blockList");
     var permList = document.getElementById("permablocked");
-    $("#store").addClass("hide");
+    var emptyMainList = true;
     if(Data.length > 0){
-      $("#store").removeClass("hide");
       for(i = 0; i < Data.length; i++){
         var url = Data[i][1];
         var ubDate = Data[i][3];
         console.log(ubDate);
         if(ubDate != "INFN"){
+          emptyMainList = false;
           tempOutput += "<tr>";
           tempOutput += "<td class='url' id='site-" + i + "'" + ">" + url + "</td>";
           tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate +"</td>";
@@ -257,11 +259,30 @@ var crd = new function(){
           permOutput += "<li class='url'>" + url + "</li>";
         }
       }
+      if(!emptyMainList){
+        $("#save").removeClass("hide");
+        $("#unblockAll").removeClass("hide");
+      }
+      else{
+        $("#save").addClass("hide");
+        $("#unblockAll").addClass("hide");
+      }
     }
     return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
   }
 }
 
+function enterPw(){
+  var attempts = 0;
+  var correct = false;
+  while(attempts < 4 && !correct){
+    if(getBG.extensionDialogs("enterPw", "")){
+      correct = true;
+    }
+    attempts++;
+  }
+  return correct;
+}
 function sendInfo(url, unit, rsn, tp){
   var info = [];
   //website blocked normally, user can unblock anytime
@@ -272,8 +293,19 @@ function sendInfo(url, unit, rsn, tp){
   //website will be permablocked
   else if(unit == "5"){
     if(getBG.extensionDialogs("permablock", url)){
-      info = ["p", url, rsn, "INFN"];
-      $(".input-field").val('');
+      if(getBG.makeCookie.getItem("pw") == null){
+        info = ["p", url, rsn, "INFN"];
+        $(".input-field").val('');
+      }
+      else{        
+        if(enterPw()){
+          info = ["p", url, rsn, "INFN"];
+          $(".input-field").val('');          
+        }
+        else{
+          getBG.extensionDialogs("tooManyTries", "");
+        }
+      }
     }
   }
   else{

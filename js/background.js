@@ -282,11 +282,20 @@ function extensionDialogs(cmd, item){
 		alert("Your block list has been saved!");
 	}
 	else if(cmd == "setPw"){
-		prompt("This password will be asked everytime you attempt to permablock a site, or unban all sites in a list."
-			+ "It must be at least 4 characters in length: ")
+		return prompt("This password will be asked everytime you attempt to permablock a site, or unban all sites in a list."
+			+ " It must be at least 4 characters in length: ");
+	}
+	else if(cmd == "pwShort"){
+		return prompt("Password entered was too short, try again.");
 	}
 	else if(cmd == "changePw"){
 		return confirm("You have already set a password, would you like to change it?");
+	}
+	else if(cmd == "tooManyTries"){
+		alert("Too many wrong password attempts. Try again later.");
+	}
+	else if(cmd == "enterPw"){
+		return prompt("Password: ") === makeCookie.getItem("pw");
 	}
 
 }
