@@ -116,11 +116,20 @@ $("#blockList").on('click', '.unblock-button', function(){
   crd.del(siteID[1]);
 });
 
+
 $("#pw").click(function(){
   if(getBG.makeCookie.getItem("pw") != null){
     console.log(getBG.makeCookie.getItem("pw"));
     if(getBG.extensionDialogs("changePw", "")){
-      setPw();
+      var auth = enterPw();
+      console.log(auth);
+      if(auth == true){
+
+        setPw();
+      }
+      else if(!auth){
+        getBG.extensionDialogs("tooManyTries", "");
+      }
     }
   }
   else{
@@ -236,6 +245,7 @@ var crd = new function(){
     var tbl = document.getElementById("blockList");
     var permList = document.getElementById("permablocked");
     var emptyMainList = true;
+    $("#save").addClass("hide");
     if(Data.length > 0){
       for(i = 0; i < Data.length; i++){
         var url = Data[i][1];
@@ -263,10 +273,6 @@ var crd = new function(){
         $("#save").removeClass("hide");
         //$("#unblockAll").removeClass("hide");
       }
-      else{
-        $("#save").addClass("hide");
-        //$("#unblockAll").addClass("hide");
-      }
     }
     return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
   }
@@ -290,11 +296,20 @@ $("#unblockAll").click(function(){
 function enterPw(){
   var attempts = 0;
   var correct = false;
-  while(attempts < 4 && !correct){
-    if(getBG.extensionDialogs("enterPw", "")){
+  console.log(correct);
+  while(attempts < 4 && correct == false){
+    console.log(attempts);
+    var input = getBG.extensionDialogs("enterPw", "");
+    console.log(input);
+    if(input === getBG.makeCookie.getItem("pw")){
       correct = true;
     }
-    attempts++;
+    else if(input == null){
+      correct = "cancelled";
+    }
+    else{
+      attempts++;
+    }
   }
   return correct;
 }
@@ -312,12 +327,13 @@ function sendInfo(url, unit, rsn, tp){
         info = ["p", url, rsn, "INFN"];
         $(".input-field").val('');
       }
-      else{        
-        if(enterPw()){
+      else{
+        var auth = enterPw();        
+        if(auth == true){
           info = ["p", url, rsn, "INFN"];
           $(".input-field").val('');          
         }
-        else{
+        else if(!auth){
           getBG.extensionDialogs("tooManyTries", "");
         }
       }

@@ -298,10 +298,10 @@ function extensionDialogs(cmd, item){
 		return confirm("You have already set a password, would you like to change it?");
 	}
 	else if(cmd == "tooManyTries"){
-		alert("Too many wrong password attempts. Try again later.");
+		alert("Too many failed password attempts. Try again later.");
 	}
 	else if(cmd == "enterPw"){
-		return prompt("Password: ") === makeCookie.getItem("pw");
+		return prompt("Enter Your Current Password: ");
 	}
 	else if(cmd == "unblockAll"){
 		return confirm("Are you sure you want to unblock all the websites on this list?");
