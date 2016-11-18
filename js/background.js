@@ -1,4 +1,5 @@
-var storage = chrome.storage.local, err = chrome.runtime.lastError, Data = Array();
+const storage = chrome.storage.local, err = chrome.runtime.lastError
+var Data = Array();
 
 chrome.runtime.onUpdateAvailable.addListener(function(details) {
   console.log("updating to version " + details.version);
@@ -327,25 +328,24 @@ function unique(url){
   return uq;
 }
 
+//trims url if it contains protocols, or www.
+function trim(rawUrl){
+	var urlPrefixList = ["http://www.", "https://www.", "http://", "https://", "www."];
+	for(var i = 0; i < urlPrefixList.length; i++){
+		console.log(urlPrefixList[i]);
+		if(rawUrl.indexOf(urlPrefixList[i]) != -1){
+			rawUrl = rawUrl.substring(urlPrefixList[i].length, rawUrl.length);
+		}
+	}
+	console.log(rawUrl);
+    return rawUrl;
+};
+
 //gives user the ability to block a site when they right click a webpage
 function rightClickBlock(info, tab) {
   console.log("This webpage has been blocked.");
-  var rawUrl = info.pageUrl;
-  if(rawUrl.substring(rawUrl.length - 1, rawUrl.length) == "/"){
-  	temp = rawUrl.substring(0, rawUrl.length - 1);
-  }
-  else{
-  	temp = rawUrl;
-  }
-  var cut = ["http://www.", "http://", "https://", "https://www.", "www."];
-  for(var i = 0; i < cut.length; i++){
-  	console.log(temp.indexOf(cut[i]));
-  	if(temp.indexOf(cut[i]) != -1){
-  		temp = temp.substring(cut[i].length, temp.length);
-  	}
-  }
-  console.log(temp);
-  var newURL = temp.split("/");
+
+  var newURL = trim(info.pageUrl).split("/");
   if(confirm("Are you sure you want to block this website?")){
   	if(unique(newURL[0])){
   		addSite(["n", newURL[0], "", "N/A"]);
