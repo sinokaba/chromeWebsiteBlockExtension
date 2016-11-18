@@ -1,56 +1,53 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	    <title>Pokus: today, not tomorrow.</title>
-		<style>
-			html, body{
-				background-color: #708090;
-				background-image: none;
-				-moz-user-select: -moz-none;
-				-khtml-user-select: none;
-				-webkit-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
-			}
-			h1{
-				font-size: 36px;	
-				top: 50%;
-				text-shadow: 3px 3px 0px rgba(0, 0, 0, 1);
-			}
-			h2{
-			  	font-size: 26px;
-			  	padding-top: 30px;
-				text-shadow: 1px 1px 0px rgba(0, 0, 0, 1);
-			}
-			#text{
-			 	margin: 0;
-			  	position: absolute;
-			  	top: 50%;
-			  	left: 50%;
-			  	margin-right: -50%;
-			  	transform: translate(-50%, -50%);
-			}
-			#text h1, h2{
-			  	font-weight: bold;
-				color:white;
-			}
-			#url{
-				color: red;
-			}
-			#res{
-				color: black;
-			}
-		</style>
-		<script src="js/jquery.js"></script>
-		<script src="js/content.js"></script>
-	</head>
-
-	<body>
-		<div id='text'>
-			<h1><span id="url"></span> is blocked</h1>
-
-			<h2>Reason for blocking: <span id="res"></span></h2>
-		</div>
-	</body>
-
+   <head>
+      <title>Pokus: today, not tomorrow.</title>
+      <style>
+         html, body{
+         background-color: #708090;
+         background-image: none;
+         -moz-user-select: -moz-none;
+         -khtml-user-select: none;
+         -webkit-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         }
+         h1{
+         font-size: 36px;	
+         top: 50%;
+         text-shadow: 3px 3px 0px rgba(0, 0, 0, 1);
+         }
+         h2{
+         font-size: 26px;
+         padding-top: 30px;
+         text-shadow: 1px 1px 0px rgba(0, 0, 0, 1);
+         }
+         #text{
+         margin: 0;
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         margin-right: -50%;
+         transform: translate(-50%, -50%);
+         }
+         #text h1, h2{
+         font-weight: bold;
+         color:white;
+         }
+         #url{
+         color: red;
+         }
+         #res{
+         color: black;
+         }
+      </style>
+      <script src="js/jquery.js"></script>
+      <script src="js/content.js"></script>
+   </head>
+   <body>
+      <div id='text'>
+         <h1><span id="url"></span> is blocked</h1>
+         <h2>Reason for blocking: <span id="res"></span></h2>
+      </div>
+   </body>
 </html>

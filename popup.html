@@ -1,254 +1,243 @@
 <!doctype html>
-<!--
- This page is shown when the extension button is clicked, because the
- "browser_action" field in manifest.json contains the "default_popup" key with
- value "popup.html".
- -->
 <html>
-  <head>
-    <title>Pokus: today, not tomorrow.</title>
-    <style>
-      body{
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      ul > li{
-        list-style-type: none; 
-        background-color: #cde7f0;
-      }
-      ul{
-        padding-left: 0;
-      }
-      input:focus{
-        border-color: blue;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        text-overflow: ellipsis;
-        width: 305px;
-        overflow: hidden;
-      }
-      #timeUnits{
-        -webkit-appearance: menulist-button;
-        height: 30px;
-      }
-      #permablocked li{
-        background-color: transparent !important;
-        display: block;
-        color: #EA2E49;
-        text-align: center;
-        text-decoration: none;
-        float: left;
-        padding-left: 12px;
-      }
-      #permablocked ul{
-        list-style-type: none;
-        overflow: hidden;
-        padding-left: 10px
-      }
-      #loadedList{
-        width: 295px;
-        height: 50px;
-      }
-      #charities{
-        text-align: center;
-      }
-      #charities ul > li{
-        background-color: transparent !important;
-        margin: 10px 0;
-      }
-      .charitiesSq{
-          width: 70px;
-          height: 70px;
-      }
-      .charitiesLng{
-          width: 150px;
-      }
-      .title{
-        color: #002F2F;
-        font-size: 20;
-        font-weight: bold;
-        text-align: center;
-      }
-      .addBorder{
-        border-right: 1px solid black;
-      }
-      .button-style{
-        background-color:#046380;
-        border:1px solid #046380;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        font-family:Arial;
-        font-size:14px;
-        padding:7px 15px;
-        text-decoration:none;
-        text-shadow:0px 1px 0px #046380;
-        opacity: .85;
-      }
-      .unblock-button{
-        background-color: #167F39;
-        border:1px solid #167F39;
-        text-shadow:0px 1px 0px #167F39;
-      }
-      .button-style:hover {
-        opacity: 1;
-      }
-      .button-style:active {
-        position: relative;
-        top: 1px;
-      }
-      .hide{
-        display: none;
-      }
-      .big{
-        background-color: #EA2E49;
-        border:1px solid #EA2E49;
-        text-shadow:0px 1px 0px #EA2E49;        
-      }
-      .url{
-        font-size: 14px;
-        font-style: italic;
-      }
-      .tabs{ 
-        border-bottom: 1px solid #DDD;
-        padding-bottom:5px;
-      }
-      .tabs a{
-        border:1px solid #DDD;
-        color:#666666;
-        padding: 5px 10px;
-        text-decoration:none;
-        background-color: #EAEAEA;
-      }
-      .tabs a.active{ 
-        background-color: #fff; 
-        border-bottom: 0; 
-        padding: 6px 11px;
-      }
-      .input-field{
-        height: 25px;
-      }
-      .dis{
-        background-color: #45BF55;
-        opacity: 1;
-        cursor: default;
-      }
-      .ubDate{
-        color: #B9121B;
-      }
-      .wrap {
-          height: 260px;
-      }
-      .center{
-        text-align: center;
-      }
-      /*table css*/
-      .wrap table {
-          width: 300px;
-          table-layout: fixed;
-      }
-      table tr td {
-          padding: 5px;
-          border: 1px solid #eee;
-          width: 38px;
-          word-wrap: break-word;
-      }
-      table.head tr td {
-          background: #EAEAEA;
-      }
-      .inner_table {
-          height: 220px;
-          overflow-y: auto;
-          overflow-x: hidden;
-      }
-    </style>
-    <script src="js/jquery.js"></script>
-    <script src="js/popup.js"></script>
-  </head>
-  <body>
-    <!--This extension allows you to block websites for a certain amount of time. In doing so, you will remain focused at the task at hand and increase your productivity.-->
-    <div id="status">
-      <div class="tabs">
-        <a href="#" id="home-link" class="tab-link active">Home</a>
-        <a href="#" id="list-link" class="tab-link">Block List</a>
-        <a href="#" id="about-link" class="tab-link">About</a>
-      </div>
-        <div id="home" class="tabCon">
+   <head>
+      <title>Pokus: today, not tomorrow.</title>
+      <style>
+         body{
+         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+         font-size: 100%;
+         }
+         ul > li{
+         list-style-type: none; 
+         background-color: #cde7f0;
+         }
+         ul{
+         padding-left: 0;
+         }
+         input:focus{
+         border-color: blue;
+         }
+         #status {
+         /* avoid an excessively wide status text */
+         text-overflow: ellipsis;
+         width: 305px;
+         overflow: hidden;
+         }
+         #timeUnits{
+         -webkit-appearance: menulist-button;
+         height: 30px;
+         }
+         #permablocked li{
+         background-color: transparent !important;
+         display: block;
+         color: #EA2E49;
+         text-align: center;
+         text-decoration: none;
+         float: left;
+         padding-left: 12px;
+         }
+         #permablocked ul{
+         list-style-type: none;
+         overflow: hidden;
+         padding-left: 10px
+         }
+         #loadedList{
+         width: 295px;
+         height: 50px;
+         }
+         #charities{
+         text-align: center;
+         }
+         #charities ul > li{
+         background-color: transparent !important;
+         margin: 10px 0;
+         }
+         .charitiesSq{
+         width: 70px;
+         height: 70px;
+         }
+         .charitiesLng{
+         width: 150px;
+         }
+         .title{
+         color: #002F2F;
+         font-size: 20;
+         font-weight: bold;
+         text-align: center;
+         }
+         .addBorder{
+         border-right: 1px solid black;
+         }
+         .button-style{
+         background-color:#046380;
+         border:1px solid #046380;
+         display:inline-block;
+         cursor:pointer;
+         color:#ffffff;
+         font-family:Arial;
+         font-size:14px;
+         padding:7px 15px;
+         text-decoration:none;
+         text-shadow:0px 1px 0px #046380;
+         opacity: .85;
+         }
+         .unblock-button{
+         background-color: #167F39;
+         border:1px solid #167F39;
+         text-shadow:0px 1px 0px #167F39;
+         }
+         .button-style:hover {
+         opacity: 1;
+         }
+         .button-style:active {
+         position: relative;
+         top: 1px;
+         }
+         .hide{
+         display: none;
+         }
+         .big{
+         background-color: #EA2E49;
+         border:1px solid #EA2E49;
+         text-shadow:0px 1px 0px #EA2E49;        
+         }
+         .url{
+         font-size: 14px;
+         font-style: italic;
+         }
+         .tabs{ 
+         border-bottom: 1px solid #DDD;
+         padding-bottom:5px;
+         }
+         .tabs a{
+         border:1px solid #DDD;
+         color:#666666;
+         padding: 5px 10px;
+         text-decoration:none;
+         background-color: #EAEAEA;
+         }
+         .tabs a.active{ 
+         background-color: #fff; 
+         border-bottom: 0; 
+         padding: 6px 11px;
+         }
+         .input-field{
+         height: 25px;
+         }
+         .dis{
+         background-color: #45BF55;
+         opacity: 1;
+         cursor: default;
+         }
+         .ubDate{
+         color: #B9121B;
+         }
+         .wrap {
+         height: 260px;
+         }
+         .center{
+         text-align: center;
+         }
+         /*table css*/
+         .wrap table {
+         width: 300px;
+         table-layout: fixed;
+         }
+         table tr td {
+         padding: 5px;
+         border: 1px solid #eee;
+         width: 38px;
+         word-wrap: break-word;
+         }
+         table.head tr td {
+         background: #EAEAEA;
+         }
+         .inner_table {
+         height: 220px;
+         overflow-y: auto;
+         overflow-x: hidden;
+         }
+      </style>
+      <script src="js/jquery.js"></script>
+      <script src="js/popup.js"></script>
+   </head>
+   <body>
+      <!--This extension allows you to block websites for a certain amount of time. In doing so, you will remain focused at the task at hand and increase your productivity.-->
+      <div id="status">
+         <div class="tabs">
+            <a href="#" id="home-link" class="tab-link active">Home</a>
+            <a href="#" id="list-link" class="tab-link">Block List</a>
+            <a href="#" id="about-link" class="tab-link">About</a>
+         </div>
+         <div id="home" class="tabCon">
             <div id="addSite">
-
-              <form id="mainForm" autocomplete="off">
-                <p class="title"><label>Pokus</label></p>
-                <p id="urlInput">URL:</p>
-                <input name="url" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
-                <textarea id="loadedList" class="hide"></textarea>
-                <p>Comments:</p>
-                <input name="res" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
-                <p>Block Period:</p>
-                <div class="center">
-                <input name="time" class="input-field" type="text" value="" id="blockPeriod" size="10" maxlength="3" placeholder="Whole numbers only" disabled>
-                <select id="timeUnits">
-                  <option value="1">Minute(s)</option>
-                  <option value="2">Hour(s)</option>
-                  <option value="3">Day(s)</option>
-                  <option value="4" selected="selected">Unblock Manually</option>
-                  <option value="5">Permanently</option>
-                </select>
-              </div>
-                <br />
-                <div class="center">
-                  <input type="submit" class="button-style" id="blockNow" name="submit" value="Block">
-                  <input type="submit" class="button-style" id="loadList" value="Load List">
-                </div>
-              
-              </form>
+               <form id="mainForm" autocomplete="off">
+                  <p class="title"><label>Pokus</label></p>
+                  <p id="urlInput">URL:</p>
+                  <input name="url" class="input-field" type="text" value="" id="websiteURL" size="45" maxlength="40" placeholder="block this site">
+                  <textarea id="loadedList" class="hide"></textarea>
+                  <p>Comments:</p>
+                  <input name="res" type="text" class="input-field" value="" id="comment" size="45" maxlength="50" placeholder="Reason for blocking this site.">
+                  <p>Block Period:</p>
+                  <div class="center">
+                     <input name="time" class="input-field" type="text" value="" id="blockPeriod" size="10" maxlength="3" placeholder="Whole numbers only" disabled>
+                     <select id="timeUnits">
+                        <option value="1">Minute(s)</option>
+                        <option value="2">Hour(s)</option>
+                        <option value="3">Day(s)</option>
+                        <option value="4" selected="selected">Unblock Manually</option>
+                        <option value="5">Permanently</option>
+                     </select>
+                  </div>
+                  <br />
+                  <div class="center">
+                     <input type="submit" class="button-style" id="blockNow" name="submit" value="Block">
+                     <input type="submit" class="button-style" id="loadList" value="Load List">
+                  </div>
+               </form>
             </div>
             <hr>
             <div class="center">
-              <input type="submit" class="big button-style" id="pw" value="Set Password">
+               <input type="submit" class="big button-style" id="pw" value="Set Password">
             </div>
-
             <hr>
-        </div>
-
-        <div id="list" class="hide tabCon">
+         </div>
+         <div id="list" class="hide tabCon">
             <p class="title">Blocked Websites</p>
             <div class="wrap">
-              <table class="head">
+               <table class="head">
                   <tr>
-                      <td class="addBorder">URL: </td>
-                      <td class="addBorder">Unblock Date: </td>
-                      <td>Act: </td>
+                     <td class="addBorder">URL: </td>
+                     <td class="addBorder">Unblock Date: </td>
+                     <td>Act: </td>
                   </tr>
-              </table>
-              <div class="inner_table">
-              <table>
-                <tbody id="blockList"></tbody>
-              </table>
-              </div>
+               </table>
+               <div class="inner_table">
+                  <table>
+                     <tbody id="blockList"></tbody>
+                  </table>
+               </div>
             </div>
             <div class="center">
-              <input type="submit" class="button-style" id="save" value="Save List">
-              <!--<input type="submit" class="big button-style" id="unblockAll" value="Unblock All">-->
+               <input type="submit" class="button-style" id="save" value="Save List">
+               <!--<input type="submit" class="big button-style" id="unblockAll" value="Unblock All">-->
             </div>
             <hr>
             <h4>Permablocked sites:</h4>
             <ul id="permablocked">
-              
             </ul>
-        </div>
-        <div id="about" class="hide tabCon">
-
-          <h5 style="text-align: center">I made this extension to help with my procrastination problem. If you have some disposable income, and you would like to make a difference please consider donating to some of the charities I listed below. These charities are all very highly rated and do good work, and I think it is important to support them however way we can.</h5>
-          <div id="charities">
-            <ul>
-              <li><a href="https://www.nrdc.org" target="_blank"><img class="charitiesSq" src="img/nrdcLogo.png"/></a></li>
-              <li><a href="https://www.oxfamamerica.org" target="_blank"><img class="charitiesLng" src="img/oxfamLogo.png"></a></li>
-              <li><a href="https://doctorswithoutborders.org/" target="_blank"><img class="charitiesLng" src="img/dwbLogo.png"></a></li>
-              <li><a href="http://www.conservationfund.org/" target="_blank"><img class="charitiesLng" src="img/conFundLogo.png"></a></li>
-            </ul>
-          </div>
-        </div>
+         </div>
+         <div id="about" class="hide tabCon">
+            <h5 style="text-align: center">I made this extension to help with my procrastination problem. If you have some disposable income, and you would like to make a difference please consider donating to some of the charities I listed below. These charities are all very highly rated and do good work, and I think it is important to support them however way we can.</h5>
+            <div id="charities">
+               <ul>
+                  <li><a href="https://www.nrdc.org" target="_blank"><img class="charitiesSq" src="img/nrdcLogo.png"/></a></li>
+                  <li><a href="https://www.oxfamamerica.org" target="_blank"><img class="charitiesLng" src="img/oxfamLogo.png"></a></li>
+                  <li><a href="https://doctorswithoutborders.org/" target="_blank"><img class="charitiesLng" src="img/dwbLogo.png"></a></li>
+                  <li><a href="http://www.conservationfund.org/" target="_blank"><img class="charitiesLng" src="img/conFundLogo.png"></a></li>
+               </ul>
+            </div>
+         </div>
       </div>
-  </body>
+   </body>
 </html>
