@@ -105,7 +105,7 @@ $(function() {
                 var auth = enterPw();
                 console.log(auth);
                 if (auth == true) {
-
+                    console.log("passed");
                     setPw();
                 } else if (!auth) {
                     getBG.extensionDialogs("tooManyTries", "");
@@ -222,8 +222,10 @@ $(function() {
             const permList = document.getElementById("permablocked");
             var emptyMainList = true;
             $("#save").addClass("hide");
+            $("#unblockAll").addClass("hide");
             if (Data.length > 0) {
                 for (i = 0; i < Data.length; i++) {
+                    console.log(i + " : " + Data[i][1]);
                     const urlInList = Data[i][1];
                     const ubDate = Data[i][3];
                     console.log(ubDate);
@@ -245,7 +247,7 @@ $(function() {
                 }
                 if (!emptyMainList) {
                     $("#save").removeClass("hide");
-                    //$("#unblockAll").removeClass("hide");
+                    $("#unblockAll").removeClass("hide");
                 }
             }
             return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
@@ -253,18 +255,19 @@ $(function() {
     }
 
 
-    /*
+
     $("#unblockAll").click(function(){
-      if(getBG.extensionDialogs("unblockAll")){
-        if(enterPw()){
-
+        if(getBG.extensionDialogs("unblockAll")){
+            var auth = enterPw();
+            if(auth == true){
+                getBG.unblockAll();
+                crd.grabList();
+            }
+            else if(!auth){
+                getBG.extensionDialogs("tooManyTries", "");
+            }
         }
-        else{
-
-        }
-      }
     })
-    */
 
 
     function enterPw() {
@@ -346,6 +349,7 @@ $(function() {
                 getBG.extensionDialogs("invalidTime", timeAmount);
             }
         }
+        console.log(info);
         return info;
     }
 

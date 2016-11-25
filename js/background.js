@@ -252,22 +252,23 @@ function infnBlocking(urls) {
     }, ["blocking"]);
 }
 
-/*
+
 function unblockAll(){
- 	if(chrome.webRequest.onBeforeRequest.hasListener(blockRequest[3])){
- 		chrome.webRequest.onBeforeRequest.removeListener(blockRequest[3]);	
- 	};
- 
- 	Data.length = 0;
- 	updateFilters();
- 	storage.clear(function(){
- 		var err = chrome.runtime.lastError;
- 		if(err){
- 			console.log(err);
-		}	
-	})
+    console.log("d before: " + Data);
+ 	for(var i = 0; i < Data.length; i++){
+        console.log("print " + i + ": " + Data[i][1]);
+        if(Data[i][3] != "INFN"){
+            if(Data[i][3] == "N/A"){
+                removeSite(i, "norm");
+            }
+            else{
+                removeSite(i, "time");
+            }
+        }
+    }
+    console.log("d after: " + Data);
 }
-*/
+
 function extensionDialogs(cmd, item) {
     if (cmd == "permablock") {
         return confirm("Are you sure you want to permablock '" + item + "'?");
