@@ -256,6 +256,7 @@ function infnBlocking(urls) {
 function unblockAll(){
     console.log("d before: " + Data);
  	for(var i = 0; i < Data.length; i++){
+        console.log(Data.length + " i: " + i);
         console.log("print " + i + ": " + Data[i][1]);
         if(Data[i][3] != "INFN"){
             if(Data[i][3] == "N/A"){
@@ -264,6 +265,7 @@ function unblockAll(){
             else{
                 removeSite(i, "time");
             }
+            unblockAll();
         }
     }
     console.log("d after: " + Data);
