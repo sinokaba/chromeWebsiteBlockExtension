@@ -253,16 +253,15 @@ function infnBlocking(urls) {
 }
 
 
-function unblockAll(){
+function unblockAll() {
     console.log("d before: " + Data);
- 	for(var i = 0; i < Data.length; i++){
+    for (var i = 0; i < Data.length; i++) {
         console.log(Data.length + " i: " + i);
         console.log("print " + i + ": " + Data[i][1]);
-        if(Data[i][3] != "INFN"){
-            if(Data[i][3] == "N/A"){
+        if (Data[i][3] != "INFN") {
+            if (Data[i][3] == "N/A") {
                 removeSite(i, "norm");
-            }
-            else{
+            } else {
                 removeSite(i, "time");
             }
             unblockAll();
@@ -300,7 +299,7 @@ function extensionDialogs(cmd, item) {
     } else if (cmd == "tooManyTries") {
         alert("Too many failed password attempts. Try again later.");
     } else if (cmd == "enterPw") {
-        return prompt("Enter Your Current Password: ");
+        return prompt("After 4 tries you will not be able to access password guarded features for 2 hours. Enter Your Current Password: ");
     } else if (cmd == "unblockAll") {
         return confirm("Are you sure you want to unblock all the websites on this list?");
     }
@@ -313,11 +312,50 @@ chrome.contextMenus.create({
     onclick: rightClickBlock
 });
 
+
+function enterPW() {
+    var attempts = 0;
+    var correct = false;
+    console.log(correct);
+    while (attempts < 4 && correct == false) {
+        console.log(attempts);
+        var input = extensionDialogs("enterPw", "");
+        console.log(input);
+        if (input === makeCookie.getItem("pw")) {
+            correct = true;
+        } else if (input == null) {
+            correct = "cancelled";
+        } else {
+            attempts++;
+        }
+    }
+    return correct;
+}
+
+
+function setPW() {
+    var pass = extensionDialogs("setPw", "");
+    console.log(pass);
+    while (pass.length < 4) {
+        pass = extensionDialogs("pwShort", "");
+    }
+    makeCookie.setItem("pw", pass, Infinity);
+}
+
+function failedPW() {
+    console.log("hitt");
+    if (makeCookie.getItem("failedPWAttemps") == null) {
+        makeCookie.setItem("failedPWAttemps", "wrongPassword", 7200);
+    }
+    extensionDialogs("tooManyTries");
+}
+
 function unique(url) {
     var uq = true;
     for (var j = 0; j < Data.length; j++) {
         console.log(url + " =? " + Data[j][1]);
         if (url.indexOf(Data[j][1]) != -1) {
+            console.log("url: " + url + " copy: " + Data[j][1]);
             uq = false;
         }
     }

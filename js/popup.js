@@ -102,47 +102,50 @@ $(function() {
         if (getBG.makeCookie.getItem("pw") != null) {
             console.log(getBG.makeCookie.getItem("pw"));
             if (getBG.extensionDialogs("changePw", "")) {
-                var auth = enterPw();
-                console.log(auth);
-                if (auth == true) {
-                    console.log("passed");
-                    setPw();
-                } else if (!auth) {
-                    getBG.extensionDialogs("tooManyTries", "");
+                if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                    var auth = getBG.enterPW();
+                    console.log(auth);
+                    if (auth == true) {
+                        console.log("passed");
+                        getBG.setPW();
+                    } else if (!auth) {
+                        getBG.failedPW();
+                    }
+                } else {
+                    getBG.failedPW();
                 }
             }
         } else {
-            setPw();
+            getBG.setPW();
         }
     });
 
-
-    function setPw() {
-        var pass = getBG.extensionDialogs("setPw", "");
-        console.log(pass);
-        while (pass.length < 4) {
-            pass = getBG.extensionDialogs("pwShort", "");
-        }
-        getBG.makeCookie.setItem("pw", pass, Infinity);
-    }
-
-
     $("#save").click(function() {
-        var urlList = [];
-        for (var i = 0; i < Data.length; i++) {
-            if (Data[i][3] != "INFN") {
-                urlList.push(Data[i][1]);
+        if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+            var auth = getBG.enterPW();
+            if (auth == true) {
+                var urlList = [];
+                for (var i = 0; i < Data.length; i++) {
+                    if (Data[i][3] != "INFN") {
+                        urlList.push(Data[i][1]);
+                    }
+                }
+                var urlListStr = JSON.stringify(urlList);
+                console.log(getBG.makeCookie.getItem("savedList"));
+                if (getBG.makeCookie.getItem("savedList") == null) {
+                    getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+                    getBG.extensionDialogs("listSaved", "");
+                } else {
+                    if (getBG.extensionDialogs("overrideSave", urlListStr)) {
+                        getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+                    }
+                }
+            } else if (!auth) {
+                getBG.failedPW();
             }
-        }
-        var urlListStr = JSON.stringify(urlList);
-        console.log(getBG.makeCookie.getItem("savedList"));
-        if (getBG.makeCookie.getItem("savedList") == null) {
-            getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
-            getBG.extensionDialogs("listSaved", "");
         } else {
-            if (getBG.extensionDialogs("overrideSave", urlListStr)) {
-                getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
-            }
+            console.log("wronnggg");
+            getBG.failedPW();
         }
         console.log(getBG.makeCookie.getItem("savedList"));
     })
@@ -256,39 +259,21 @@ $(function() {
 
 
 
-    $("#unblockAll").click(function(){
-        if(getBG.extensionDialogs("unblockAll")){
-            var auth = enterPw();
-            if(auth == true){
-                getBG.unblockAll();
-                crd.grabList();
-            }
-            else if(!auth){
-                getBG.extensionDialogs("tooManyTries", "");
+    $("#unblockAll").click(function() {
+        if (getBG.extensionDialogs("unblockAll")) {
+            if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                var auth = getBG.enterPW();
+                if (auth == true) {
+                    getBG.unblockAll();
+                    crd.grabList();
+                } else if (!auth) {
+                    getBG.failedPW();
+                }
+            } else {
+                getBG.failedPW();
             }
         }
     })
-
-
-    function enterPw() {
-        var attempts = 0;
-        var correct = false;
-        console.log(correct);
-        while (attempts < 4 && correct == false) {
-            console.log(attempts);
-            var input = getBG.extensionDialogs("enterPw", "");
-            console.log(input);
-            if (input === getBG.makeCookie.getItem("pw")) {
-                correct = true;
-            } else if (input == null) {
-                correct = "cancelled";
-            } else {
-                attempts++;
-            }
-        }
-        return correct;
-    }
-
 
     function sendInfo(url, unit, rsn, tp) {
         var info = [];
@@ -304,12 +289,16 @@ $(function() {
                     info = ["p", url, rsn, "INFN"];
                     $(".input-field").val('');
                 } else {
-                    var auth = enterPw();
-                    if (auth == true) {
-                        info = ["p", url, rsn, "INFN"];
-                        $(".input-field").val('');
-                    } else if (!auth) {
-                        getBG.extensionDialogs("tooManyTries", "");
+                    if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                        var auth = getBG.enterPW();
+                        if (auth == true) {
+                            info = ["p", url, rsn, "INFN"];
+                            $(".input-field").val('');
+                        } else if (!auth) {
+                            getBG.failedPW();
+                        }
+                    } else {
+                        getBG.failedPW();
                     }
                 }
             }
