@@ -100,7 +100,6 @@ $(function() {
 
     $("#pw").click(function() {
         if (getBG.makeCookie.getItem("pw") != null) {
-            console.log(getBG.makeCookie.getItem("pw"));
             if (getBG.extensionDialogs("changePw", "")) {
                 if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
                     var auth = getBG.enterPW();

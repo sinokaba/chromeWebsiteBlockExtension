@@ -271,39 +271,48 @@ function unblockAll() {
 }
 
 function extensionDialogs(cmd, item) {
-    if (cmd == "permablock") {
-        return confirm("Are you sure you want to permablock '" + item + "'?");
-    } else if (cmd == "invalidURL") {
-        alert("Please enter a valid URL.");
-    } else if (cmd == "reachedLimit") {
-        alert("You have blocked the maximum number of websites.");
-    } else if (cmd == "invalidTime") {
-        alert("You did not enter a valid value for the amount of time the website should be blocked for.");
-    } else if (cmd == "unblockConfirm") {
-        return confirm("Are you sure you want to unblock " + item + "?");
-    } else if (cmd == "alreadyBlocked") {
-        alert("You have already blocked this website!");
-    } else if (cmd == "overrideSave") {
-        return confirm("A saved list already exists, are you sure you want to override it?");
-    } else if (cmd == "noSave") {
-        alert("You do not have a saved list.");
-    } else if (cmd == "listSaved") {
-        alert("Your block list has been saved!");
-    } else if (cmd == "setPw") {
-        return prompt("This password will be asked everytime you attempt to permablock a site, or unban all sites in a list." +
-            " It must be at least 4 characters in length: ");
-    } else if (cmd == "pwShort") {
-        return prompt("Password entered was too short, try again.");
-    } else if (cmd == "changePw") {
-        return confirm("You have already set a password, would you like to change it?");
-    } else if (cmd == "tooManyTries") {
-        alert("Too many failed password attempts. Try again later.");
-    } else if (cmd == "enterPw") {
-        return prompt("After 4 tries you will not be able to access password guarded features for 2 hours. Enter Your Current Password: ");
-    } else if (cmd == "unblockAll") {
-        return confirm("Are you sure you want to unblock all the websites on this list?");
+    switch(cmd){
+        case "permablock":
+            return confirm("Are you sure you want to permablock '" + item + "'?");
+        case "invalidURL":
+            alert("Please enter a valid URL.");
+            break;
+        case "reachedLimit":
+            alert("You have blocked the maximum number of websites.");
+            break;
+        case "invalidTime":
+            alert("You did not enter a valid value for the amount of time the website should be blocked for.");
+            break;
+        case "unblockConfirm":
+            return confirm("Are you sure you want to unblock " + item + "?");
+        case "alreadyBlocked":
+            alert("You have already blocked this website!");
+            break;
+        case "overrideSave":
+            return confirm("A saved list already exists, are you sure you want to override it?");
+        case "noSave":
+            alert("You do not have a saved list.");
+            break;
+        case "listSaved":
+            alert("Your block list has been saved!");
+            break;
+        case "setPw":
+            return prompt("This password will be asked everytime you attempt to permablock a site, or unban all sites in a list." +
+            " It must be at least 4 characters in length: ");         
+        case "pwShort":
+            return prompt("Password entered was too short, try again.");
+        case "changePw":
+            return confirm("You have already set a password, would you like to change it?");
+        case "tooManyTries":
+            alert("Too many failed password attempts. Try again later.");
+            break;
+        case "enterPw":
+            return prompt("After 4 tries you will not be able to access password guarded features for 2 hours. Enter Your Current Password: ");
+        case "unblockAll":
+            return confirm("Are you sure you want to unblock all the websites on this list?");
+        default:
+            alert("Invalid command");
     }
-
 }
 
 chrome.contextMenus.create({
