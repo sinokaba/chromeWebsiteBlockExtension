@@ -3,7 +3,6 @@ const storage = chrome.storage.local,
 var Data = Array();
 
 chrome.runtime.onUpdateAvailable.addListener(function(details) {
-    console.log("updating to version " + details.version);
     chrome.runtime.reload();
 });
 
@@ -19,10 +18,8 @@ for (var i = 0; i < 3; i++) {
         //since url becomes redirect url, don't want that
         var tabIdToUrl = {};
         tabIdToUrl[details.tabId.toString()] = details.url;
-        console.log(tabIdToUrl);
         storage.set(tabIdToUrl);
 
-        console.log(chrome.extension.getURL("redirect.html"));
         return {
             redirectUrl: chrome.extension.getURL("redirect.html")
         };
@@ -31,7 +28,6 @@ for (var i = 0; i < 3; i++) {
 
 //alarm test
 chrome.alarms.onAlarm.addListener(function(alarm) {
-    console.log("alarm: " + alarm);
 })
 
 //cookie frame, for making cookies. taken from mozilla js docs
@@ -91,9 +87,7 @@ function loadOldData() {
             return result[key];
         });
         if (rawD.length > 0) {
-            console.log(rawD);
             var len = rawD[0].match((/\[/g) || []).length - 1;
-            console.log(len);
             var temp = rawD[0].replace(/['"]+/g, '');
             var tempParsed = temp.split(']');
             var info = [];
@@ -105,7 +99,6 @@ function loadOldData() {
                 }
                 Data.push(oldData);
             }
-            console.log(Data);
             for (var i = 0; i < Data.length; i++) {
                 if (Data[i][3] == "N/A") {
                     updateFilters("norm");
@@ -120,10 +113,8 @@ function loadOldData() {
 }
 
 loadOldData();
-console.log(Data);
 
 function addSite(sInfo) {
-    console.log(Data);
     Data.push(sInfo);
     storage.set({
         "data": JSON.stringify(Data)
@@ -132,7 +123,6 @@ function addSite(sInfo) {
             alert("An error occurred: " + err.message);
         }
     });
-    console.log(sInfo[3]);
 
     if (sInfo[3] == "N/A") {
         updateFilters("norm");
@@ -152,12 +142,10 @@ function removeSite(index, type) {
             alert("An error occurred: " + err.message);
         }
     });
-    console.log(Data);
     updateFilters(type);
 }
 
 function updateFilters(type) {
-    console.log("you called me");
     var nUrls = [];
     var tUrls = [];
     var tDates = [];
@@ -196,10 +184,8 @@ function updateFilters(type) {
 
 function normBlocking(urls) {
     if (chrome.webRequest.onBeforeRequest.hasListener(blockRequest[0])) {
-        console.log(urls);
         chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
     };
-    console.log(urls);
     chrome.webRequest.onBeforeRequest.addListener(blockRequest[0], {
         urls: urls
     }, ["blocking"]);
@@ -207,7 +193,6 @@ function normBlocking(urls) {
 
 function timeBlocking(urls, tDates) {
     if (chrome.webRequest.onBeforeRequest.hasListener(blockRequest[1])) {
-        console.log(urls);
         chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
     };
     chrome.webRequest.onBeforeRequest.addListener(blockRequest[1], {
@@ -219,26 +204,21 @@ function timeBlocking(urls, tDates) {
     var timer = setInterval(function() {
         var curTime = Date.now();
         for (var i = 0; i < tDates.length; i++) {
-            console.log(Math.floor((tDates[i] - curTime) / 1000));
             if (curTime >= tDates[i]) {
                 counter++;
                 for (var k = 0; k < Data.length; k++) {
                     if (Data[k][4] == tDates[i]) {
-                        console.log(Data[k][1]);
                         chrome.notifications.create('reminder', {
                             type: 'basic',
-                            iconUrl: 'img/pokusIcon.png',
+                            iconUrl: 'img/pokusIcon128.png',
                             title: 'Website Unblocked',
                             message: '"' + Data[k][1] + '" is now unblocked. Just refresh the page.'
                         }, function(notificationId) {
-                            console.log(notificationId);
                         });
                         removeSite(k, "time");
                     }
                 }
-                console.log(counter + " " + tDates.length);
                 if (counter == tDates.length) {
-                    console.log("yeaa i clear it mang");
                     clearInterval(timer);
                 }
             }
@@ -254,10 +234,7 @@ function infnBlocking(urls) {
 
 
 function unblockAll() {
-    console.log("d before: " + Data);
     for (var i = 0; i < Data.length; i++) {
-        console.log(Data.length + " i: " + i);
-        console.log("print " + i + ": " + Data[i][1]);
         if (Data[i][3] != "INFN") {
             if (Data[i][3] == "N/A") {
                 removeSite(i, "norm");
@@ -267,7 +244,6 @@ function unblockAll() {
             unblockAll();
         }
     }
-    console.log("d after: " + Data);
 }
 
 function extensionDialogs(cmd, item) {
@@ -325,11 +301,8 @@ chrome.contextMenus.create({
 function enterPW() {
     var attempts = 0;
     var correct = false;
-    console.log(correct);
     while (attempts < 4 && correct == false) {
-        console.log(attempts);
         var input = extensionDialogs("enterPw", "");
-        console.log(input);
         if (input === makeCookie.getItem("pw")) {
             correct = true;
         } else if (input == null) {
@@ -344,7 +317,6 @@ function enterPW() {
 
 function setPW() {
     var pass = extensionDialogs("setPw", "");
-    console.log(pass);
     while (pass.length < 4) {
         pass = extensionDialogs("pwShort", "");
     }
@@ -352,7 +324,6 @@ function setPW() {
 }
 
 function failedPW() {
-    console.log("hitt");
     if (makeCookie.getItem("failedPWAttemps") == null) {
         makeCookie.setItem("failedPWAttemps", "wrongPassword", 7200);
     }
@@ -362,13 +333,10 @@ function failedPW() {
 function unique(url) {
     var uq = true;
     for (var j = 0; j < Data.length; j++) {
-        console.log(url + " =? " + Data[j][1]);
         if (url.indexOf(Data[j][1]) != -1) {
-            console.log("url: " + url + " copy: " + Data[j][1]);
             uq = false;
         }
     }
-    console.log(uq);
     return uq;
 }
 
@@ -376,19 +344,15 @@ function unique(url) {
 function trim(rawUrl) {
     var urlPrefixList = ["http://www.", "https://www.", "http://", "https://", "www."];
     for (var i = 0; i < urlPrefixList.length; i++) {
-        console.log(urlPrefixList[i]);
         if (rawUrl.indexOf(urlPrefixList[i]) != -1) {
             rawUrl = rawUrl.substring(urlPrefixList[i].length, rawUrl.length);
         }
     }
-    console.log(rawUrl);
     return rawUrl;
 };
 
 //gives user the ability to block a site when they right click a webpage
 function rightClickBlock(info, tab) {
-    console.log("This webpage has been blocked.");
-
     var newURL = trim(info.pageUrl).split("/");
     if (confirm("Are you sure you want to block this website?")) {
         if (unique(newURL[0])) {

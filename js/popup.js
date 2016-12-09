@@ -1,5 +1,6 @@
 $(function() {
 
+
     const getBG = chrome.extension.getBackgroundPage(),
         url = document.getElementById("websiteURL");
     const timeUnit = document.getElementById("timeUnits"),
@@ -35,7 +36,6 @@ $(function() {
 
     function checkOpSelected() {
         timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
-        console.log(timeUnitSelected);
         if (timeUnitSelected == "4" || timeUnitSelected == "5") {
             $("#blockPeriod").prop('disabled', true);
         } else if (timeUnitSelected == "1" || timeUnitSelected == "2" || timeUnitSelected == "3") {
@@ -49,7 +49,6 @@ $(function() {
 
     $("#home-link").click(function() {
         $('#timeUnits option').prop('selected', function() {
-            console.log(this.defaultSelected);
 
             return this.defaultSelected;
         });
@@ -103,9 +102,7 @@ $(function() {
             if (getBG.extensionDialogs("changePw", "")) {
                 if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
                     var auth = getBG.enterPW();
-                    console.log(auth);
                     if (auth == true) {
-                        console.log("passed");
                         getBG.setPW();
                     } else if (!auth) {
                         getBG.failedPW();
@@ -120,36 +117,40 @@ $(function() {
     });
 
     $("#save").click(function() {
-        if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-            var auth = getBG.enterPW();
-            if (auth == true) {
-                var urlList = [];
-                for (var i = 0; i < Data.length; i++) {
-                    if (Data[i][3] != "INFN") {
-                        urlList.push(Data[i][1]);
-                    }
+        if(getBG.makeCookie.getItem("pw") != null){
+            if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                var auth = getBG.enterPW();
+                if (auth == true) {
+                    saveList();
+                } else if (!auth) {
+                    getBG.failedPW();
                 }
-                var urlListStr = JSON.stringify(urlList);
-                console.log(getBG.makeCookie.getItem("savedList"));
-                if (getBG.makeCookie.getItem("savedList") == null) {
-                    getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
-                    getBG.extensionDialogs("listSaved", "");
-                } else {
-                    if (getBG.extensionDialogs("overrideSave", urlListStr)) {
-                        getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
-                    }
-                }
-            } else if (!auth) {
+            } else {
                 getBG.failedPW();
             }
-        } else {
-            console.log("wronnggg");
-            getBG.failedPW();
         }
-        console.log(getBG.makeCookie.getItem("savedList"));
+        else{
+            saveList();
+        }
     })
 
-
+    function saveList(){
+        var urlList = [];
+        for (var i = 0; i < Data.length; i++) {
+            if (Data[i][3] != "INFN") {
+                urlList.push(Data[i][1]);
+            }
+        }
+        var urlListStr = JSON.stringify(urlList);
+        if (getBG.makeCookie.getItem("savedList") == null) {
+            getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+            getBG.extensionDialogs("listSaved", "");
+        } else {
+            if (getBG.extensionDialogs("overrideSave", urlListStr)) {
+                getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
+            }
+        }        
+    }
     $("#loadList").click(function() {
 
         if ($(this).val() == "Load List") {
@@ -191,7 +192,6 @@ $(function() {
                 } else {
                     getBG.extensionDialogs("invalidURL", websiteURL)
                 }
-                console.log(siteInfo.length);
                 if (siteInfo.length > 0) {
                     getBG.addSite(siteInfo);
 
@@ -203,7 +203,6 @@ $(function() {
                         siteInfo = sendInfo(ls[i], timeUnitSelected, rsn, "list");
                         getBG.addSite(siteInfo);
                     } else {
-                        console.log("site already blocked");
                     }
                 }
             }
@@ -217,7 +216,6 @@ $(function() {
         }
         this.grabList = function() {
             Data = getBG.Data;
-            console.log(Data + " len: " + Data.length);
             var tempOutput = "";
             var permOutput = "";
             const tbl = document.getElementById("blockList");
@@ -227,10 +225,8 @@ $(function() {
             $("#unblockAll").addClass("hide");
             if (Data.length > 0) {
                 for (i = 0; i < Data.length; i++) {
-                    console.log(i + " : " + Data[i][1]);
                     const urlInList = Data[i][1];
                     const ubDate = Data[i][3];
-                    console.log(ubDate);
                     if (ubDate != "INFN") {
                         emptyMainList = false;
                         tempOutput += "<tr>";
@@ -260,16 +256,22 @@ $(function() {
 
     $("#unblockAll").click(function() {
         if (getBG.extensionDialogs("unblockAll")) {
-            if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-                var auth = getBG.enterPW();
-                if (auth == true) {
-                    getBG.unblockAll();
-                    crd.grabList();
-                } else if (!auth) {
+            if(getBG.makeCookie.getItem("pw") != null){
+                if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                    var auth = getBG.enterPW();
+                    if (auth == true) {
+                        getBG.unblockAll();
+                        crd.grabList();
+                    } else if (!auth) {
+                        getBG.failedPW();
+                    }
+                } else {
                     getBG.failedPW();
                 }
-            } else {
-                getBG.failedPW();
+            }
+            else{
+                getBG.unblockAll();
+                crd.grabList(); 
             }
         }
     })
@@ -303,7 +305,7 @@ $(function() {
             }
         } else {
             var timeAmount = time.value;
-            console.log(timeAmount);
+
             if (unit == "1") {
                 timeAmount *= 60000;
             } else if (unit == "2") {
@@ -337,7 +339,6 @@ $(function() {
                 getBG.extensionDialogs("invalidTime", timeAmount);
             }
         }
-        console.log(info);
         return info;
     }
 
