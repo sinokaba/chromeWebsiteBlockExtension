@@ -66,17 +66,7 @@ $(function() {
 
     //checks if url exists
     function ValidURL(str) {
-        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-        if (!pattern.test(str)) {
-            return false;
-        } else {
-            return true;
-        }
+        return /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test("http://" + str);
     };
 
     //checks if entered value is an integer, also tests for if the input value is empty
@@ -182,6 +172,7 @@ $(function() {
             var siteInfo;
             if (!$("#websiteURL").is(":disabled")) {
                 var websiteURL = url.value;
+                console.log(ValidURL(websiteURL));
                 if (ValidURL(websiteURL)) {
                     if (getBG.unique(websiteURL)) {
                         const url = getBG.trim(websiteURL);
