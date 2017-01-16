@@ -3,7 +3,7 @@
 
   "name": "Pokus",
   "description": "Website blocking extension",
-  "version": "2.1.2",
+  "version": "2.1.5",
   "author": "Sinokaba",
   "icons":{
     "16": "img/pokusIcon16.png",

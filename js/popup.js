@@ -1,6 +1,4 @@
 $(function() {
-
-
     const getBG = chrome.extension.getBackgroundPage(),
         url = document.getElementById("websiteURL");
     const timeUnit = document.getElementById("timeUnits"),
@@ -8,16 +6,13 @@ $(function() {
         getReason = document.getElementById("comment");
     var Data = Array();
 
-    $(".tab-link").each(function() {
-        $(this).click(function(e) {
-            var temp = e.target.id.split('-');
-            var tabID = temp[0];
-            $(".tab-link").removeClass("active");
-            $(this).addClass("active");
-            $(".tabCon").addClass("hide");
-            $("#" + tabID).removeClass("hide");
-            return false;
-        })
+    $('#mainForm').submit(function(e) {
+        e.preventDefault();
+    })
+
+    //listens to the block button, and blocks the website entered into the input field once it's pressed
+    $("#blockNow").click(function() {
+        block();
     });
 
     //make input field auto select on start up
@@ -33,6 +28,21 @@ $(function() {
         checkOpSelected();
     })
 
+    $("#list-link").click(function() {
+        grabList();
+    });
+
+    $(".tab-link").each(function() {
+        $(this).click(function(e) {
+            var temp = e.target.id.split('-');
+            var tabID = temp[0];
+            $(".tab-link").removeClass("active");
+            $(this).addClass("active");
+            $(".tabCon").addClass("hide");
+            $("#" + tabID).removeClass("hide");
+            return false;
+        })
+    });
 
     function checkOpSelected() {
         timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
@@ -43,9 +53,6 @@ $(function() {
             focusInField(time);
         }
     }
-    $("#list-link").click(function() {
-        crd.grabList();
-    });
 
     $("#home-link").click(function() {
         $('#timeUnits option').prop('selected', function() {
@@ -83,48 +90,31 @@ $(function() {
     $("#blockList").on('click', '.unblock-button', function() {
         const buttonID = $(this).attr('id');
         const siteID = buttonID.split('-');
-        crd.del(siteID[1]);
+        unblock(siteID[1]);
     });
 
 
+    //set or change password
     $("#pw").click(function() {
-        if (getBG.makeCookie.getItem("pw") != null) {
+        if (getBG.makeCookie.getItem("pw") == null) {
+            getBG.setPW();
+        } else {
             if (getBG.extensionDialogs("changePw", "")) {
-                if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-                    var auth = getBG.enterPW();
-                    if (auth == true) {
-                        getBG.setPW();
-                    } else if (!auth) {
-                        getBG.failedPW();
-                    }
-                } else {
-                    getBG.failedPW();
+                if (handlePasswordAttempts()) {
+                    getBG.setPW();
                 }
             }
-        } else {
-            getBG.setPW();
         }
     });
+
 
     $("#save").click(function() {
-        if(getBG.makeCookie.getItem("pw") != null){
-            if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-                var auth = getBG.enterPW();
-                if (auth == true) {
-                    saveList();
-                } else if (!auth) {
-                    getBG.failedPW();
-                }
-            } else {
-                getBG.failedPW();
-            }
-        }
-        else{
+        if (handlePasswordAttempts()) {
             saveList();
         }
-    })
+    });
 
-    function saveList(){
+    function saveList() {
         var urlList = [];
         for (var i = 0; i < Data.length; i++) {
             if (Data[i][3] != "INFN") {
@@ -139,7 +129,7 @@ $(function() {
             if (getBG.extensionDialogs("overrideSave", urlListStr)) {
                 getBG.makeCookie.setItem("savedList", urlListStr, Infinity);
             }
-        }        
+        }
     }
     $("#loadList").click(function() {
 
@@ -165,107 +155,116 @@ $(function() {
     })
 
     //reworked create/add/delete
-    var crd = new function() {
-        this.addSite = function() {
-            var rsn = getReason.value;
-            var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
-            var siteInfo;
-            if (!$("#websiteURL").is(":disabled")) {
-                var websiteURL = url.value;
-                console.log(ValidURL(websiteURL));
-                if (ValidURL(websiteURL)) {
-                    if (getBG.unique(websiteURL)) {
-                        const url = getBG.trim(websiteURL);
-                        siteInfo = sendInfo(url, timeUnitSelected, rsn, "single");
-                    } else {
-                        getBG.extensionDialogs("alreadyBlocked", websiteURL);
-                    }
+    function block() {
+        var rsn = getReason.value;
+        var timeUnitSelected = timeUnit.options[timeUnit.selectedIndex].value;
+        var siteInfo;
+        if (!$("#websiteURL").is(":disabled")) {
+            var websiteURL = url.value;
+            console.log(ValidURL(websiteURL));
+            if (ValidURL(websiteURL)) {
+                if (getBG.unique(websiteURL)) {
+                    const url = getBG.trim(websiteURL);
+                    siteInfo = sendInfo(url, timeUnitSelected, rsn, "single");
                 } else {
-                    getBG.extensionDialogs("invalidURL", websiteURL)
-                }
-                if (siteInfo.length > 0) {
-                    getBG.addSite(siteInfo);
-
+                    getBG.extensionDialogs("alreadyBlocked", websiteURL);
                 }
             } else {
-                var ls = $("#loadedList").val().split(',');
-                for (var i = 0; i < ls.length; i++) {
-                    if (getBG.unique(ls[i])) {
-                        siteInfo = sendInfo(ls[i], timeUnitSelected, rsn, "list");
-                        getBG.addSite(siteInfo);
-                    } else {
-                    }
-                }
+                getBG.extensionDialogs("invalidURL", websiteURL)
             }
-            this.grabList();
-        }
+            if (siteInfo.length > 0) {
+                getBG.addSite(siteInfo);
 
-        this.del = function(id) {
-            var index = id;
-            getBG.removeSite(index, "norm");
-            this.grabList();
+            }
+        } else {
+            var ls = $("#loadedList").val().split(',');
+            for (var i = 0; i < ls.length; i++) {
+                if (getBG.unique(ls[i])) {
+                    siteInfo = sendInfo(ls[i], timeUnitSelected, rsn, "list");
+                    getBG.addSite(siteInfo);
+                } else {}
+            }
         }
-        this.grabList = function() {
-            Data = getBG.Data;
-            var tempOutput = "";
-            var permOutput = "";
-            const tbl = document.getElementById("blockList");
-            const permList = document.getElementById("permablocked");
-            var emptyMainList = true;
-            $("#save").addClass("hide");
-            $("#unblockAll").addClass("hide");
-            if (Data.length > 0) {
-                for (i = 0; i < Data.length; i++) {
-                    const urlInList = Data[i][1];
-                    const ubDate = Data[i][3];
-                    if (ubDate != "INFN") {
-                        emptyMainList = false;
-                        tempOutput += "<tr>";
-                        tempOutput += "<td class='url' id='site-" + i + "'" + ">" + urlInList + "</td>";
-                        tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate + "</td>";
-                        if (ubDate != "N/A") {
-                            tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
-                            tempOutput += "</tr>";
-                        } else {
-                            tempOutput += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
-                            tempOutput += "</tr>";
-                        }
+        grabList();
+    }
+
+
+    function unblock(id) {
+        var index = id;
+        getBG.removeSite(index, "norm");
+        grabList();
+    }
+
+
+    function grabList() {
+        Data = getBG.Data;
+        var tempOutput = "";
+        var permOutput = "";
+        const tbl = document.getElementById("blockList");
+        const permList = document.getElementById("permablocked");
+        var emptyMainList = true;
+        $("#save").addClass("hide");
+        $("#unblockAll").addClass("hide");
+        if (Data.length > 0) {
+            for (i = 0; i < Data.length; i++) {
+                const urlInList = Data[i][1];
+                const ubDate = Data[i][3];
+                if (ubDate != "INFN") {
+                    emptyMainList = false;
+                    tempOutput += "<tr>";
+                    tempOutput += "<td class='url' id='site-" + i + "'" + ">" + urlInList + "</td>";
+                    tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate + "</td>";
+                    if (ubDate != "N/A") {
+                        tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
+                        tempOutput += "</tr>";
                     } else {
-                        permOutput += "<li class='url'>" + urlInList + "</li>";
+                        tempOutput += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
+                        tempOutput += "</tr>";
                     }
-                }
-                if (!emptyMainList) {
-                    $("#save").removeClass("hide");
-                    $("#unblockAll").removeClass("hide");
+                } else {
+                    permOutput += "<li class='url'>" + urlInList + "</li>";
                 }
             }
-            return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
+            if (!emptyMainList) {
+                $("#save").removeClass("hide");
+                $("#unblockAll").removeClass("hide");
+            }
         }
+        return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
     }
 
 
 
     $("#unblockAll").click(function() {
         if (getBG.extensionDialogs("unblockAll")) {
-            if(getBG.makeCookie.getItem("pw") != null){
-                if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-                    var auth = getBG.enterPW();
-                    if (auth == true) {
-                        getBG.unblockAll();
-                        crd.grabList();
-                    } else if (!auth) {
-                        getBG.failedPW();
-                    }
-                } else {
-                    getBG.failedPW();
-                }
-            }
-            else{
+            if (handlePasswordAttempts()) {
                 getBG.unblockAll();
-                crd.grabList(); 
+                grabList();
             }
         }
     })
+
+    function handlePasswordAttempts() {
+        var success = false;
+        if (getBG.makeCookie.getItem("pw") != null) {
+            console.log(getBG.makeCookie.getItem("pw"));
+            if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
+                var auth = getBG.enterPW();
+                if (auth == true) {
+                    success = true;
+                } else if (!auth) {
+                    getBG.failedPW();
+                } else {
+                    console.log("Cancelled!");
+                }
+            } else {
+                getBG.failedPW();
+            }
+        } else {
+            success = true;
+        }
+        return success;
+    }
 
     function sendInfo(url, unit, rsn, tp) {
         var info = [];
@@ -277,70 +276,60 @@ $(function() {
         //website will be permablocked
         else if (unit == "5") {
             if (getBG.extensionDialogs("permablock", url)) {
-                if (getBG.makeCookie.getItem("pw") == null) {
+                if (handlePasswordAttempts()) {
                     info = ["p", url, rsn, "INFN"];
                     $(".input-field").val('');
-                } else {
-                    if (getBG.makeCookie.getItem("failedPWAttemps") == null) {
-                        var auth = getBG.enterPW();
-                        if (auth == true) {
-                            info = ["p", url, rsn, "INFN"];
-                            $(".input-field").val('');
-                        } else if (!auth) {
-                            getBG.failedPW();
-                        }
-                    } else {
-                        getBG.failedPW();
-                    }
                 }
             }
         } else {
-            var timeAmount = time.value;
 
-            if (unit == "1") {
-                timeAmount *= 60000;
-            } else if (unit == "2") {
-                timeAmount *= 3600000;
-            } else if (unit == "3") {
-                timeAmount *= 86400000;
-            }
+            var t = determineBlockTime(unit);
+
             //calls isnum function to check whether the user inputted an integer value
-            if ((isNum(timeAmount))) {
-                var sd = Date.now(),
-                    ed = new Date(timeAmount + sd);
-                var year = ed.getFullYear(),
-                    month = ed.getMonth() + 1,
-                    day = ed.getDate(),
-                    hr = ed.getHours() % 12,
-                    min = ed.getMinutes();
-                var period = ed.getHours() > 11 || ed.getHours() == 24 ? "PM" : "AM";
-                month = month < 10 ? "0" + month : month;
-                day = day < 10 ? "0" + day : day;
-                hr = hr < 10 ? "0" + hr : hr;
-                min = min < 10 ? "0" + min : min;
-                if (hr == 0) {
-                    hr = 12;
-                }
-                var unblockDate = month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
-                info = ["n", url, rsn, unblockDate, timeAmount + sd];
+            if ((isNum(t))) {
+                var startDate = Date.now();
+                var unblockDate = formatUnblockDate(t, startDate);
+                info = ["n", url, rsn, unblockDate, t + startDate];
                 if (tp != "list") {
                     $(".input-field").val('');
                 }
             } else {
-                getBG.extensionDialogs("invalidTime", timeAmount);
+                getBG.extensionDialogs("invalidTime", t);
             }
         }
         return info;
     }
 
+    function determineBlockTime(unit) {
+        var timeAmount = time.value;
 
-    $('#mainForm').submit(function(e) {
-        e.preventDefault();
-    })
+        if (unit == "1") {
+            timeAmount *= 60000;
+        } else if (unit == "2") {
+            timeAmount *= 3600000;
+        } else if (unit == "3") {
+            timeAmount *= 86400000;
+        }
 
-    //listens to the block button, and blocks the website entered into the input field once it's pressed
-    $("#blockNow").click(function() {
-        crd.addSite();
-    });
+        return timeAmount;
+    }
+
+    function formatUnblockDate(banLength, start) {
+        var end = new Date(banLength + start);
+        var year = end.getFullYear(),
+            month = end.getMonth() + 1,
+            day = end.getDate(),
+            hr = end.getHours() % 12,
+            min = end.getMinutes();
+        var period = end.getHours() > 11 || end.getHours() == 24 ? "PM" : "AM";
+        month = month < 10 ? "0" + month : month;
+        day = day < 10 ? "0" + day : day;
+        hr = hr < 10 ? "0" + hr : hr;
+        min = min < 10 ? "0" + min : min;
+        if (hr == 0) {
+            hr = 12;
+        }
+        return month + "/" + day + "/" + year + " at " + hr + ":" + min + " " + period;
+    }
 
 });

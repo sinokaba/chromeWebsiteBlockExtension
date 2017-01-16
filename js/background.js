@@ -212,7 +212,7 @@ function timeBlocking(urls, tDates) {
                             type: 'basic',
                             iconUrl: 'img/pokusIcon128.png',
                             title: 'Website Unblocked',
-                            message: '"' + Data[k][1] + '" is now unblocked. Just refresh the page.'
+                            message: '"' + Data[k][1] + '" is now unblocked.'
                         }, function(notificationId) {
                         });
                         removeSite(k, "time");
