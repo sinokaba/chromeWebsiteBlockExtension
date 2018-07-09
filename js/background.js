@@ -195,21 +195,25 @@ function block(blockRequestType, urls, dates){
 
 function timeBlocking(urls, tDates){
     var counter = 0;
-    var timer = setInterval(function(){
+    //perhaps instead of using setInterval, use chrome.alarms.create 
+    var timer = setInterval(function() {
         var curTime = Date.now();
-        for(var i = 0; i < tDates.length; i++){
-            console.log(Math.floor((tDates[i] - curTime)/1000));
-            if(curTime >= tDates[i]){
+        for (var i = 0; i < tDates.length; i++) {
+            if (curTime >= tDates[i]) {
                 counter++;
-                for(var k = 0; k < Data.length; k++){
-                    if(Data[k][4] == tDates[i]){
-                        alert(Data[k][1] + " has been unblocked!");
-                        removeSite(k, "t");
+                for (var k = 0; k < Data.length; k++) {
+                    if (Data[k][4] == tDates[i]) {
+                        chrome.notifications.create('reminder', {
+                            type: 'basic',
+                            iconUrl: 'img/pokusIcon128.png',
+                            title: 'Website Unblocked',
+                            message: '"' + Data[k][1] + '" is now unblocked.'
+                        }, function(notificationId) {
+                        });
+                        removeSite(k, "time");
                     }
                 }
-                console.log(counter + " " + tDates.length) ;
-                if(counter == tDates.length){
-                    console.log("yeaa i clear it mang");
+                if (counter == tDates.length) {
                     clearInterval(timer);
                 }
             }
