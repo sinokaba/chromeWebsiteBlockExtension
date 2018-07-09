@@ -1,5 +1,4 @@
-const storage = chrome.storage.local,
-    err = chrome.runtime.lastError;
+const storage = chrome.storage.local, err = chrome.runtime.lastError;
 var Data = Array();
 
 chrome.runtime.onUpdateAvailable.addListener(function(details) {
@@ -13,7 +12,6 @@ for (var i = 0; i < 3; i++) {
             // Don't trigger on iframes
             return;
         }
-
         //stores tabid to local storage, when a blocked url is accessed an alternate js file access local storage with tab id to get url
         //since url becomes redirect url, don't want that
         var tabIdToUrl = {};
@@ -25,6 +23,39 @@ for (var i = 0; i < 3; i++) {
         };
     }
 }
+
+function loadOldData() {
+    storage.get("data", function(result) {
+        var rawD = Object.keys(result).map(function(key) {
+            return result[key];
+        });
+        if (rawD.length > 0) {
+            var len = rawD[0].match((/\[/g) || []).length - 1;
+            var temp = rawD[0].replace(/['"]+/g, '');
+            var tempParsed = temp.split(']');
+            var info = [];
+            for (var i = 0; i < len; i++) {
+                var d = tempParsed[i].split('[');
+                var oldData = d[1].split(',');
+                if (i == 0) {
+                    oldData = d[2].split(',');
+                }
+                Data.push(oldData);
+            }
+            for (var i = 0; i < Data.length; i++) {
+                if (Data[i][3] == "N/A") {
+                    updateFilters("norm");
+                } else if (Data[i][3] == "INFN") {
+                    updateFilters("infn");
+                } else {
+                    updateFilters("time");
+                }
+            }
+        }
+    });
+}
+
+loadOldData();
 
 //alarm test
 chrome.alarms.onAlarm.addListener(function(alarm) {
@@ -81,39 +112,6 @@ var makeCookie = {
     }
 };
 
-function loadOldData() {
-    storage.get("data", function(result) {
-        var rawD = Object.keys(result).map(function(key) {
-            return result[key];
-        });
-        if (rawD.length > 0) {
-            var len = rawD[0].match((/\[/g) || []).length - 1;
-            var temp = rawD[0].replace(/['"]+/g, '');
-            var tempParsed = temp.split(']');
-            var info = [];
-            for (var i = 0; i < len; i++) {
-                var d = tempParsed[i].split('[');
-                var oldData = d[1].split(',');
-                if (i == 0) {
-                    oldData = d[2].split(',');
-                }
-                Data.push(oldData);
-            }
-            for (var i = 0; i < Data.length; i++) {
-                if (Data[i][3] == "N/A") {
-                    updateFilters("norm");
-                } else if (Data[i][3] == "INFN") {
-                    updateFilters("infn");
-                } else {
-                    updateFilters("time");
-                }
-            }
-        }
-    });
-}
-
-loadOldData();
-
 function addSite(sInfo) {
     Data.push(sInfo);
     storage.set({
@@ -145,91 +143,78 @@ function removeSite(index, type) {
     updateFilters(type);
 }
 
-function updateFilters(type) {
+function updateFilters(type){
+    console.log("you called me " + type);
     var nUrls = [];
     var tUrls = [];
     var tDates = [];
     var iUrls = [];
-    for (var i = 0; i < Data.length; i++) {
-        if (Data[i][3] == "N/A") {
-            nUrls.push("*://" + Data[i][1] + "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
-        } else if (Data[i][3] == "INFN") {
-            iUrls.push("*://" + Data[i][1] + "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
-        } else {
-            tUrls.push("*://" + Data[i][1] + "/*", "*://www." + Data[i][1] + "/*", "*://m." + Data[i][1] + "/*");
+    for(var i = 0; i < Data.length; i++){
+        if(Data[i][3] == "N/A"){
+            nUrls.push("*://*." +  Data[i][1] + "/*");
+        }
+        else if(Data[i][3] == "INFN"){
+            iUrls.push("*://*." +  Data[i][1] + "/*");        
+        }
+        else{
+            tUrls.push("*://*." +  Data[i][1] + "/*");
             tDates.push(Data[i][4]);
-        }
+        }   
     }
-    if (type == "norm") {
-        if (nUrls.length > 0) {
-            normBlocking(nUrls);
-        } else {
-            chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
-        }
-    } else if (type == "time") {
-        if (tUrls.length > 0) {
-            timeBlocking(tUrls, tDates);
-        } else {
-            chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
-        }
-    } else if (type == "infn") {
-        if (iUrls.length > 0) {
-            infnBlocking(iUrls);
-        }
-    } else {
+    if(type == "norm"){
+        block(blockRequest[0], nUrls, null);
+    }
+    else if(type == "time"){
+        block(blockRequest[1], tUrls, tDates);
+    }
+    else if(type == "infn"){
+        block(blockRequest[2], iUrls, null);
+    }
+    else{
         chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
         chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
     }
 }
 
-function normBlocking(urls) {
-    if (chrome.webRequest.onBeforeRequest.hasListener(blockRequest[0])) {
-        chrome.webRequest.onBeforeRequest.removeListener(blockRequest[0]);
-    };
-    chrome.webRequest.onBeforeRequest.addListener(blockRequest[0], {
-        urls: urls
-    }, ["blocking"]);
+function block(blockRequestType, urls, dates){
+    console.log(urls);
+    if(urls.length > 0){
+        console.log("blocking");
+        if(chrome.webRequest.onBeforeRequest.hasListener(blockRequestType)){
+            chrome.webRequest.onBeforeRequest.removeListener(blockRequestType);
+        };
+        chrome.webRequest.onBeforeRequest.addListener(blockRequestType, {urls: urls}, ['blocking']);    
+        if(dates != null){
+            timeBlocking(urls, dates);
+        }
+    }
+    else{
+        chrome.webRequest.onBeforeRequest.removeListener(blockRequestType);             
+    }
 }
 
-function timeBlocking(urls, tDates) {
-    if (chrome.webRequest.onBeforeRequest.hasListener(blockRequest[1])) {
-        chrome.webRequest.onBeforeRequest.removeListener(blockRequest[1]);
-    };
-    chrome.webRequest.onBeforeRequest.addListener(blockRequest[1], {
-        urls: urls
-    }, ["blocking"]);
-
+function timeBlocking(urls, tDates){
     var counter = 0;
-    //perhaps instead of using setInterval, use chrome.alarms.create 
-    var timer = setInterval(function() {
+    var timer = setInterval(function(){
         var curTime = Date.now();
-        for (var i = 0; i < tDates.length; i++) {
-            if (curTime >= tDates[i]) {
+        for(var i = 0; i < tDates.length; i++){
+            console.log(Math.floor((tDates[i] - curTime)/1000));
+            if(curTime >= tDates[i]){
                 counter++;
-                for (var k = 0; k < Data.length; k++) {
-                    if (Data[k][4] == tDates[i]) {
-                        chrome.notifications.create('reminder', {
-                            type: 'basic',
-                            iconUrl: 'img/pokusIcon128.png',
-                            title: 'Website Unblocked',
-                            message: '"' + Data[k][1] + '" is now unblocked.'
-                        }, function(notificationId) {
-                        });
-                        removeSite(k, "time");
+                for(var k = 0; k < Data.length; k++){
+                    if(Data[k][4] == tDates[i]){
+                        alert(Data[k][1] + " has been unblocked!");
+                        removeSite(k, "t");
                     }
                 }
-                if (counter == tDates.length) {
+                console.log(counter + " " + tDates.length) ;
+                if(counter == tDates.length){
+                    console.log("yeaa i clear it mang");
                     clearInterval(timer);
                 }
             }
         }
     }, 1000);
-}
-
-function infnBlocking(urls) {
-    chrome.webRequest.onBeforeRequest.addListener(blockRequest[2], {
-        urls: urls
-    }, ["blocking"]);
 }
 
 

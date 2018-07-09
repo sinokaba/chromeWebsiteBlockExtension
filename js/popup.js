@@ -23,6 +23,43 @@ $(function() {
         ele.select();
     }
 
+    function grabList() {
+        Data = getBG.Data;
+        var tempOutput = "";
+        var permOutput = "";
+        const tbl = document.getElementById("blockList");
+        const permList = document.getElementById("permablocked");
+        var emptyMainList = true;
+        $("#save").addClass("hide");
+        $("#unblockAll").addClass("hide");
+        if (Data.length > 0) {
+            for (i = 0; i < Data.length; i++) {
+                const urlInList = Data[i][1];
+                const ubDate = Data[i][3];
+                if (ubDate != "INFN") {
+                    emptyMainList = false;
+                    tempOutput += "<tr>";
+                    tempOutput += "<td class='url' id='site-" + i + "'" + ">" + urlInList + "</td>";
+                    tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate + "</td>";
+                    if (ubDate != "N/A") {
+                        tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
+                        tempOutput += "</tr>";
+                    } else {
+                        tempOutput += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
+                        tempOutput += "</tr>";
+                    }
+                } else {
+                    permOutput += "<li class='url'>" + urlInList + "</li>";
+                }
+            }
+            if (!emptyMainList) {
+                $("#save").removeClass("hide");
+                $("#unblockAll").removeClass("hide");
+            }
+        }
+        return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
+    }
+
     //disables/enables the input field depending depending on option selected
     $("#timeUnits").change(function() {
         checkOpSelected();
@@ -56,7 +93,6 @@ $(function() {
 
     $("#home-link").click(function() {
         $('#timeUnits option').prop('selected', function() {
-
             return this.defaultSelected;
         });
         checkOpSelected();
@@ -70,7 +106,6 @@ $(function() {
         $(".input-field").val('');
     });
 
-
     //checks if url exists
     function ValidURL(str) {
         return /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test("http://" + str);
@@ -79,11 +114,7 @@ $(function() {
     //checks if entered value is an integer, also tests for if the input value is empty
     function isNum(val) {
         const pattern = new RegExp('^[0-9]+$');
-        if (pattern.test(val)) {
-            return true;
-        } else {
-            return false;
-        }
+        return pattern.test(val);
     };
 
     //unblock button, using .on so this function works for newly generated elements
@@ -92,7 +123,6 @@ $(function() {
         const siteID = buttonID.split('-');
         unblock(siteID[1]);
     });
-
 
     //set or change password
     $("#pw").click(function() {
@@ -106,7 +136,6 @@ $(function() {
             }
         }
     });
-
 
     $("#save").click(function() {
         if (handlePasswordAttempts()) {
@@ -131,6 +160,7 @@ $(function() {
             }
         }
     }
+
     $("#loadList").click(function() {
 
         if ($(this).val() == "Load List") {
@@ -188,52 +218,11 @@ $(function() {
         grabList();
     }
 
-
     function unblock(id) {
         var index = id;
         getBG.removeSite(index, "norm");
         grabList();
     }
-
-
-    function grabList() {
-        Data = getBG.Data;
-        var tempOutput = "";
-        var permOutput = "";
-        const tbl = document.getElementById("blockList");
-        const permList = document.getElementById("permablocked");
-        var emptyMainList = true;
-        $("#save").addClass("hide");
-        $("#unblockAll").addClass("hide");
-        if (Data.length > 0) {
-            for (i = 0; i < Data.length; i++) {
-                const urlInList = Data[i][1];
-                const ubDate = Data[i][3];
-                if (ubDate != "INFN") {
-                    emptyMainList = false;
-                    tempOutput += "<tr>";
-                    tempOutput += "<td class='url' id='site-" + i + "'" + ">" + urlInList + "</td>";
-                    tempOutput += "<td id='unblockTimer-" + i + "'" + " class='ubDate'>" + ubDate + "</td>";
-                    if (ubDate != "N/A") {
-                        tempOutput += "<td><button" + " class='button-style dis' disabled>Remove</button></td>";
-                        tempOutput += "</tr>";
-                    } else {
-                        tempOutput += "<td><button id='unblock-" + i + "'" + " class='button-style unblock-button'>Remove</button></td>";
-                        tempOutput += "</tr>";
-                    }
-                } else {
-                    permOutput += "<li class='url'>" + urlInList + "</li>";
-                }
-            }
-            if (!emptyMainList) {
-                $("#save").removeClass("hide");
-                $("#unblockAll").removeClass("hide");
-            }
-        }
-        return [tbl.innerHTML = tempOutput, permList.innerHTML = permOutput];
-    }
-
-
 
     $("#unblockAll").click(function() {
         if (getBG.extensionDialogs("unblockAll")) {
